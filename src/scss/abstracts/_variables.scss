@@ -1,0 +1,97 @@
+//COLORS
+$color-white: #fff;
+
+$color-grey-light: #d0d0d0;
+
+$color-grey-light-2: #d2dcdf;
+
+$color-grey-light-3: #7a7a7a;
+
+$color-grey-light-4: #8c8c8c;
+
+$color-grey-dark: #383838;
+
+$color-primary: #0092db;
+
+$color-primary-thin: rgba($color-primary, 0.45);
+$color-primary-thin-dark: rgba($color-primary, 0.65);
+
+$color-black-1: #141716;
+$color-black-2: #08090a;
+$color-black-3: #040b1d;
+
+$color-red: #d00000;
+$color-orange: #ff9f1c;
+$color-green: #1db954;
+
+//FONT
+$default-font-size: 1.6rem;
+
+//CUSTOM
+
+$color-input-light: rgba($color-grey-light, 0.7);
+$color-input-dark: rgba($color-white, 0.2);
+
+$modal-close-area-light: rgba($color-black-2, 0.8);
+$modal-close-area-dark: rgba($color-black-2, 0.9);
+
+//LIGHT AND DARK MODE
+
+$themes: (
+  light: (
+    color-modal-close-area: $modal-close-area-light,
+    color-modal: $color-white,
+    color-input: $color-input-light,
+    color-label: $color-grey-light-3,
+    color-post: $color-grey-light-2,
+    color-menu-box: $color-grey-light-2,
+    color-background: $color-white,
+    color-primary: $color-primary,
+    color-primary-thin: $color-primary-thin-dark,
+    color-border: $color-grey-light,
+    color-text: $color-black-1,
+    color-placeholder: $color-grey-dark,
+    color-text-secondary: $color-grey-dark,
+    color-text-tertiary: $color-grey-light-4,
+    color-red: $color-red,
+    color-orange: $color-orange,
+    color-green: $color-green,
+    color-text-opaque: rgba($color-black-1, 0.6),
+    color-background-opaque: rgba($color-white, 0.6),
+    blurred-border:
+      linear-gradient(to bottom, rgba($color-grey-light, 1), transparent),
+    bottom-thin-box-shadow: 0 0.4rem 1px rgba($color-primary-thin, 0.4),
+    fade-gradient:
+      linear-gradient(to bottom, transparent 0 50%, rgba($color-white, 1)),
+    default-box-shadow: 0 1rem 2rem rgba($color-black-2, 0.25),
+    big-box-shadow: 0 1.5rem 3rem rgba($color-black-2, 0.5),
+  ),
+  dark: (
+    color-modal-close-area: $modal-close-area-dark,
+    color-modal: $color-black-1,
+    color-input: $color-input-dark,
+    color-post: $color-black-1,
+    color-label: $color-grey-light,
+    color-menu-box: $color-black-1,
+    color-background: $color-black-2,
+    color-primary: $color-primary,
+    color-primary-thin: $color-primary-thin,
+    color-border: $color-black-3,
+    color-text: $color-white,
+    color-placeholder: $color-grey-light,
+    color-text-secondary: $color-grey-light,
+    color-text-tertiary: $color-grey-light-3,
+    color-text-opaque: rgba($color-white, 0.6),
+    color-background-opaque: rgba($color-black-2, 0.6),
+    color-red: $color-red,
+    color-orange: $color-orange,
+    color-green: $color-green,
+    blurred-border:
+      linear-gradient(to bottom, rgba($color-black-3, 1), transparent),
+    bottom-thin-box-shadow: 0 0.4rem 1px rgba($color-black-3, 1),
+    fade-gradient:
+      linear-gradient(to bottom, transparent 0 50%, rgba($color-black-2, 1)),
+    default-box-shadow: 0 1rem 2rem rgba($color-black-3, 0.35),
+    big-box-shadow: 0 1.5rem 3rem rgba($color-black-3, 0.6),
+  ),
+);

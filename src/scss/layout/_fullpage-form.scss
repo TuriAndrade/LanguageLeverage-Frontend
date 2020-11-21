@@ -1,0 +1,88 @@
+.fullpage-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows:
+    [row-heading-start] minmax(min-content, calc(100vh - 8rem))
+    [row-heading-end row-form-start] min-content
+    [row-form-end row-footer-start] 8rem
+    [row-footer-end];
+
+  &__footer {
+    grid-row: row-footer-start / row-footer-end;
+    position: fixed;
+    width: 100%;
+    height: 8rem;
+    bottom: 0;
+    left: 0;
+  }
+
+  &__heading {
+    position: relative;
+    grid-row: row-heading-start / row-heading-end;
+    @include theme-aware("background-color", "color-primary");
+    display: flex;
+    justify-content: center;
+    padding: 4rem 4rem 8rem 4rem;
+  }
+
+  &__heading-text {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    max-width: 70rem;
+    width: 100%;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+
+    & > *:not(:last-child) {
+      margin-bottom: 2rem;
+    }
+
+    &--primary {
+      color: $color-white;
+      font-size: 4.5rem;
+    }
+
+    &--secondary {
+      color: $color-grey-light;
+      font-size: 2.5rem;
+
+      &-enter,
+      &-appear {
+        opacity: 0;
+      }
+
+      &-enter-active,
+      &-appear-active {
+        opacity: 1;
+        transition: opacity 0.3s 0.2s;
+      }
+
+      &-exit {
+        opacity: 1;
+      }
+
+      &-exit-active {
+        opacity: 0;
+        transition: opacity 0.3s 0.2s;
+      }
+    }
+  }
+
+  &__heading-btn {
+    position: absolute;
+    bottom: 4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3.5rem;
+    color: $color-white;
+    display: flex;
+    background: transparent;
+  }
+
+  &__form {
+    grid-row: row-form-start / row-form-end;
+    display: flex;
+    justify-content: center;
+  }
+}

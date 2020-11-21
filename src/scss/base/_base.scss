@@ -1,0 +1,47 @@
+html {
+  font-size: 62.5%;
+
+  @include respond(tab-land) {
+    font-size: 56.25%; //1rem = 9px
+  }
+
+  @include respond(big-desktop) {
+    //this is a min-width query, so it comes in the end
+    font-size: 75%; //1rem = 12px
+  }
+}
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  box-sizing: inherit; //Faz com que todos os elementos herdem o box-sizing do body
+}
+
+body {
+  box-sizing: border-box;
+  @include theme-aware("background", "color-background");
+}
+
+input,
+button,
+textarea,
+a {
+  border: none;
+  box-sizing: border-box; //não herdam por algum motivo em algumas situações
+}
+
+a,
+button {
+  cursor: pointer;
+}
+
+input,
+textarea,
+button,
+select,
+a {
+  -webkit-tap-highlight-color: transparent;
+}

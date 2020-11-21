@@ -1,0 +1,317 @@
+.navbar {
+  position: relative;
+  @include theme-aware("background-color", "color-background");
+  width: 100%;
+  height: calc(100% - 1px);
+  max-width: 144rem;
+  row-gap: 2rem;
+  column-gap: 2rem;
+  display: grid;
+  grid-template-rows: [row-navbar-start] 1fr [row-navbar-end];
+  grid-template-columns:
+    [padding-left] 1.5rem
+    [col-navbar-left-start] minmax(min-content, 1fr)
+    [col-navbar-left-end col-navbar-center-start] minmax(min-content, 3fr)
+    [col-navbar-center-end col-navbar-right-start] minmax(min-content, 1fr)
+    [col-navbar-right-end col-navbar-end] 1.5rem [padding-right];
+
+  @include respond(tab-port) {
+    grid-template-columns:
+      [padding-left] 1.5rem
+      [col-navbar-left-start] min-content
+      [col-navbar-left-end col-navbar-right-start] 1fr
+      [col-navbar-right-end col-navbar-end] 1.5rem [padding-right];
+  }
+
+  &::after {
+    left: 0;
+    bottom: -2px;
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    @include theme-aware("background-image", "blurred-border");
+  }
+
+  &__menu-box {
+    grid-row: row-navbar-start / row-navbar-end;
+    grid-column: col-navbar-left-start / col-navbar-left-end;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    & > *:not(:last-child) {
+      margin-right: 4rem;
+
+      @include respond(tab-port) {
+        margin-right: 0;
+      }
+    }
+  }
+
+  &__profile-box {
+    grid-row: row-navbar-start / row-navbar-end;
+    grid-column: col-navbar-left-start / col-navbar-left-end;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    display: none;
+
+    & > *:not(:last-child) {
+      margin-right: 4rem;
+
+      @include respond(tab-port) {
+        margin-right: 0;
+      }
+    }
+
+    @include respond(tab-port) {
+      display: flex;
+    }
+  }
+
+  &__menu-btn {
+    position: relative;
+    width: 3rem;
+    height: 3px;
+    border-radius: 100rem;
+    @include theme-aware("background-color", "color-primary");
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      @include theme-aware("background-color", "color-primary");
+      height: 100%;
+      border-radius: 100rem;
+      left: 0;
+    }
+
+    &::before {
+      width: 2rem;
+      top: -1rem;
+    }
+
+    &::after {
+      width: 4rem;
+      top: 1rem;
+    }
+
+    &-enter {
+      &::before {
+        width: 2rem;
+      }
+
+      &::after {
+        width: 4rem;
+      }
+
+      width: 3rem;
+    }
+
+    &-enter-active {
+      &::before,
+      &::after {
+        width: 0;
+        transition: all 0.5s;
+      }
+
+      width: 0;
+      transition: all 0.5s;
+    }
+
+    &-exit,
+    &-enter-done {
+      &::before,
+      &::after {
+        width: 0;
+      }
+
+      width: 0;
+    }
+
+    &-exit-active {
+      &::before {
+        width: 2rem;
+        transition: all 0.5s;
+      }
+
+      &::after {
+        width: 4rem;
+        transition: all 0.5s;
+      }
+
+      width: 3rem;
+      transition: all 0.5s;
+    }
+  }
+
+  &__menu-btn-box {
+    height: 100%;
+    width: 4rem;
+    background: transparent;
+    align-items: center;
+    display: none;
+
+    @include respond(tab-port) {
+      display: flex;
+    }
+
+    &--profile {
+      @include respond(tab-port) {
+        display: none;
+      }
+    }
+  }
+
+  &__logo {
+    height: 4rem;
+
+    @include respond(tab-port) {
+      display: none;
+    }
+  }
+
+  &__search-box {
+    display: flex;
+    align-items: center;
+    grid-row: row-navbar-start / row-navbar-end;
+    grid-column: col-navbar-center-start / col-navbar-center-end;
+
+    @include respond(tab-port) {
+      grid-column: col-navbar-right-start / col-navbar-right-end;
+    }
+  }
+
+  &__search-form {
+    width: 100%;
+    position: relative;
+    height: 3.7rem;
+  }
+
+  &__search-input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1.6rem;
+    width: 100%;
+    border-radius: 100rem;
+    height: 100%;
+    align-items: center;
+    padding-left: 1.5rem;
+    @include theme-aware("color", "color-text");
+    @include theme-aware("background-color", "color-primary-thin");
+
+    &::placeholder {
+      /* Chrome, Firefox, Opera, Safari 10.1+ */
+      @include theme-aware("color", "color-placeholder");
+      opacity: 1; /* Firefox */
+    }
+
+    &:-ms-input-placeholder {
+      /* Internet Explorer 10-11 */
+      @include theme-aware("color", "color-placeholder");
+    }
+
+    &::-ms-input-placeholder {
+      /* Microsoft Edge */
+      @include theme-aware("color", "color-placeholder");
+    }
+
+    &-enter {
+      opacity: 0;
+      visibility: hidden;
+      width: 0;
+    }
+
+    &-enter-active {
+      opacity: 1;
+      visibility: visible;
+      width: 100%;
+      transition: all 0.5s ease-in-out;
+    }
+
+    &-exit {
+      opacity: 1;
+      visibility: visible;
+      width: 100%;
+    }
+
+    &-exit-active {
+      opacity: 0;
+      visibility: hidden;
+      width: 0;
+      transition: all 0.5s ease-in-out;
+    }
+  }
+
+  &__search-btn {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    right: 0;
+    top: 0;
+    height: 3.7rem;
+    width: 3.7rem;
+    background: transparent;
+    border-radius: 50%;
+    transition: background-color 0.5s;
+
+    @include not-touch-device() {
+      &:hover {
+        @include theme-aware("background-color", "color-primary-thin");
+      }
+    }
+
+    &--active {
+      @include not-touch-device() {
+        &:hover {
+          background-color: transparent !important;
+        }
+      }
+    }
+  }
+
+  &__search-icon {
+    display: flex;
+    font-size: 2.5rem;
+    @include theme-aware("color", "color-text");
+  }
+
+  &__btn-box {
+    grid-column: col-navbar-right-start / col-navbar-right-end;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    @include respond(tab-port) {
+      display: none;
+    }
+
+    & > *:not(:first-child) {
+      margin-left: 4rem;
+    }
+
+    &--item {
+      &-enter {
+        visibility: hidden;
+        opacity: 0;
+      }
+      &-enter-active {
+        visibility: visible;
+        opacity: 1;
+        transition: width 0.2s, opacity 0.2s 0.2s, visibility 0.2s 0.2s;
+      }
+      &-exit {
+        visibility: visible;
+        opacity: 1;
+      }
+      &-exit-active {
+        visibility: hidden;
+        opacity: 0;
+        transition: width 0.2s 0.2s, opacity 0.2s, visibility 0.2s;
+      }
+    }
+  }
+}

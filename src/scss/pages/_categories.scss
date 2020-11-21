@@ -1,0 +1,24 @@
+.categories {
+  &__box {
+    width: 100%;
+    max-width: 40rem;
+    display: flex;
+    flex-wrap: wrap;
+
+    & > * {
+      margin-bottom: 0.5rem;
+      margin-right: 0.5rem;
+    }
+  }
+
+  &__item {
+    @include theme-aware("color", "color-text-secondary");
+    display: flex;
+    cursor: pointer;
+    border: 1px solid $color-primary;
+    font-size: 1.5rem;
+    font-weight: 500;
+    border-radius: 100rem;
+    padding: 0 0.5rem;
+  }
+}

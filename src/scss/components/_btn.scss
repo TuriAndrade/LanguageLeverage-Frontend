@@ -1,0 +1,312 @@
+.btn-flag {
+  position: relative;
+  display: inline-flex;
+  height: 1.5rem;
+  background: transparent;
+  align-items: center;
+
+  & > *:not(:last-child) {
+    margin-right: 1rem;
+  }
+
+  &__active {
+    font-size: 1.3rem;
+    display: flex;
+    margin-left: 1rem;
+    @include theme-aware("color", "color-primary");
+  }
+
+  &__flag {
+    display: flex;
+    height: 100%;
+  }
+
+  &__text {
+    font-size: 1rem;
+    font-weight: 500;
+    @include theme-aware("color", "color-text-secondary");
+
+    &--thick {
+      font-size: $default-font-size;
+    }
+  }
+}
+
+.btn-color-circle-icon {
+  display: inline-flex;
+  height: 2.2rem;
+  background: transparent;
+  display: flex;
+  align-items: center;
+
+  & > *:not(:last-child) {
+    margin-right: 1rem;
+  }
+
+  &__icon {
+    height: 1.8rem;
+    width: 1.8rem;
+    border-radius: 50%;
+
+    &--black {
+      background-color: $color-black-2;
+    }
+
+    &--white {
+      background-color: $color-white;
+    }
+  }
+
+  &--active &__icon {
+    border: 1px solid $color-primary;
+  }
+
+  &__text {
+    font-size: 1rem;
+    font-weight: 500;
+    @include theme-aware("color", "color-text-secondary");
+
+    &--thick {
+      font-size: $default-font-size;
+    }
+  }
+}
+
+.btn-text {
+  font-size: $default-font-size;
+  @include theme-aware("color", "color-text");
+  background: transparent;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 2rem;
+  border-radius: 100rem;
+  transition: all 0.1s;
+
+  @include not-touch-device() {
+    &:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+  }
+
+  @include not-touch-device() {
+    &:active {
+      transform: translateY(-1px);
+    }
+  }
+
+  &:not(:last-child) {
+    margin-right: 1rem;
+  }
+
+  & > *:not(:last-child) {
+    margin-right: 1rem;
+  }
+
+  &--icon {
+    display: flex;
+    svg {
+      height: 2.2rem;
+      fill: $color-white;
+    }
+  }
+
+  &--text {
+    font-weight: 300;
+    font-size: 1.5rem;
+    color: $color-white;
+  }
+
+  &--thick {
+    padding: 1rem 2rem;
+  }
+
+  &--thick &--text {
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  &--w100 {
+    justify-content: center;
+    width: 100%;
+  }
+
+  &--thin {
+    padding: 0.4rem 2rem;
+  }
+
+  &--thin &--text {
+    font-size: 1.2rem;
+  }
+
+  &--color-primary {
+    @include theme-aware("background-color", "color-primary");
+  }
+
+  &--color-red {
+    @include theme-aware("background-color", "color-red");
+  }
+}
+
+.btn-icon {
+  display: flex;
+  align-self: center;
+  background: transparent;
+  @include theme-aware("color", "color-text-secondary");
+
+  & > *:not(:last-child) {
+    margin-right: 1rem;
+  }
+
+  &--icon {
+    font-size: 2.1rem;
+    display: flex;
+    svg {
+      @include theme-aware("fill", "color-text-secondary");
+    }
+  }
+
+  &--number {
+    font-size: 1.2rem;
+    @include theme-aware("color", "color-text-secondary");
+  }
+
+  @include not-touch-device() {
+    &--orange:hover &--icon svg {
+      @include theme-aware("fill", "color-orange");
+    }
+
+    &--orange:hover &--number {
+      @include theme-aware("color", "color-orange");
+    }
+
+    &--primary:hover &--icon svg {
+      @include theme-aware("fill", "color-primary");
+    }
+
+    &--primary:hover &--number {
+      @include theme-aware("color", "color-primary");
+    }
+
+    &--red:hover &--icon svg {
+      @include theme-aware("fill", "color-red");
+    }
+
+    &--red:hover &--number {
+      @include theme-aware("color", "color-red");
+    }
+
+    &--green:hover &--icon svg {
+      @include theme-aware("fill", "color-green");
+    }
+
+    &--green:hover &--number {
+      @include theme-aware("color", "color-green");
+    }
+  }
+}
+
+.btn-icon-2 {
+  display: flex;
+  align-self: center;
+  background: transparent;
+  cursor: pointer;
+  font-size: 2.1rem;
+
+  &--primary {
+    @include theme-aware("color", "color-primary");
+
+    svg {
+      @include theme-aware("fill", "color-primary");
+    }
+  }
+}
+
+.btn-icon-3 {
+  display: flex;
+  align-self: center;
+  transition: color 0.3s;
+  background: transparent;
+  @include theme-aware("color", "color-text-secondary");
+  cursor: pointer;
+  font-size: 2.1rem;
+
+  &--red {
+    @include not-touch-device() {
+      &:hover {
+        @include theme-aware("color", "color-red");
+      }
+    }
+  }
+}
+
+.border-btn {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  transition: color 0.25s;
+  border: 0;
+  font-size: 2rem;
+  padding: 1rem;
+
+  &__icon {
+    display: inline-flex;
+  }
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  &::before,
+  &::after {
+    border: 2px solid transparent;
+    width: 0;
+    height: 0;
+  }
+
+  &::before {
+    top: 0;
+    left: 0;
+  }
+
+  &::after {
+    bottom: 0;
+    right: 0;
+  }
+
+  &--active {
+    @include theme-aware("color", "color-primary");
+  }
+
+  // Hover styles
+  &--active::before,
+  &--active::after {
+    width: 100%;
+    height: 100%;
+  }
+
+  &--active::before {
+    @include theme-aware("border-top-color", "color-primary");
+    @include theme-aware("border-right-color", "color-primary");
+    transition: width 0.25s ease-out, height 0.25s ease-out 0.25s;
+  }
+
+  &--active::after {
+    @include theme-aware("border-bottom-color", "color-primary");
+    @include theme-aware("border-left-color", "color-primary");
+    transition: border-color 0s ease-out 0.5s, width 0.25s ease-out 0.5s,
+      height 0.25s ease-out 0.75s;
+  }
+}

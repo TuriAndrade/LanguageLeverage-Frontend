@@ -1,0 +1,227 @@
+.dashboard {
+  display: grid;
+  padding: 0 6rem;
+  width: 100%;
+  grid-template-rows: [row-header-start] 7.5rem [row-header-end];
+  grid-template-columns: 1fr;
+  grid-auto-rows: 8.5rem;
+  row-gap: 3rem;
+
+  @include respond(tab-port) {
+    padding: 0 2rem;
+  }
+
+  @include respond(phone) {
+    padding: 0;
+  }
+
+  @include respond(small-phone) {
+    padding: 0 2rem;
+  }
+
+  &__header {
+    grid-row: row-header-start / row-header-end;
+    border-radius: 100rem;
+    @include theme-aware("background-color", "color-post");
+    display: flex;
+    overflow-x: auto;
+    align-items: stretch;
+    padding: 0 3rem;
+
+    &::-webkit-scrollbar {
+      height: 0;
+      width: 0;
+    }
+
+    & > *:not(:last-child) {
+      margin-right: 5rem;
+    }
+
+    & > *:last-child {
+      &::before {
+        content: "";
+        position: absolute;
+        height: 100%;
+        width: 3rem;
+        right: -3rem;
+        top: 0;
+      }
+    }
+  }
+
+  &__header-option {
+    font-weight: 500;
+    position: relative;
+    font-size: 1.5rem;
+    @include theme-aware("color", "color-text-secondary");
+    white-space: nowrap;
+    align-items: center;
+    padding: 0.5rem 0;
+    background: transparent;
+
+    @include not-touch-device() {
+      &:hover {
+        @include theme-aware("color", "color-text");
+      }
+    }
+
+    &--active {
+      @include theme-aware("color", "color-text");
+
+      &::after {
+        content: "";
+        width: 100%;
+        height: 2px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        @include theme-aware("background-color", "color-primary");
+      }
+    }
+  }
+
+  &__item {
+    border-radius: 100rem;
+    @include theme-aware("background-color", "color-post");
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 3.5rem 0.5rem 5rem;
+
+    @include respond(small-phone) {
+      padding: 0.5rem 2rem 0.5rem 2.8rem;
+    }
+
+    &--red {
+      justify-content: center;
+      @include theme-aware("background-color", "color-red");
+      font-size: 2.5rem;
+      color: $color-white;
+      font-weight: 600;
+
+      @include respond(small-phone) {
+        font-size: 2rem;
+      }
+    }
+  }
+
+  &__item-section {
+    display: flex;
+    flex-direction: column;
+
+    &--primary {
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      font-size: 2rem;
+      @include theme-aware("color", "color-text");
+
+      @include respond(small-phone) {
+        font-size: $default-font-size;
+      }
+    }
+
+    &--secondary {
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      font-size: 1.4rem;
+      @include theme-aware("color", "color-text-secondary");
+
+      @include respond(small-phone) {
+        font-size: 1.3rem;
+      }
+    }
+
+    &--tertiary {
+      display: inline-flex;
+      align-items: center;
+      font-size: 1.4rem;
+      font-weight: 400;
+      @include theme-aware("color", "color-text-secondary");
+
+      @include respond(small-phone) {
+        font-size: 1.3rem;
+      }
+    }
+
+    &--phone {
+      display: none;
+
+      @include respond(phone) {
+        display: flex;
+      }
+    }
+
+    &--normal {
+      display: flex;
+
+      @include respond(phone) {
+        display: none;
+      }
+    }
+  }
+
+  &__item-btn-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    font-size: 2.5rem;
+    @include theme-aware("color", "color-text");
+    transition: color 0.3s;
+    cursor: pointer;
+
+    & > svg {
+      width: 2.5rem;
+      @include theme-aware("fill", "color-text");
+      transition: fill 0.3s;
+    }
+
+    @include not-touch-device() {
+      &:hover {
+        @include theme-aware("color", "color-primary");
+
+        & > svg {
+          @include theme-aware("fill", "color-primary");
+        }
+      }
+    }
+
+    &--active {
+      @include theme-aware("color", "color-primary");
+
+      & > svg {
+        @include theme-aware("fill", "color-primary");
+      }
+    }
+  }
+
+  &__option {
+    padding: 2rem 4rem;
+    font-size: 2rem;
+    font-weight: 400;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    @include theme-aware("color", "color-text-secondary");
+
+    @include not-touch-device() {
+      &:hover {
+        @include theme-aware("color", "color-primary");
+      }
+    }
+
+    & > *:not(:last-child) {
+      margin-right: 2rem;
+    }
+
+    &:not(:last-child) {
+      border-bottom-style: solid;
+      border-bottom-width: 1px;
+      @include theme-aware("border-bottom-color", "color-label");
+    }
+  }
+}

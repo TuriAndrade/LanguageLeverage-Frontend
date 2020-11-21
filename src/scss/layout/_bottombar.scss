@@ -1,0 +1,55 @@
+.bottombar {
+  padding: 0 2rem;
+  @include theme-aware("background-color", "color-background");
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+  overflow-x: auto;
+  align-items: center;
+
+  &::after {
+    left: 2rem;
+    top: 0;
+    content: "";
+    position: absolute;
+    width: calc(100% - 4rem);
+    height: 2px;
+    @include theme-aware("background-image", "blurred-border");
+
+    @include respond(small-phone) {
+      width: 100%;
+      left: 0;
+    }
+  }
+
+  &__item {
+    background-color: transparent;
+    display: flex;
+    height: 100%;
+  }
+
+  &__btn-icon {
+    height: 100%;
+    background: transparent;
+    display: flex;
+    padding: 2rem;
+    align-items: center;
+    @include theme-aware("color", "color-text");
+
+    svg {
+      @include theme-aware("fill", "color-text");
+      width: 2rem;
+    }
+
+    &--active {
+      @include theme-aware("color", "color-primary");
+
+      svg {
+        @include theme-aware("fill", "color-primary");
+      }
+    }
+  }
+}

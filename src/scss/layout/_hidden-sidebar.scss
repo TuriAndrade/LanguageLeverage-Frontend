@@ -1,0 +1,152 @@
+.hidden-sidebar {
+  display: none;
+
+  @include respond(tab-port) {
+    display: grid;
+  }
+
+  grid-template-rows: [row-close-btn-start] 8rem [row-close-btn-end] repeat(
+      2,
+      minmax(min-content, 1fr)
+    );
+  grid-template-columns: 1fr;
+
+  position: fixed;
+  width: 100%;
+  overflow: auto;
+  height: 100%;
+  z-index: 500;
+  left: 0;
+  top: 0;
+  @include theme-aware("background-color", "color-background");
+
+  &-enter {
+    transform: translateX(100%);
+  }
+
+  &-enter-active {
+    transform: translateX(0);
+    transition: transform 0.2s ease-out 0.2s;
+  }
+
+  &-enter-done,
+  &-exit {
+    transform: translateX(0);
+  }
+
+  &-exit-active {
+    transform: translateX(100%);
+    transition: transform 0.2s ease-in 0.2s;
+  }
+
+  &__close-btn {
+    position: relative;
+    width: 4rem;
+    height: 3px;
+    border-radius: 100rem;
+    @include theme-aware("background-color", "color-primary");
+    transform: rotateZ(45deg);
+
+    &::before {
+      content: "";
+      position: absolute;
+      @include theme-aware("background-color", "color-primary");
+      height: 100%;
+      width: 4rem;
+      border-radius: 100rem;
+      left: 0;
+      top: 0;
+      transform: rotateZ(-90deg);
+    }
+  }
+
+  &__header {
+    grid-row: row-close-btn-start / row-close-btn-end;
+  }
+
+  &__item {
+    position: relative;
+    display: flex;
+    text-decoration: none;
+    font-family: "Poppins", sans-serif;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 4rem;
+    flex-direction: column;
+
+    & > * {
+      display: flex;
+    }
+
+    &--icon {
+      color: $color-white;
+      font-size: 4rem;
+    }
+
+    &--text-primary {
+      color: $color-white;
+      font-weight: 500;
+      font-size: 3.8rem;
+    }
+
+    &--text-secondary {
+      color: $color-white;
+      font-size: 2.1rem;
+      font-weight: 300;
+      padding-right: 1rem;
+    }
+  }
+
+  &__item-btn {
+    position: absolute;
+    right: 4rem;
+    bottom: 4rem;
+    color: $color-white;
+    font-size: 2.5rem;
+  }
+
+  &__login-box {
+    grid-row: 2 / 3;
+    @include theme-aware("background-color", "color-primary");
+  }
+
+  &__register-box {
+    grid-row: 3 / 4;
+    @include theme-aware("background-color", "color-primary-thin");
+  }
+
+  &__close-btn-box {
+    background: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 8rem;
+    width: 8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+
+    &-enter,
+    &-appear {
+      opacity: 0;
+    }
+
+    &-enter-active,
+    &-appear-active {
+      opacity: 1;
+      transition: opacity 0.4s 0.4s;
+    }
+
+    &-enter-done,
+    &-appear-done,
+    &-exit {
+      opacity: 1;
+    }
+
+    &-exit-active {
+      opacity: 0;
+      transition: opacity 0.4s 0.4s;
+    }
+  }
+}

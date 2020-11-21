@@ -1,0 +1,84 @@
+.loading {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  @include theme-aware("background-color", "color-background");
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &-enter,
+  &-appear {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  &-enter-active,
+  &-appear-active {
+    visibility: visible;
+    opacity: 1;
+    transition: all 0s 0.2s;
+  }
+
+  &-exit {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  &-exit-active {
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0s;
+  }
+}
+
+.loading-content {
+  @include theme-aware("background-color", "color-background");
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  flex-direction: column;
+
+  & > *:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+
+  &__text {
+    @include theme-aware("color", "color-primary");
+    font-size: 2rem;
+    font-weight: 400;
+  }
+
+  &-enter,
+  &-appear {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  &-enter-active,
+  &-appear-active {
+    opacity: 1;
+    visibility: visible;
+    transition: all 0s 0.2s;
+  }
+
+  &-exit {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  &-exit-active {
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0s;
+  }
+}

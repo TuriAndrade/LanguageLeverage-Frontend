@@ -1,0 +1,222 @@
+.profile {
+  display: grid;
+  grid-column: 1fr;
+  row-gap: 2.5rem;
+  padding: 0 6rem;
+
+  @include respond(phone) {
+    padding: 0 2rem;
+  }
+
+  &__user-picture-input {
+    display: none;
+  }
+
+  &__user-picture-label {
+    display: inline-flex;
+    align-items: center;
+
+    & > *:not(:last-child) {
+      margin-right: 2rem;
+    }
+  }
+
+  &__item {
+    display: grid;
+    max-width: 75rem;
+    grid-template-columns:
+      [col-label-start] minmax(min-content, 1fr)
+      [col-label-end col-input-start] minmax(min-content, 3fr)
+      [col-input-end];
+    grid-auto-rows: min-content;
+    row-gap: 1rem;
+    column-gap: 5rem;
+
+    @include respond(phone) {
+      grid-template-columns: 1fr;
+      column-gap: 0;
+    }
+  }
+
+  &__submit-btn {
+    grid-column: col-input-start / col-input-end;
+
+    @include respond(phone) {
+      grid-column: 1 / 2;
+    }
+  }
+
+  &__header {
+    display: grid;
+    align-items: center;
+    max-width: 75rem;
+    grid-template-rows: 1fr;
+    column-gap: 5rem;
+    grid-template-columns:
+      [col-picture-start] minmax(min-content, 1fr)
+      [col-picture-end col-user-start] minmax(min-content, 3fr)
+      [col-user-end];
+    align-items: center;
+
+    @include respond(phone) {
+      grid-template-columns: repeat(2, minmax(5rem, max-content));
+      column-gap: 2.5rem;
+    }
+  }
+
+  &__picture {
+    justify-self: end;
+    grid-column: 1 / 2;
+    height: 5rem;
+    width: 5rem;
+    border-radius: 50%;
+    overflow: hidden;
+
+    img {
+      object-fit: cover;
+      object-position: center center;
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  &__user {
+    justify-self: start;
+    grid-column: 2 / 3;
+    display: flex;
+    flex-direction: column;
+
+    &--primary {
+      @include theme-aware("color", "color-text");
+      font-size: 2rem;
+      font-weight: 500;
+      background: transparent;
+    }
+
+    &--secondary {
+      @include theme-aware("color", "color-primary");
+      font-size: $default-font-size;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  }
+
+  &__change-password-btn {
+    grid-column: col-input-start / col-input-end;
+    @include theme-aware("color", "color-primary");
+    font-size: $default-font-size;
+    font-weight: 600;
+    cursor: pointer;
+    justify-self: start;
+    background: transparent;
+    @include respond(phone) {
+      grid-column: 1 / 2;
+    }
+  }
+
+  &__input {
+    justify-self: start;
+    grid-column: col-input-start / col-input-end;
+    font-size: 1.4rem;
+    position: relative;
+    border-width: 1px;
+    resize: none;
+    border-style: solid;
+    resize: none;
+    @include theme-aware("border-color", "color-input");
+    width: 100%;
+    border-radius: 3px;
+    padding: 1rem;
+    @include theme-aware("color", "color-text-secondary");
+    background: transparent;
+
+    &--error {
+      @include theme-aware("border-color", "color-red");
+    }
+
+    @include respond(phone) {
+      grid-column: 1 / 2;
+    }
+
+    &::placeholder {
+      /* Chrome, Firefox, Opera, Safari 10.1+ */
+      @include theme-aware("color", "color-placeholder");
+      opacity: 1; /* Firefox */
+    }
+
+    &:-ms-input-placeholder {
+      /* Internet Explorer 10-11 */
+      @include theme-aware("color", "color-placeholder");
+    }
+
+    &::-ms-input-placeholder {
+      /* Microsoft Edge */
+      @include theme-aware("color", "color-placeholder");
+    }
+  }
+
+  &__error {
+    @include theme-aware("color", "color-red");
+    font-size: 1.4rem;
+    font-weight: 600;
+    grid-column: col-input-start / col-input-end;
+
+    @include respond(phone) {
+      grid-column: 1 / 2;
+    }
+  }
+
+  &__warning {
+    justify-self: start;
+    grid-column: col-input-start / col-input-end;
+    font-size: $default-font-size;
+    font-weight: 600;
+    position: relative;
+    border-width: 2px;
+    border-style: solid;
+    resize: none;
+    width: 100%;
+    border-radius: 3px;
+    padding: 1rem;
+    background: transparent;
+
+    &--red {
+      @include theme-aware("border-color", "color-red");
+      @include theme-aware("color", "color-red");
+    }
+
+    &--green {
+      @include theme-aware("border-color", "color-green");
+      @include theme-aware("color", "color-green");
+    }
+
+    @include respond(phone) {
+      grid-column: 1 / 2;
+    }
+  }
+
+  label {
+    justify-self: end;
+    grid-column: col-label-start / col-label-end;
+    @include theme-aware("color", "color-text-secondary");
+    font-size: $default-font-size;
+    font-weight: 600;
+
+    @include respond(phone) {
+      justify-self: start;
+      grid-column: 1 / 2;
+    }
+  }
+
+  &__item-description {
+    grid-column: col-input-start / col-input-end;
+    @include theme-aware("color", "color-text-tertiary");
+    font-size: 1.3rem;
+    font-weight: 500;
+
+    @include respond(phone) {
+      grid-column: 1 / 2;
+      font-size: 1.5rem;
+    }
+  }
+}
