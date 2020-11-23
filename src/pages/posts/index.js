@@ -4,7 +4,7 @@ import scrollToTop from "../../components/scrollToTop"
 
 function Posts() {
   return (
-    <div className="dashboard">
+    <div className="dashboard dashboard--header">
       <div className="dashboard__header">
         <button className="dashboard__header-option dashboard__header-option--active">
           Publicados

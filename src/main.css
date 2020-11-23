@@ -544,8 +544,8 @@ textarea {
   z-index: 1000;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center; }
@@ -577,7 +577,7 @@ textarea {
   align-items: center;
   top: 0;
   left: 0;
-  z-index: 1000;
+  z-index: 10;
   flex-direction: column; }
   .theme-light .loading-content {
     background-color: #fff; }
@@ -626,11 +626,20 @@ textarea {
       height: 100%; }
   .form__heading {
     font-size: 2.5rem;
-    font-weight: 600; }
+    font-weight: 600;
+    line-height: 120%; }
     .theme-light .form__heading {
       color: #141716; }
     .theme-dark .form__heading {
       color: #fff; }
+  .form__description {
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 140%; }
+    .theme-light .form__description {
+      color: #8c8c8c; }
+    .theme-dark .form__description {
+      color: #7a7a7a; }
   .form__input-box {
     position: relative;
     display: flex;
@@ -1402,7 +1411,6 @@ textarea {
   max-width: 144rem;
   min-height: 100vh;
   margin: 0 auto;
-  row-gap: 2rem;
   column-gap: 2rem; }
   .container--3c {
     grid-template-rows: [row-navbar-start] 8rem [row-navbar-end row-main-start] 1fr [row-main-end row-grid-end];
@@ -1434,6 +1442,7 @@ textarea {
         grid-template-rows: [row-navbar-start] 8rem [row-navbar-end row-main-start] 1fr [row-main-end row-grid-end];
         grid-template-columns: [col-sidebar-left-end col-main-start] minmax(min-content, 1fr) [col-main-end col-grid-end]; } }
   .container__navbar {
+    transform: translate3d(0, 0, 0);
     z-index: 100;
     position: fixed;
     top: 0;
@@ -1453,17 +1462,14 @@ textarea {
   .container__main {
     position: relative;
     grid-row: row-main-start / row-main-end;
-    grid-column: col-main-start / col-main-end;
-    padding-bottom: 2rem; }
-    @media (max-width: 56.25em) {
-      .container__main {
-        padding-bottom: 0; } }
+    grid-column: col-main-start / col-main-end; }
   .container__sidebar {
     z-index: 100;
+    transform: translate3d(0, 0, 0);
     position: sticky;
-    top: 10rem;
+    top: 8rem;
     width: 100%;
-    height: calc(100vh - 8rem - 2rem);
+    height: calc(100vh - 8rem);
     overflow-y: hidden; }
     .container__sidebar--left {
       left: 0;
@@ -1488,44 +1494,59 @@ textarea {
     bottom: 0;
     left: 0;
     z-index: 200;
-    display: none; }
+    display: none;
+    transform: translate3d(0, 0, 0); }
     @media (max-width: 56.25em) {
       .container__bottombar {
         display: flex; } }
 
+/*
+  transform: translate3d(0, 0, 0) fixes a scroll bug of fixed and sticky elements on mobile devices
+  no idea why this works
+  https://stackoverflow.com/questions/44679794/position-fixed-on-chrome-mobile-causing-element-to-move-on-scroll-up-down
+*/
 .dashboard {
   display: grid;
-  padding: 0 6rem;
+  padding: 0 6rem 2rem 6rem;
   width: 100%;
   grid-template-rows: [row-header-start] 7.5rem [row-header-end];
   grid-template-columns: 1fr;
-  grid-auto-rows: 8.5rem;
-  row-gap: 3rem; }
+  grid-auto-rows: 8.5rem; }
+  .dashboard > *:first-child {
+    border-top: none !important; }
+  .dashboard > *:last-child {
+    border-bottom: none !important; }
+  .dashboard--header > *:nth-child(2) {
+    border-top: none !important; }
   @media (max-width: 56.25em) {
     .dashboard {
       padding: 0 2rem; } }
   @media (max-width: 43.75em) {
     .dashboard {
       padding: 0; } }
-  @media (max-width: 31.25em) {
-    .dashboard {
-      padding: 0 2rem; } }
   .dashboard__header {
     grid-row: row-header-start / row-header-end;
-    border-radius: 100rem;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
     display: flex;
     overflow-x: auto;
-    align-items: stretch;
-    padding: 0 3rem; }
+    align-items: center;
+    padding: 0 3rem;
+    position: sticky;
+    top: 8rem;
+    z-index: 10; }
     .theme-light .dashboard__header {
-      background-color: #d2dcdf; }
+      background-color: #0092db; }
     .theme-dark .dashboard__header {
-      background-color: #141716; }
+      background-color: #0092db; }
     .dashboard__header::-webkit-scrollbar {
       height: 0;
       width: 0; }
     .dashboard__header > *:not(:last-child) {
       margin-right: 5rem; }
+      @media (max-width: 31.25em) {
+        .dashboard__header > *:not(:last-child) {
+          margin-right: 2.5rem; } }
     .dashboard__header > *:last-child::before {
       content: "";
       position: absolute;
@@ -1537,6 +1558,7 @@ textarea {
     font-weight: 500;
     position: relative;
     font-size: 1.5rem;
+    color: #fff;
     white-space: nowrap;
     align-items: center;
     padding: 0.5rem 0;
@@ -1546,54 +1568,57 @@ textarea {
     but it fixes hover related problems in
     mobile devices, so it's worth it
   */ }
-    .theme-light .dashboard__header-option {
-      color: #383838; }
-    .theme-dark .dashboard__header-option {
-      color: #d0d0d0; }
-    @media not all and (pointer: coarse) {
-      .theme-light .dashboard__header-option:hover {
-        color: #141716; }
-      .theme-dark .dashboard__header-option:hover {
-        color: #fff; } }
-    .theme-light .dashboard__header-option--active {
-      color: #141716; }
-    .theme-dark .dashboard__header-option--active {
-      color: #fff; }
-    .dashboard__header-option--active::after {
+    .dashboard__header-option::after {
       content: "";
-      width: 100%;
+      width: 0%;
+      opacity: 0;
+      visibility: hidden;
       height: 2px;
       position: absolute;
       bottom: 0;
-      left: 0; }
-      .theme-light .dashboard__header-option--active::after {
-        background-color: #0092db; }
-      .theme-dark .dashboard__header-option--active::after {
-        background-color: #0092db; }
+      left: 0;
+      background-color: #fff;
+      transition: all 0.4s; }
+    @media not all and (pointer: coarse) {
+      .dashboard__header-option:hover::after {
+        width: 100%;
+        opacity: 1;
+        visibility: visible; } }
+    .dashboard__header-option--active::after {
+      width: 100%;
+      opacity: 1;
+      visibility: visible; }
   .dashboard__item {
-    border-radius: 100rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.5rem 3.5rem 0.5rem 5rem; }
+    padding: 0.5rem 3.5rem 0.5rem 5rem;
+    background-color: transparent;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-top-style: solid;
+    border-bottom-style: solid; }
     .theme-light .dashboard__item {
-      background-color: #d2dcdf; }
+      border-color: #d2dcdf; }
     .theme-dark .dashboard__item {
-      background-color: #141716; }
+      border-color: #141716; }
     @media (max-width: 31.25em) {
       .dashboard__item {
         padding: 0.5rem 2rem 0.5rem 2.8rem; } }
-    .dashboard__item--red {
+    .dashboard__item--warning {
       justify-content: center;
       font-size: 2.5rem;
-      color: #fff;
       font-weight: 600; }
-      .theme-light .dashboard__item--red {
-        background-color: #d00000; }
-      .theme-dark .dashboard__item--red {
-        background-color: #d00000; }
+      .theme-light .dashboard__item--warning {
+        color: #d00000; }
+      .theme-dark .dashboard__item--warning {
+        color: #d00000; }
+      .theme-light .dashboard__item--warning {
+        border-color: #d00000; }
+      .theme-dark .dashboard__item--warning {
+        border-color: #d00000; }
       @media (max-width: 31.25em) {
-        .dashboard__item--red {
+        .dashboard__item--warning {
           font-size: 2rem; } }
   .dashboard__item-section {
     display: flex;
@@ -1602,7 +1627,7 @@ textarea {
       font-weight: 600;
       display: inline-flex;
       align-items: center;
-      font-size: 2rem; }
+      font-size: 1.6rem; }
       .theme-light .dashboard__item-section--primary {
         color: #141716; }
       .theme-dark .dashboard__item-section--primary {
@@ -1634,6 +1659,10 @@ textarea {
       @media (max-width: 31.25em) {
         .dashboard__item-section--tertiary {
           font-size: 1.3rem; } }
+    .theme-light .dashboard__item-section--active {
+      color: #0092db; }
+    .theme-dark .dashboard__item-section--active {
+      color: #0092db; }
     .dashboard__item-section--phone {
       display: none; }
       @media (max-width: 43.75em) {
@@ -1721,7 +1750,11 @@ textarea {
 .feed {
   display: grid;
   grid-row-gap: 3rem;
-  grid-template-columns: 1fr; }
+  grid-template-columns: 1fr;
+  padding: 2rem 0; }
+  @media (max-width: 43.75em) {
+    .feed {
+      padding: 0; } }
 
 .post-box {
   display: flex;
@@ -2518,6 +2551,7 @@ textarea {
 
 .sidebar {
   width: 100%;
+  padding: 2rem 0;
   overflow-x: auto;
   height: 100%;
   display: grid;
@@ -2843,6 +2877,25 @@ textarea {
   .theme-dark .categories__item {
     color: #d0d0d0; }
 
+.logout__modal {
+  display: flex;
+  flex-direction: column; }
+  .logout__modal > * {
+    margin-bottom: 2rem; }
+
+.logout__modal-header {
+  width: 100%;
+  display: flex;
+  padding: 1rem 2rem;
+  justify-content: center;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 600; }
+  .theme-light .logout__modal-header {
+    background-color: #0092db; }
+  .theme-dark .logout__modal-header {
+    background-color: #0092db; }
+
 .preferences__heading {
   font-weight: 800;
   font-size: 2.4rem;
@@ -2878,7 +2931,7 @@ textarea {
   display: grid;
   grid-column: 1fr;
   row-gap: 2.5rem;
-  padding: 0 6rem; }
+  padding: 2rem 6rem; }
   @media (max-width: 43.75em) {
     .profile {
       padding: 0 2rem; } }

@@ -34,7 +34,7 @@ function Login() {
   const [errorPassword, setErrorPassword] = useState(null)
 
   const [error, setError] = useState(null)
-  const [sucess, setSuccess] = useState(null)
+  const [success, setSuccess] = useState(null)
 
   const [popupIn, setPopupIn] = useState(false)
 
@@ -96,7 +96,7 @@ function Login() {
         setModalIn={setPopupIn}
         error={error}
         setError={setError}
-        sucess={sucess}
+        success={success}
         setSuccess={setSuccess}
       />
       <div className="fullpage-form__heading">

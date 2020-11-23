@@ -5,7 +5,6 @@
   max-width: 144rem;
   min-height: 100vh;
   margin: 0 auto;
-  row-gap: 2rem;
   column-gap: 2rem;
 
   &--3c {
@@ -90,6 +89,7 @@
   }
 
   &__navbar {
+    transform: translate3d(0, 0, 0);
     z-index: 100;
     position: fixed;
     top: 0;
@@ -113,19 +113,15 @@
     position: relative;
     grid-row: row-main-start / row-main-end;
     grid-column: col-main-start / col-main-end;
-    padding-bottom: 2rem;
-
-    @include respond(tab-port) {
-      padding-bottom: 0;
-    }
   }
 
   &__sidebar {
     z-index: 100;
+    transform: translate3d(0, 0, 0);
     position: sticky;
-    top: 10rem;
+    top: 8rem;
     width: 100%;
-    height: calc(100vh - 8rem - 2rem);
+    height: calc(100vh - 8rem);
     overflow-y: hidden;
 
     &--left {
@@ -159,9 +155,16 @@
     left: 0;
     z-index: 200;
     display: none;
+    transform: translate3d(0, 0, 0);
 
     @include respond(tab-port) {
       display: flex;
     }
   }
 }
+
+/*
+  transform: translate3d(0, 0, 0) fixes a scroll bug of fixed and sticky elements on mobile devices
+  no idea why this works
+  https://stackoverflow.com/questions/44679794/position-fixed-on-chrome-mobile-causing-element-to-move-on-scroll-up-down
+*/
