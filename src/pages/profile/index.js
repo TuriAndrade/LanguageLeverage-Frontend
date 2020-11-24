@@ -162,12 +162,13 @@ function Profile() {
           onUploadProgress: (e) => {
             if (e.total > e.loaded) {
               setPictureUploading(true)
+            } else {
+              setPictureUploading(false)
             }
           },
         })
 
         setProfilePicture(response.data.link)
-        setPictureUploading(false)
       } catch (e) {
         if (
           e.response &&

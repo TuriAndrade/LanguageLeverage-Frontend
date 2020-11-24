@@ -48,6 +48,10 @@ export function Link({ editor, modalIn, toggleModal }) {
               <div className="text-editor__modal">
                 <div className="text-editor__modal-header">Link</div>
                 <form className="form">
+                  <p className="form__heading">Insira um link</p>
+                  <p className="form__description">
+                    Transforme o texto selecionado em um link
+                  </p>
                   <div className="form__input-box">
                     <ControlledInput
                       type="text"
@@ -135,6 +139,10 @@ export function LinkFile({ editor, modalIn, toggleModal, Quill }) {
               <div className="text-editor__modal">
                 <div className="text-editor__modal-header">File</div>
                 <form className="form">
+                  <p className="form__heading">Insira um arquivo</p>
+                  <p className="form__description">
+                    Escolha o tipo de arquivo e insira seu link
+                  </p>
                   <div className="form__btn-row">
                     <button
                       onClick={(e) => {
@@ -204,6 +212,39 @@ export function LinkFile({ editor, modalIn, toggleModal, Quill }) {
                   >
                     <p className="btn-primary--text">Inserir</p>
                   </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </CSSTransition>
+      </div>
+    </CSSTransition>
+  )
+}
+
+export function Upload({ modalIn, uploadProgress }) {
+  return (
+    <CSSTransition in={modalIn} timeout={500} classNames="modal" unmountOnExit>
+      <div className="modal">
+        <div className="modal__close-area"></div>
+        <CSSTransition
+          in={modalIn}
+          timeout={500}
+          classNames="modal__box"
+          appear
+        >
+          <div className="modal__box modal__box">
+            <div className="modal__content modal__content--fit-content-small">
+              <div className="text-editor__modal">
+                <div className="text-editor__modal-header">Upload</div>
+                <form className="form">
+                  <p className="form__heading">Uploading...</p>
+                  <div className="text-editor__progress-bar">
+                    <div
+                      style={{ width: uploadProgress }}
+                      className="text-editor__progress"
+                    ></div>
+                  </div>
                 </form>
               </div>
             </div>

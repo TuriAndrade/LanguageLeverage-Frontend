@@ -24,7 +24,10 @@ import {
   AudioBlot,
 } from "./blots"
 
-import { Link, LinkFile } from "./modals"
+import { Link, LinkFile, Upload } from "./modals"
+
+import api from "../../services/api"
+import { CsrfContext } from "../context"
 
 Quill.register(BoldBlot)
 Quill.register(ItalicBlot)
@@ -43,8 +46,12 @@ export default class TextEditor extends Component {
     this.state = {
       linkModalIn: false,
       linkFileModalIn: false,
+      isUploadingFile: false,
+      uploadProgress: 0,
     }
   }
+
+  static contextType = CsrfContext
 
   toggleLinkModal = () => {
     this.setState((prevstate) => ({
@@ -56,6 +63,66 @@ export default class TextEditor extends Component {
     this.setState((prevstate) => ({
       linkFileModalIn: !prevstate.linkFileModalIn,
     }))
+  }
+
+  insertFile = (e, fileType) => {
+    if (
+      e.currentTarget &&
+      e.currentTarget.files &&
+      e.currentTarget.files.length > 0 &&
+      this.editor
+    ) {
+      const file = e.currentTarget.files[0]
+
+      let formData = new FormData()
+
+      formData.append("file", file)
+
+      e.currentTarget.value = null
+      e.target.value = null
+
+      api
+        .post("/upload/file", formData, {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            csrftoken: this.context.csrfToken,
+          },
+          onUploadProgress: (e) => {
+            if (e.total > e.loaded) {
+              this.setState({
+                isUploadingFile: true,
+                uploadProgress: parseInt(
+                  Math.round((e.loaded * 100) / e.total)
+                ),
+              })
+            } else {
+              this.setState({
+                isUploadingFile: false,
+                uploadProgress: 0,
+              })
+            }
+          },
+        })
+        .then((response) => {
+          this.editor.focus()
+
+          const range = this.editor.getSelection(true)
+          const position = range ? range.index : 0
+
+          this.editor.insertEmbed(
+            position,
+            fileType,
+            {
+              src: response.data.link,
+              alt: response.data.originalname,
+              key: response.data.key,
+            },
+            Quill.sources.USER
+          )
+          this.editor.setSelection(position + 1, Quill.sources.SILENT)
+        })
+    }
   }
 
   componentDidMount() {
@@ -85,6 +152,10 @@ export default class TextEditor extends Component {
           editor={this.editor}
           modalIn={this.state.linkFileModalIn}
           toggleModal={this.toggleLinkFileModal}
+        />
+        <Upload
+          modalIn={this.state.isUploadingFile}
+          uploadProgress={this.state.uploadProgress}
         />
         <div className="text-editor__toolbar">
           <button
@@ -165,15 +236,42 @@ export default class TextEditor extends Component {
           >
             <FaHeading />
           </button>
-          <button className="text-editor__btn text-editor__btn--big">
+          <label
+            htmlFor="text-editor__insert-image"
+            className="text-editor__btn text-editor__btn--big"
+          >
             <BiImage />
-          </button>
-          <button className="text-editor__btn">
+          </label>
+          <input
+            onChange={(e) => this.insertFile(e, "image")}
+            id="text-editor__insert-image"
+            type="file"
+            className="text-editor__file-input"
+          />
+          <label
+            htmlFor="text-editor__insert-video"
+            className="text-editor__btn"
+          >
             <FiVideo />
-          </button>
-          <button className="text-editor__btn">
+          </label>
+          <input
+            onChange={(e) => this.insertFile(e, "video")}
+            id="text-editor__insert-video"
+            type="file"
+            className="text-editor__file-input"
+          />
+          <label
+            htmlFor="text-editor__insert-audio"
+            className="text-editor__btn"
+          >
             <FaRegFileAudio />
-          </button>
+          </label>
+          <input
+            onChange={(e) => this.insertFile(e, "audio")}
+            id="text-editor__insert-audio"
+            type="file"
+            className="text-editor__file-input"
+          />
           <button
             onClick={() => {
               this.toggleLinkFileModal()
@@ -182,7 +280,12 @@ export default class TextEditor extends Component {
           >
             <VscFileSymlinkFile />
           </button>
-          <button className="text-editor__btn text-editor__btn--big text-editor__btn--green">
+          <button
+            onClick={() => {
+              console.log(this.editor.getContents())
+            }}
+            className="text-editor__btn text-editor__btn--big text-editor__btn--green"
+          >
             <HiOutlineCloudUpload />
           </button>
         </div>

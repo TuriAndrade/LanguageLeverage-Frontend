@@ -23,13 +23,22 @@
     left: 0;
     top: 8rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min-content, 6rem));
+    grid-template-columns: repeat(auto-fit, minmax(min-content, 4rem));
     column-gap: 1rem;
     padding: 2rem;
   }
 
+  &__file-input {
+    display: none;
+  }
+
   &__btn {
     background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0.5rem;
+    cursor: pointer;
     font-size: 2rem;
     @include theme-aware("color", "color-text");
     transition: color 0.2s;
@@ -81,6 +90,23 @@
     color: $color-white;
     font-size: 2rem;
     font-weight: 600;
+  }
+
+  &__progress-bar {
+    width: 100%;
+    height: 3rem;
+    border-radius: 100rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  &__progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    @include theme-aware("background-color", "color-green");
   }
 }
 
