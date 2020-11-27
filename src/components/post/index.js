@@ -1,13 +1,13 @@
 import React, { useState } from "react"
 import Meme from "../../assets/meme_static.webp"
 import Comment from "../comment"
-import { GoComment } from "react-icons/go"
 import {
   AiOutlineHeart,
   AiOutlineShareAlt,
   AiOutlinePlusCircle,
   AiOutlineMinusCircle,
-} from "react-icons/ai"
+  GoComment,
+} from "react-icons/all"
 
 export default function Post() {
   const [isOpened, setIsOpened] = useState(false)
@@ -23,38 +23,40 @@ export default function Post() {
         <div className="post-header__cover">
           <img src={Meme} alt="Meme" />
         </div>
-        <div className="post-header__btn-box post-header__btn-box--1">
-          <button className="btn-icon btn-icon--orange">
-            <div className="btn-icon--icon">
-              <GoComment />
-            </div>
-            <div className="btn-icon--number post-header__btn-number">7</div>
-          </button>
-        </div>
-        <div className="post-header__btn-box post-header__btn-box--2">
-          <button className="btn-icon btn-icon--red">
-            <div className="btn-icon--icon">
-              <AiOutlineHeart />
-            </div>
-            <div className="btn-icon--number post-header__btn-number">64</div>
-          </button>
-        </div>
-        <div className="post-header__btn-box post-header__btn-box--3">
-          <button className="btn-icon btn-icon--primary">
-            <div className="btn-icon--icon">
-              <AiOutlineShareAlt />
-            </div>
-          </button>
-        </div>
-        <div className="post-header__btn-box post-header__btn-box--4">
-          <button
-            onClick={() => setIsOpened((prevState) => !prevState)}
-            className="btn-icon btn-icon--green"
-          >
-            <div className="btn-icon--icon">
-              {isOpened ? <AiOutlineMinusCircle /> : <AiOutlinePlusCircle />}
-            </div>
-          </button>
+        <div className="post-header__btn-box">
+          <div className="post-header__btn">
+            <button className="btn-icon btn-icon--orange">
+              <div className="btn-icon--icon">
+                <GoComment />
+              </div>
+              <div className="btn-icon--number post-header__btn-number">7</div>
+            </button>
+          </div>
+          <div className="post-header__btn">
+            <button className="btn-icon btn-icon--red">
+              <div className="btn-icon--icon">
+                <AiOutlineHeart />
+              </div>
+              <div className="btn-icon--number post-header__btn-number">64</div>
+            </button>
+          </div>
+          <div className="post-header__btn">
+            <button className="btn-icon btn-icon--primary">
+              <div className="btn-icon--icon">
+                <AiOutlineShareAlt />
+              </div>
+            </button>
+          </div>
+          <div className="post-header__btn">
+            <button
+              onClick={() => setIsOpened((prevState) => !prevState)}
+              className="btn-icon btn-icon--green"
+            >
+              <div className="btn-icon--icon">
+                {isOpened ? <AiOutlineMinusCircle /> : <AiOutlinePlusCircle />}
+              </div>
+            </button>
+          </div>
         </div>
       </div>
       <div

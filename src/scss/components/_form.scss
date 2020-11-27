@@ -33,6 +33,7 @@
 
   &__description {
     font-size: $default-font-size;
+    text-align: center;
     font-weight: 400;
     @include theme-aware("color", "color-text-tertiary");
     line-height: 140%;

@@ -194,11 +194,7 @@
     padding: 3rem 0.7rem 2rem 0.7rem;
     display: flex;
     flex-wrap: wrap;
-
-    & > * {
-      margin-bottom: 2px;
-      margin-right: 2px;
-    }
+    gap: 2px;
   }
 
   &__menu-category {

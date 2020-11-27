@@ -25,10 +25,11 @@
   width: 100%;
   grid-template-rows:
     [row-header-start] 6rem [row-header-end row-cover-start] min-content
-    [row-cover-end row-footer-start] 6rem [row-footer-end row-grid-end];
+    [row-cover-end row-footer-start] minmax(6rem, min-content)
+    [row-footer-end row-grid-end];
   grid-template-columns:
     [padding-left-1] 2rem [padding-left-2] 2rem
-    repeat(4, [col-start] 1fr [col-end])
+    [col-content-start] 1fr [col-content-end]
     2rem [padding-right-2] 2rem [padding-right-1];
 
   @include respond(small-phone) {
@@ -76,29 +77,16 @@
   }
 
   &__btn-box {
-    display: flex;
-    justify-content: flex-start;
-
-    & > *:not(:last-child) {
-      margin-right: 1.5rem;
-    }
-
-    &--1 {
-      grid-row: row-footer-start / row-footer-end;
-      grid-column: col-start 1 / col-end 1;
-    }
-    &--2 {
-      grid-row: row-footer-start / row-footer-end;
-      grid-column: col-start 2 / col-end 2;
-    }
-    &--3 {
-      grid-row: row-footer-start / row-footer-end;
-      grid-column: col-start 3 / col-end 3;
-    }
-    &--4 {
-      grid-row: row-footer-start / row-footer-end;
-      grid-column: col-start 4 / col-end 4;
-    }
+    padding: 2rem 0;
+    grid-row: row-footer-start / row-footer-end;
+    grid-column: col-content-start / col-content-end;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(3rem, 1fr));
+    justify-items: center;
+    align-items: center;
+    column-gap: 2rem;
+    row-gap: 2rem;
   }
 
   &__btn-number {
@@ -124,6 +112,13 @@
   grid-template-columns: 1fr;
   row-gap: 3rem;
 
+  &--no-comments {
+    grid-template-rows:
+      [row-content-start] min-content
+      [row-content-end row-categories-start] min-content
+      [row-categories-end row-grid-end];
+  }
+
   @include respond(small-phone) {
     padding: 1.5rem 2rem;
   }
@@ -136,11 +131,7 @@
     grid-row: row-categories-start / row-categories-end;
     display: flex;
     flex-wrap: wrap;
-
-    & > * {
-      margin-bottom: 1rem;
-      margin-right: 1rem;
-    }
+    gap: 1rem;
   }
 
   &__comments-box {

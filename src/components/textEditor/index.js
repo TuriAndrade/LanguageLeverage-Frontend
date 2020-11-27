@@ -23,6 +23,7 @@ import { CsrfContext } from "../context"
 import PopupMessage from "../popupMessage"
 
 import { isEqual } from "lodash"
+import "quill-paste-smart"
 
 import {
   ItalicBlot,
@@ -67,7 +68,30 @@ export default class TextEditor extends Component {
   static contextType = CsrfContext
 
   componentDidMount() {
-    this.editor = new Quill(this.editorContainer.current)
+    this.editor = new Quill(this.editorContainer.current, {
+      modules: {
+        clipboard: {
+          allowed: {
+            tags: [
+              "a",
+              "b",
+              "strong",
+              "u",
+              "s",
+              "i",
+              "p",
+              "br",
+              "ul",
+              "ol",
+              "li",
+              "span",
+            ],
+            attributes: ["href", "rel", "target", "class"],
+          },
+          keepSelection: true,
+        },
+      },
+    })
 
     const delta = {
       ops: [
@@ -166,6 +190,9 @@ export default class TextEditor extends Component {
             Quill.sources.USER
           )
           this.editor.setSelection(position + 1, Quill.sources.SILENT)
+
+          const selectionEl = window.getSelection().focusNode
+          selectionEl.scrollIntoView(true)
         })
         .catch((e) => {
           if (

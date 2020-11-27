@@ -158,6 +158,19 @@
   }
 }
 
+.u-discreet-disabled-btn {
+  &,
+  &:active {
+    pointer-events: none !important;
+  }
+
+  @include not-touch-device() {
+    &:hover {
+      pointer-events: none !important;
+    }
+  }
+}
+
 .u-margin-right-children-small {
   & > *:not(:last-child) {
     margin-right: 2rem !important;

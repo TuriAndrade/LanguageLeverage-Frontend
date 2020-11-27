@@ -1,0 +1,9 @@
+.post-preview {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+
+  @include respond(small-phone) {
+    padding: 0;
+  }
+}

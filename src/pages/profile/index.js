@@ -37,7 +37,7 @@ function Profile() {
 
   const [profilePicture, setProfilePicture] = useState(null)
 
-  const [isUserSet, setIsUserSet] = useState(false)
+  const [loadingContent, setLoadingContent] = useState(true)
 
   const [pictureUploading, setPictureUploading] = useState(false)
 
@@ -62,7 +62,7 @@ function Profile() {
         setLogin(userData.login)
         setProfilePicture(userData.picture)
         if (userData.editor) setDescription(userData.editor.description)
-        setIsUserSet(true)
+        setLoadingContent(false)
       })
   }, [
     setName,
@@ -70,7 +70,7 @@ function Profile() {
     setLogin,
     setProfilePicture,
     setDescription,
-    setIsUserSet,
+    setLoadingContent,
   ])
 
   async function handleSubmit(e) {
@@ -201,8 +201,8 @@ function Profile() {
         success={success}
         setSuccess={setSuccess}
       />
-      <LoadingContent loadingIn={!isUserSet} />
-      {isUserSet ? (
+      <LoadingContent loadingIn={loadingContent} />
+      {!loadingContent ? (
         <form onSubmit={handleSubmit} className="dashboard-form">
           <div className="dashboard-form__header">
             <div className="dashboard-form__picture">

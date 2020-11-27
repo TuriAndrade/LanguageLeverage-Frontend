@@ -16,6 +16,9 @@ import { UserContext, CsrfContext } from "../../components/context"
 
 function Logout() {
   const [sessions, setSessions] = useState(null)
+
+  const [loadingContent, setLoadingContent] = useState(true)
+
   const [completeLogoutIn, setCompleteLogoutIn] = useState(false)
   const [simpleLogoutIn, setSimpleLogoutIn] = useState(false)
 
@@ -28,10 +31,16 @@ function Logout() {
   const { csrfToken, setCsrfToken } = useContext(CsrfContext)
 
   useEffect(() => {
-    api.get("/sessions", { withCredentials: true }).then((response) => {
-      setSessions(response.data.sessions)
-    })
-  }, [setSessions])
+    api
+      .get("/sessions", { withCredentials: true })
+      .then((response) => {
+        setSessions(response.data.sessions)
+        setLoadingContent(false)
+      })
+      .catch((e) => {
+        console.log(e.response)
+      })
+  }, [])
 
   const [password, setPassword] = useState("")
   const [errorPassword, setErrorPassword] = useState(null)
@@ -232,8 +241,8 @@ function Logout() {
           </CSSTransition>
         </div>
       </CSSTransition>
-      <LoadingContent loadingIn={!sessions} />
-      {sessions ? (
+      <LoadingContent loadingIn={loadingContent} />
+      {!loadingContent ? (
         <div className="dashboard dashboard--header">
           <div className="dashboard__header">
             <button className="dashboard__header-option dashboard__header-option--active">
