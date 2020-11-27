@@ -16,6 +16,7 @@ export default function ControlledInput({
       {element === "textarea" ? (
         <TextareaAutosize
           {...rest}
+          spellCheck={false}
           onChange={(e) => {
             formatter
               ? formatter(e.target.value, setState)

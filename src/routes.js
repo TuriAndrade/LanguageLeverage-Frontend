@@ -30,6 +30,7 @@ import Editors from "./pages/editors"
 import Admins from "./pages/admins"
 import NewPost from "./pages/newPost"
 import AllPosts from "./pages/allPosts"
+import UpdatePost from "./pages/updatePost"
 
 import { ProfileLayout, DefaultLayout } from "./components/layout"
 
@@ -106,6 +107,7 @@ export default function Routes() {
                     "/admins",
                     "/new/post",
                     "/all/posts",
+                    "/update/post/:id",
                   ]}
                   render={() => (
                     <ProfileLayout>
@@ -131,6 +133,11 @@ export default function Routes() {
                           path="/new/post"
                           validatedEditorOnly
                           component={NewPost}
+                        />
+                        <PrivateRoute
+                          path="/update/post/:id"
+                          validatedEditorOnly
+                          component={UpdatePost}
                         />
                         <PrivateRoute
                           path="/all/posts"

@@ -148,7 +148,12 @@ function Profile() {
       e.currentTarget.files.length > 0
     ) {
       try {
+        setPictureUploading(true)
+
         const file = e.currentTarget.files[0]
+
+        e.currentTarget.value = null
+        e.target.value = null
 
         let formData = new FormData()
         formData.append("file", file)
@@ -159,16 +164,10 @@ function Profile() {
             "Content-Type": "multipart/form-data",
             csrftoken: csrfToken,
           },
-          onUploadProgress: (e) => {
-            if (e.total > e.loaded) {
-              setPictureUploading(true)
-            } else {
-              setPictureUploading(false)
-            }
-          },
         })
 
         setProfilePicture(response.data.link)
+        setPictureUploading(false)
       } catch (e) {
         if (
           e.response &&
@@ -204,18 +203,18 @@ function Profile() {
       />
       <LoadingContent loadingIn={!isUserSet} />
       {isUserSet ? (
-        <form onSubmit={handleSubmit} className="profile">
-          <div className="profile__header">
-            <div className="profile__picture">
+        <form onSubmit={handleSubmit} className="dashboard-form">
+          <div className="dashboard-form__header">
+            <div className="dashboard-form__picture">
               <img src={profilePicture || DefaultProfilePic} alt="Profile" />
             </div>
-            <div className="profile__user">
-              <div className="profile__user--primary">{login}</div>
+            <div className="dashboard-form__user">
+              <div className="dashboard-form__user--primary">{login}</div>
               <label
-                className="profile__user-picture-label"
-                htmlFor="profile__user-picture-input"
+                className="dashboard-form__user-picture-label"
+                htmlFor="dashboard-form__file-input"
               >
-                <div className="profile__user--secondary">
+                <div className="dashboard-form__user--secondary">
                   Alterar foto de perfil
                 </div>
                 {pictureUploading ? (
@@ -227,14 +226,14 @@ function Profile() {
                 ) : null}
               </label>
               <input
-                id="profile__user-picture-input"
+                id="dashboard-form__file-input"
                 type="file"
-                className="profile__user-picture-input"
+                className="dashboard-form__file-input"
                 onChange={changeProfilePic}
               />
             </div>
           </div>
-          <div className="profile__item">
+          <div className="dashboard-form__item">
             <label>Nome</label>
             <ControlledInput
               type="text"
@@ -243,11 +242,11 @@ function Profile() {
               setState={setName}
               formatter={atMost100}
               error={errorName}
-              inputClass="profile__input"
-              errorClass="profile__error"
+              inputClass="dashboard-form__input"
+              errorClass="dashboard-form__error"
             />
           </div>
-          <div className="profile__item">
+          <div className="dashboard-form__item">
             <label>Email</label>
             <ControlledInput
               type="text"
@@ -255,11 +254,11 @@ function Profile() {
               state={email}
               setState={setEmail}
               error={errorEmail}
-              inputClass="profile__input"
-              errorClass="profile__error"
+              inputClass="dashboard-form__input"
+              errorClass="dashboard-form__error"
             />
           </div>
-          <div className="profile__item">
+          <div className="dashboard-form__item">
             <label>Login</label>
             <ControlledInput
               type="text"
@@ -268,18 +267,16 @@ function Profile() {
               formatter={loginRegEx}
               setState={setLogin}
               error={errorLogin}
-              inputClass="profile__input"
-              errorClass="profile__error"
+              inputClass="dashboard-form__input"
+              errorClass="dashboard-form__error"
             />
           </div>
-          <div className="profile__item">
+          <div className="dashboard-form__item">
             <label>Senha</label>
-            <button className="profile__change-password-btn">
-              Alterar senha
-            </button>
+            <button className="dashboard-form__input-btn">Alterar senha</button>
           </div>
           {user && user.isEditor ? (
-            <div className="profile__item">
+            <div className="dashboard-form__item">
               <label>Descrição</label>
               <ControlledInput
                 element="textarea"
@@ -289,19 +286,19 @@ function Profile() {
                 state={description}
                 setState={setDescription}
                 error={errorDescription}
-                inputClass="profile__input"
-                errorClass="profile__error"
+                inputClass="dashboard-form__input"
+                errorClass="dashboard-form__error"
               />
-              <div className="profile__item-description">
+              <div className="dashboard-form__item-description">
                 Escreva um pouco sobre você! Pode ser da forma como quiser.
                 Assim, seus leitores podem te conhecer um pouco melhor!
               </div>
             </div>
           ) : null}
           {user && user.isEditor && !user.isValidated ? (
-            <div className="profile__item">
+            <div className="dashboard-form__item">
               <label>Status</label>
-              <div className="profile__warning profile__warning--red">
+              <div className="dashboard-form__warning dashboard-form__warning--red">
                 Você não pode publicar no momento &nbsp;
                 <span role="img" aria-label="sad emoji">
                   &#128546;
@@ -309,9 +306,9 @@ function Profile() {
               </div>
             </div>
           ) : user && user.isEditor && user.isValidated ? (
-            <div className="profile__item">
+            <div className="dashboard-form__item">
               <label>Status</label>
-              <div className="profile__warning profile__warning--green">
+              <div className="dashboard-form__warning dashboard-form__warning--green">
                 Você pode publicar no momento &nbsp;
                 <span role="img" aria-label="happy emoji">
                   &#128513;
@@ -320,9 +317,9 @@ function Profile() {
             </div>
           ) : null}
           {user && user.isAdmin && !user.hasFullPermission ? (
-            <div className="profile__item">
+            <div className="dashboard-form__item">
               <label>Permissões</label>
-              <div className="profile__warning profile__warning--red">
+              <div className="dashboard-form__warning dashboard-form__warning--red">
                 Você não é um administrador pleno &nbsp;
                 <span role="img" aria-label="sad emoji">
                   &#128546;
@@ -330,9 +327,9 @@ function Profile() {
               </div>
             </div>
           ) : user && user.isAdmin && user.hasFullPermission ? (
-            <div className="profile__item">
+            <div className="dashboard-form__item">
               <label>Permissões</label>
-              <div className="profile__warning profile__warning--green">
+              <div className="dashboard-form__warning dashboard-form__warning--green">
                 Você é um administrador pleno &nbsp;
                 <span role="img" aria-label="happy emoji">
                   &#128513;
@@ -340,10 +337,10 @@ function Profile() {
               </div>
             </div>
           ) : null}
-          <div className="profile__item">
+          <div className="dashboard-form__item">
             <button
               type="submit"
-              className="btn-primary btn-primary--color-primary btn-primary--thick profile__submit-btn"
+              className="btn-primary btn-primary--color-primary btn-primary--thick dashboard-form__submit-btn"
             >
               <div className="btn-primary--text">Enviar</div>
             </button>

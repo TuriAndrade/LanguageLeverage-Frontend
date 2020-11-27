@@ -11,7 +11,18 @@ import {
   FaRegFileAudio,
   VscFileSymlinkFile,
   HiOutlineCloudUpload,
+  AiOutlineUnorderedList,
+  AiOutlineOrderedList,
 } from "react-icons/all"
+
+import { Link, LinkFile, Upload } from "./modals"
+
+import api from "../../services/api"
+import { CsrfContext } from "../context"
+
+import PopupMessage from "../popupMessage"
+
+import { isEqual } from "lodash"
 
 import {
   ItalicBlot,
@@ -22,12 +33,8 @@ import {
   ImageBlot,
   VideoBlot,
   AudioBlot,
+  ListBlot,
 } from "./blots"
-
-import { Link, LinkFile, Upload } from "./modals"
-
-import api from "../../services/api"
-import { CsrfContext } from "../context"
 
 Quill.register(BoldBlot)
 Quill.register(ItalicBlot)
@@ -37,8 +44,12 @@ Quill.register(LinkBlot)
 Quill.register(ImageBlot)
 Quill.register(VideoBlot)
 Quill.register(AudioBlot)
+Quill.register(ListBlot)
 
 export default class TextEditor extends Component {
+  initDelta
+  onSubmit
+
   constructor(props) {
     super(props)
     this.editorContainer = React.createRef()
@@ -48,10 +59,44 @@ export default class TextEditor extends Component {
       linkFileModalIn: false,
       isUploadingFile: false,
       uploadProgress: 0,
+      uploadError: null,
+      popupIn: false,
     }
   }
 
   static contextType = CsrfContext
+
+  componentDidMount() {
+    this.editor = new Quill(this.editorContainer.current)
+
+    const delta = {
+      ops: [
+        {
+          insert: "Comece a escrever ...",
+        },
+      ],
+    }
+
+    this.editor.setContents(this.props.initDelta || delta)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!isEqual(prevProps.initDelta, this.props.initDelta)) {
+      this.editor.setContents(this.props.initDelta)
+    }
+  }
+
+  setPopupIn = (newState) => {
+    this.setState({
+      popupIn: newState,
+    })
+  }
+
+  setUploadError = (newState) => {
+    this.setState({
+      uploadError: newState,
+    })
+  }
 
   toggleLinkModal = () => {
     this.setState((prevstate) => ({
@@ -122,26 +167,43 @@ export default class TextEditor extends Component {
           )
           this.editor.setSelection(position + 1, Quill.sources.SILENT)
         })
+        .catch((e) => {
+          if (
+            e.response &&
+            e.response.data &&
+            e.response.data.error === "Invalid type!"
+          ) {
+            this.setUploadError("Tipo de arquivo inválido!")
+          } else if (
+            e.response &&
+            e.response.data &&
+            e.response.data.error === "File too large"
+          ) {
+            this.setUploadError("Arquivo muito grande!")
+          } else {
+            this.setUploadError("Algum erro ocorreu!")
+          }
+
+          this.setPopupIn(true)
+        })
+        .finally(() =>
+          this.setState({
+            isUploadingFile: false,
+            uploadProgress: 0,
+          })
+        )
     }
-  }
-
-  componentDidMount() {
-    this.editor = new Quill(this.editorContainer.current)
-
-    const delta = {
-      ops: [
-        {
-          insert: "Comece a escrever...",
-        },
-      ],
-    }
-
-    this.editor.setContents(delta)
   }
 
   render() {
     return (
       <div className="text-editor">
+        <PopupMessage
+          modalIn={this.state.popupIn}
+          setModalIn={this.setPopupIn}
+          error={this.state.uploadError}
+          setError={this.setUploadError}
+        />
         <Link
           editor={this.editor}
           modalIn={this.state.linkModalIn}
@@ -236,6 +298,40 @@ export default class TextEditor extends Component {
           >
             <FaHeading />
           </button>
+          <button
+            onClick={() => {
+              if (this.editor) {
+                const format = this.editor.getFormat()
+
+                if (format) {
+                  this.editor.format(
+                    "list",
+                    format.list === "bullet" ? false : "bullet"
+                  )
+                }
+              }
+            }}
+            className="text-editor__btn text-editor__btn--big"
+          >
+            <AiOutlineUnorderedList />
+          </button>
+          <button
+            onClick={() => {
+              if (this.editor) {
+                const format = this.editor.getFormat()
+
+                if (format) {
+                  this.editor.format(
+                    "list",
+                    format.list === "ordered" ? null : "ordered"
+                  )
+                }
+              }
+            }}
+            className="text-editor__btn text-editor__btn--big"
+          >
+            <AiOutlineOrderedList />
+          </button>
           <label
             htmlFor="text-editor__insert-image"
             className="text-editor__btn text-editor__btn--big"
@@ -282,7 +378,10 @@ export default class TextEditor extends Component {
           </button>
           <button
             onClick={() => {
-              console.log(this.editor.getContents())
+              this.props.onSubmit({
+                html: this.editor.root.innerHTML,
+                delta: this.editor.getContents(),
+              })
             }}
             className="text-editor__btn text-editor__btn--big text-editor__btn--green"
           >

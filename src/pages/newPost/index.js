@@ -1,9 +1,9 @@
 import React from "react"
 import scrollToTop from "../../components/scrollToTop"
-import TextEditor from "../../components/textEditor"
+import EditPost from "../../components/editPost"
 
 function NewPost() {
-  return <TextEditor />
+  return <EditPost />
 }
 
 export default scrollToTop({ component: NewPost })

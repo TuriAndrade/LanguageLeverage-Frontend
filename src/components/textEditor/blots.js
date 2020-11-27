@@ -3,6 +3,7 @@ import Quill from "quill"
 const Inline = Quill.import("blots/inline")
 const Block = Quill.import("blots/block")
 const BlockEmbed = Quill.import("blots/block/embed")
+const List = Quill.import("formats/list")
 
 export class BoldBlot extends Inline {}
 BoldBlot.blotName = "bold"
@@ -18,6 +19,9 @@ export class BlockquoteBlot extends Block {}
 BlockquoteBlot.blotName = "blockquote"
 BlockquoteBlot.tagName = "blockquote"
 BlockquoteBlot.className = "quill__blockquote"
+
+export class ListBlot extends List {}
+ListBlot.className = "quill__list"
 
 export class HeaderBlot extends Block {
   static create(value) {
