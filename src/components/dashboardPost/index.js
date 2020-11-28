@@ -17,7 +17,17 @@ export default function DashboardPost({
   const [optionsIn, setOptionsIn] = useState(false)
   const [unpublishIn, setUnpublishIn] = useState(false)
   const [deleteIn, setDeleteIn] = useState(false)
+  const [messageIn, setMessageIn] = useState(false)
+  const [message, setMessage] = useState(null)
   const { csrfToken } = useContext(CsrfContext)
+
+  useEffect(() => {
+    if (messageIn) {
+      const messageTimeout = setTimeout(() => setMessageIn(false), 2000)
+
+      return () => clearTimeout(messageTimeout)
+    }
+  }, [messageIn])
 
   function convertTime(timestamp) {
     const time = getTimePassed(timestamp)
@@ -187,8 +197,33 @@ export default function DashboardPost({
     }
   }
 
+  function copyToClipboard() {
+    navigator.clipboard
+      .writeText(`localhost:3000/post/${article.id}`)
+      .then(
+        function () {
+          setMessage("Link copiado!")
+        },
+        function () {
+          setMessage("Falha ao copiar o link!")
+        }
+      )
+      .finally(() => {
+        setMessageIn(true)
+        setOptionsIn(false)
+      })
+  }
+
   return (
     <>
+      <CSSTransition
+        in={messageIn}
+        classNames="bottom-message"
+        timeout={400}
+        unmountOnExit
+      >
+        <div className="bottom-message">{message}</div>
+      </CSSTransition>
       <CSSTransition
         in={unpublishIn}
         timeout={500}
@@ -315,7 +350,12 @@ export default function DashboardPost({
                 <FaTimes />
               </button>
               <div className="modal__content modal__content--fit-content-small">
-                <button className="dashboard__option">Editar</button>
+                <Link
+                  to={`/update/post/${article.id}`}
+                  className="dashboard__option"
+                >
+                  Editar
+                </Link>
                 <Link
                   to={`/preview/post/${article.id}`}
                   className="dashboard__option"
@@ -328,7 +368,14 @@ export default function DashboardPost({
                 >
                   {article.isPublished ? "Despublicar" : "Publicar"}
                 </button>
-                <button className="dashboard__option">Link</button>
+                {article.isPublished ? (
+                  <button
+                    onClick={copyToClipboard}
+                    className="dashboard__option"
+                  >
+                    Link
+                  </button>
+                ) : null}
                 <button
                   onClick={() => {
                     setOptionsIn(false)

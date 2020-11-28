@@ -205,6 +205,14 @@ export default function EditPost(props) {
           setError("Esse post não pertence a você ou não existe!")
           setSuccess(null)
           setPopupIn(true)
+        } else if (
+          e.response &&
+          e.response.data &&
+          e.response.data.error === "No validated editor found with this id!"
+        ) {
+          setError("Você não tem permissão para isso no momento!")
+          setSuccess(null)
+          setPopupIn(true)
         } else {
           setError("Algo de errado aconteceu!")
           setSuccess(null)
