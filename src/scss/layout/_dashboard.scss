@@ -6,6 +6,10 @@
   grid-template-columns: 1fr;
   grid-auto-rows: 8.5rem;
 
+  &--min-content {
+    grid-auto-rows: min-content;
+  }
+
   & > *:first-child {
     border-top: none !important;
   }
@@ -26,6 +30,10 @@
 
   @include respond(phone) {
     padding: 0;
+  }
+
+  &--min-content-item {
+    justify-self: center;
   }
 
   &__header {
@@ -124,8 +132,13 @@
       padding: 0.5rem 2rem 0.5rem 2.8rem;
     }
 
+    &--min-content {
+      height: 8.5rem;
+    }
+
     &--warning {
       justify-content: center;
+      text-align: center;
       font-size: 2.5rem;
       @include theme-aware("color", "color-red");
       font-weight: 600;

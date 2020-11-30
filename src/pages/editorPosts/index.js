@@ -5,7 +5,7 @@ import LoadingContent from "../../components/loadingContent"
 import api from "../../services/api"
 import PopupMessage from "../../components/popupMessage"
 
-function AllPosts() {
+function EditorPosts(props) {
   const [loadingContent, setLoadingContent] = useState(true)
   const [articles, setArticles] = useState(null)
 
@@ -17,22 +17,26 @@ function AllPosts() {
   const [filter, setFilter] = useState("published")
 
   useEffect(() => {
-    api
-      .get("/all/articles", { withCredentials: true })
-      .then((response) => {
-        setArticles(
-          response.data.map((articleAndSubjects) => {
-            return articleAndSubjects.article // I only need the article, not the subjects/categories
-          })
-        )
-        setLoadingContent(false)
-      })
-      .catch((e) => {
-        setError("Algo de errado aconteceu!")
-        setPopupIn(true)
-        setLoadingContent(false)
-      })
-  }, [])
+    if (props.match.params.editorId) {
+      api
+        .get(`/editor/articles/${props.match.params.editorId}`, {
+          withCredentials: true,
+        })
+        .then((response) => {
+          setArticles(
+            response.data.map((articleAndSubjects) => {
+              return articleAndSubjects.article // I only need the article, not the subjects/categories
+            })
+          )
+          setLoadingContent(false)
+        })
+        .catch((e) => {
+          setError("Algo de errado aconteceu!")
+          setPopupIn(true)
+          setLoadingContent(false)
+        })
+    }
+  }, [props.match.params.editorId])
 
   function removeArticle(id) {
     setArticles((prevstate) =>
@@ -161,4 +165,4 @@ function AllPosts() {
   )
 }
 
-export default scrollToTop({ component: AllPosts })
+export default scrollToTop({ component: EditorPosts })

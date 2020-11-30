@@ -153,7 +153,7 @@ function Register() {
           <Typist cursor={{ show: false }} startDelay={600}>
             <div className="fullpage-form__heading-text--primary">
               você se cadastra e escreve textos incríveis para ajudar pessoas de
-              todo Brasil a aprender inglês!
+              todo o Brasil a aprender inglês!
             </div>
           </Typist>
         </div>

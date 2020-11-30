@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import scrollToTop from "../../components/scrollToTop"
 import { AiOutlineHeart, AiOutlineShareAlt, GoComment } from "react-icons/all"
 import LoadingContent from "../../components/loadingContent"
 import PopupMessage from "../../components/popupMessage"
 import getTimePassed from "../../utils/getTimePassed"
 import api from "../../services/api"
+import { UserContext } from "../../components/context"
 
 function PreviewPost(props) {
   const [loadingContent, setLoadingContent] = useState(true)
@@ -13,52 +14,98 @@ function PreviewPost(props) {
   const [categories, setCategories] = useState(null)
   const [popupIn, setPopupIn] = useState(false)
 
+  const { user } = useContext(UserContext)
+
   useEffect(() => {
     if (props.match.params.id) {
-      api
-        .get(`/editor/article/${props.match.params.id}`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          const article = response.data.article
+      if (user && user.isAdmin) {
+        api
+          .get(`/any/article/${props.match.params.id}`, {
+            withCredentials: true,
+          })
+          .then((response) => {
+            const article = response.data.article
 
-          if (article) {
-            setPost(article)
-          }
+            if (article) {
+              setPost(article)
+            }
 
-          const subjects = response.data.subjects
+            const subjects = response.data.subjects
 
-          if (subjects) {
-            subjects.map((subject) => {
-              setCategories((prevstate) => {
-                if (prevstate) {
-                  return [...prevstate, subject.subject]
-                } else {
-                  return [subject.subject]
-                }
+            if (subjects) {
+              subjects.map((subject) => {
+                setCategories((prevstate) => {
+                  if (prevstate) {
+                    return [...prevstate, subject.subject]
+                  } else {
+                    return [subject.subject]
+                  }
+                })
+                return null
               })
-              return null
-            })
-          }
-        })
-        .catch((e) => {
-          if (
-            e.response &&
-            e.response.data &&
-            e.response.data.error ===
-              "No article found with this id and editor id!"
-          ) {
-            setError("Esse post não pertence a você ou não existe!")
-          } else {
-            setError("Algum erro aconteceu!")
-          }
-          setPopupIn(true)
-          setPost(null)
-          setCategories(null)
-        })
-        .finally(() => setLoadingContent(false))
+            }
+          })
+          .catch((e) => {
+            if (
+              e.response &&
+              e.response.data &&
+              e.response.data.error === "No article found with this id!"
+            ) {
+              setError("Esse post não existe!")
+            } else {
+              setError("Algum erro aconteceu!")
+            }
+            setPopupIn(true)
+            setPost(null)
+            setCategories(null)
+          })
+          .finally(() => setLoadingContent(false))
+      } else {
+        api
+          .get(`/editor/article/${props.match.params.id}`, {
+            withCredentials: true,
+          })
+          .then((response) => {
+            const article = response.data.article
+
+            if (article) {
+              setPost(article)
+            }
+
+            const subjects = response.data.subjects
+
+            if (subjects) {
+              subjects.map((subject) => {
+                setCategories((prevstate) => {
+                  if (prevstate) {
+                    return [...prevstate, subject.subject]
+                  } else {
+                    return [subject.subject]
+                  }
+                })
+                return null
+              })
+            }
+          })
+          .catch((e) => {
+            if (
+              e.response &&
+              e.response.data &&
+              e.response.data.error ===
+                "No article found with this id and editor id!"
+            ) {
+              setError("Esse post não pertence a você ou não existe!")
+            } else {
+              setError("Algum erro aconteceu!")
+            }
+            setPopupIn(true)
+            setPost(null)
+            setCategories(null)
+          })
+          .finally(() => setLoadingContent(false))
+      }
     }
-  }, [props.match.params.id])
+  }, [props.match.params.id, user])
 
   function convertTime(timestamp) {
     const time = getTimePassed(timestamp)

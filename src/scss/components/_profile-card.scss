@@ -74,6 +74,19 @@
     box-shadow: 0 1.5rem 3rem rgba($color-black-2, 0.2);
   }
 
+  &__picture-identifier {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    color: $color-primary;
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   &__picture-icon {
     position: absolute;
     display: flex;
@@ -247,11 +260,16 @@
     display: flex;
     justify-content: center;
     border-radius: 3px;
+    padding: 0.5rem 1rem;
+
     &--red {
       border: 2px solid $color-red;
       color: $color-red;
     }
-    padding: 0.5rem 1rem;
+    &--green {
+      border: 2px solid $color-green;
+      color: $color-green;
+    }
   }
 
   &__info-icon {
@@ -417,6 +435,7 @@
 
   &__option {
     padding: 2rem 4rem;
+    text-decoration: none;
     font-size: 2rem;
     font-weight: 400;
     background: transparent;

@@ -152,6 +152,10 @@
   &--color-red {
     @include theme-aware("background-color", "color-red");
   }
+
+  &--color-green {
+    @include theme-aware("background-color", "color-green");
+  }
 }
 
 .btn-icon {

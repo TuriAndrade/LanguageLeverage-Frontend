@@ -404,6 +404,7 @@
 
   label {
     justify-self: end;
+    text-align: center;
     grid-column: col-label-start / col-label-end;
     @include theme-aware("color", "color-text-secondary");
     font-size: $default-font-size;

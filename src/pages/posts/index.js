@@ -28,38 +28,49 @@ function Posts() {
         setLoadingContent(false)
       })
       .catch((e) => {
-        console.log(e.response)
+        setError("Algo de errado aconteceu!")
+        setPopupIn(true)
         setLoadingContent(false)
       })
   }, [])
 
   function removeArticle(id) {
-    setArticles((prevstate) => prevstate.filter((entry) => entry.id !== id))
+    setArticles((prevstate) =>
+      Array.isArray(prevstate)
+        ? prevstate.filter((entry) => entry.id !== id)
+        : prevstate
+    )
   }
 
   function togglePublishArticle(id) {
     setArticles((prevstate) =>
-      prevstate.map((entry) => {
-        if (entry.id === id) {
-          return {
-            ...entry,
-            isPublished: !entry.isPublished,
-          }
-        } else {
-          return entry
-        }
-      })
+      Array.isArray(prevstate)
+        ? prevstate.map((entry) => {
+            if (entry.id === id) {
+              return {
+                ...entry,
+                isPublished: !entry.isPublished,
+              }
+            } else {
+              return entry
+            }
+          })
+        : prevstate
     )
   }
 
   function getPosts() {
-    const published = articles.filter((article) => !!article.isPublished)
-    const unpublished = articles.filter((article) => !article.isPublished)
+    const published =
+      Array.isArray(articles) &&
+      articles.filter((article) => !!article.isPublished)
+    const unpublished =
+      Array.isArray(articles) &&
+      articles.filter((article) => !article.isPublished)
 
     if (filter === "published") {
-      if (published.length === 0) {
+      if (!Array.isArray(published) || (published && published.length === 0)) {
         return (
-          <div className="dashboard__item dashboard__item--message dashboard__item--warning u-discreet-disabled-btn">
+          <div className="dashboard__item u-no-transitions dashboard__item--warning u-discreet-disabled-btn">
             Nenhum post publicado!
           </div>
         )
@@ -79,9 +90,12 @@ function Posts() {
         })
       }
     } else if (filter === "unpublished") {
-      if (unpublished.length === 0) {
+      if (
+        !Array.isArray(unpublished) ||
+        (unpublished && unpublished.length === 0)
+      ) {
         return (
-          <div className="dashboard__item dashboard__item--message dashboard__item--warning u-discreet-disabled-btn">
+          <div className="dashboard__item u-no-transitions dashboard__item--warning u-discreet-disabled-btn">
             Nenhum rascunho!
           </div>
         )

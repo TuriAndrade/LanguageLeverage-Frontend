@@ -10,10 +10,12 @@ import {
   atMost100,
   atMost200,
   atLeast4,
+  atLeast8,
   verifyIfBlank,
 } from "../../validators/general"
 import { validateEmail } from "../../validators/email"
 import { loginRegEx } from "../../validators/login"
+import { passwordRegEx } from "../../validators/password"
 
 import api from "../../services/api"
 
@@ -21,6 +23,8 @@ import { UserContext, CsrfContext } from "../../components/context"
 
 import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
+
+import { FaArrowLeft } from "react-icons/all"
 
 function Profile() {
   const [name, setName] = useState("")
@@ -40,6 +44,17 @@ function Profile() {
   const [loadingContent, setLoadingContent] = useState(true)
 
   const [pictureUploading, setPictureUploading] = useState(false)
+
+  const [password, setPassword] = useState("")
+  const [errorPassword, setErrorPassword] = useState(null)
+
+  const [newPassword, setNewPassword] = useState("")
+  const [errorNewPassword, setErrorNewPassword] = useState(null)
+
+  const [checkNewPassword, setCheckNewPassword] = useState("")
+  const [errorCheckNewPassword, setErrorCheckNewPassword] = useState(null)
+
+  const [changePassword, setChangePassword] = useState(false)
 
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
@@ -116,6 +131,7 @@ function Profile() {
           }
 
           setSuccess(true)
+          setError(null)
           setPopupIn(true)
         } catch (e) {
           if (
@@ -191,6 +207,58 @@ function Profile() {
     }
   }
 
+  async function handleChangePassword(e) {
+    e.preventDefault()
+
+    const data = {
+      oldPassword: verifyIfBlank(password, setErrorPassword),
+      newPassword: atLeast8(newPassword, setErrorNewPassword),
+      checkNewPassword: verifyIfBlank(
+        checkNewPassword,
+        setErrorCheckNewPassword
+      ),
+    }
+
+    if (data.oldPassword && data.newPassword && data.checkNewPassword) {
+      if (newPassword !== checkNewPassword) {
+        setErrorCheckNewPassword("As senhas não são iguais!")
+      } else {
+        try {
+          await api.patch(
+            "user/password",
+            {
+              oldPassword: data.oldPassword,
+              newPassword: data.newPassword,
+            },
+            {
+              withCredentials: true,
+              headers: {
+                csrftoken: csrfToken,
+              },
+            }
+          )
+
+          setSuccess(true)
+          setError(null)
+          setPopupIn(true)
+          setPassword("")
+          setNewPassword("")
+          setCheckNewPassword("")
+        } catch (e) {
+          if (
+            e.response &&
+            e.response.data &&
+            e.response.data.error === "Incorrect password!"
+          ) {
+            setErrorPassword("Senha incorreta!")
+          } else {
+            setError("Algum erro ocorreu!")
+          }
+        }
+      }
+    }
+  }
+
   return (
     <>
       <PopupMessage
@@ -203,149 +271,253 @@ function Profile() {
       />
       <LoadingContent loadingIn={loadingContent} />
       {!loadingContent ? (
-        <form onSubmit={handleSubmit} className="dashboard-form">
-          <div className="dashboard-form__header">
-            <div className="dashboard-form__picture">
-              <img src={profilePicture || DefaultProfilePic} alt="Profile" />
-            </div>
-            <div className="dashboard-form__user">
-              <div className="dashboard-form__user--primary">{login}</div>
-              <label
-                className="dashboard-form__user-picture-label"
-                htmlFor="dashboard-form__file-input"
-              >
-                <div className="dashboard-form__user--secondary">
-                  Alterar foto de perfil
-                </div>
-                {pictureUploading ? (
-                  <UseAnimation
-                    wrapperStyle={{ width: "3rem", height: "3rem" }}
-                    animation={loading}
-                    strokeColor="#0092db"
+        <>
+          {changePassword ? (
+            <form onSubmit={handleChangePassword} className="dashboard-form">
+              <div className="dashboard-form__header">
+                <div className="dashboard-form__picture">
+                  <img
+                    src={profilePicture || DefaultProfilePic}
+                    alt="Profile"
                   />
-                ) : null}
-              </label>
-              <input
-                id="dashboard-form__file-input"
-                type="file"
-                className="dashboard-form__file-input"
-                onChange={changeProfilePic}
-              />
-            </div>
-          </div>
-          <div className="dashboard-form__item">
-            <label>Nome</label>
-            <ControlledInput
-              type="text"
-              placeholder="Insira seu nome"
-              state={name}
-              setState={setName}
-              formatter={atMost100}
-              error={errorName}
-              inputClass="dashboard-form__input"
-              errorClass="dashboard-form__error"
-            />
-          </div>
-          <div className="dashboard-form__item">
-            <label>Email</label>
-            <ControlledInput
-              type="text"
-              placeholder="Insira seu email"
-              state={email}
-              setState={setEmail}
-              error={errorEmail}
-              inputClass="dashboard-form__input"
-              errorClass="dashboard-form__error"
-            />
-          </div>
-          <div className="dashboard-form__item">
-            <label>Login</label>
-            <ControlledInput
-              type="text"
-              placeholder="Insira seu login"
-              state={login}
-              formatter={loginRegEx}
-              setState={setLogin}
-              error={errorLogin}
-              inputClass="dashboard-form__input"
-              errorClass="dashboard-form__error"
-            />
-          </div>
-          <div className="dashboard-form__item">
-            <label>Senha</label>
-            <button className="dashboard-form__input-btn">Alterar senha</button>
-          </div>
-          {user && user.isEditor ? (
-            <div className="dashboard-form__item">
-              <label>Descrição</label>
-              <ControlledInput
-                element="textarea"
-                placeholder="Insira sua descrição"
-                type="text"
-                formatter={atMost200}
-                state={description}
-                setState={setDescription}
-                error={errorDescription}
-                inputClass="dashboard-form__input"
-                errorClass="dashboard-form__error"
-              />
-              <div className="dashboard-form__item-description">
-                Escreva um pouco sobre você! Pode ser da forma como quiser.
-                Assim, seus leitores podem te conhecer um pouco melhor!
+                </div>
+                <div className="dashboard-form__user">
+                  <div className="dashboard-form__user--primary">{login}</div>
+                  <label
+                    className="dashboard-form__user-picture-label"
+                    htmlFor="dashboard-form__file-input"
+                  >
+                    <div className="dashboard-form__user--secondary">
+                      Alterar foto de perfil
+                    </div>
+                    {pictureUploading ? (
+                      <UseAnimation
+                        wrapperStyle={{ width: "3rem", height: "3rem" }}
+                        animation={loading}
+                        strokeColor="#0092db"
+                      />
+                    ) : null}
+                  </label>
+                  <input
+                    id="dashboard-form__file-input"
+                    type="file"
+                    className="dashboard-form__file-input"
+                    onChange={changeProfilePic}
+                  />
+                </div>
               </div>
-            </div>
-          ) : null}
-          {user && user.isEditor && !user.isValidated ? (
-            <div className="dashboard-form__item">
-              <label>Status</label>
-              <div className="dashboard-form__warning dashboard-form__warning--red">
-                Você não pode publicar no momento &nbsp;
-                <span role="img" aria-label="sad emoji">
-                  &#128546;
-                </span>
+              <div className="dashboard-form__item">
+                <label>Senha atual</label>
+                <ControlledInput
+                  type="password"
+                  placeholder="Senha"
+                  state={password}
+                  setState={setPassword}
+                  formatter={passwordRegEx}
+                  error={errorPassword}
+                  inputClass="dashboard-form__input"
+                  errorClass="dashboard-form__error"
+                />
               </div>
-            </div>
-          ) : user && user.isEditor && user.isValidated ? (
-            <div className="dashboard-form__item">
-              <label>Status</label>
-              <div className="dashboard-form__warning dashboard-form__warning--green">
-                Você pode publicar no momento &nbsp;
-                <span role="img" aria-label="happy emoji">
-                  &#128513;
-                </span>
+              <div className="dashboard-form__item">
+                <label>Nova senha</label>
+                <ControlledInput
+                  type="password"
+                  placeholder="Nova senha"
+                  state={newPassword}
+                  setState={setNewPassword}
+                  formatter={passwordRegEx}
+                  error={errorNewPassword}
+                  inputClass="dashboard-form__input"
+                  errorClass="dashboard-form__error"
+                />
               </div>
-            </div>
-          ) : null}
-          {user && user.isAdmin && !user.hasFullPermission ? (
-            <div className="dashboard-form__item">
-              <label>Permissões</label>
-              <div className="dashboard-form__warning dashboard-form__warning--red">
-                Você não é um administrador pleno &nbsp;
-                <span role="img" aria-label="sad emoji">
-                  &#128546;
-                </span>
+              <div className="dashboard-form__item">
+                <label>Repita a nova senha</label>
+                <ControlledInput
+                  type="password"
+                  placeholder="Nova senha"
+                  state={checkNewPassword}
+                  formatter={passwordRegEx}
+                  setState={setCheckNewPassword}
+                  error={errorCheckNewPassword}
+                  inputClass="dashboard-form__input"
+                  errorClass="dashboard-form__error"
+                />
               </div>
-            </div>
-          ) : user && user.isAdmin && user.hasFullPermission ? (
-            <div className="dashboard-form__item">
-              <label>Permissões</label>
-              <div className="dashboard-form__warning dashboard-form__warning--green">
-                Você é um administrador pleno &nbsp;
-                <span role="img" aria-label="happy emoji">
-                  &#128513;
-                </span>
+              <div className="dashboard-form__item">
+                <button
+                  type="submit"
+                  className="btn-primary btn-primary--color-primary btn-primary--thick dashboard-form__submit-btn"
+                >
+                  <div className="btn-primary--text">Confirmar</div>
+                </button>
               </div>
-            </div>
-          ) : null}
-          <div className="dashboard-form__item">
-            <button
-              type="submit"
-              className="btn-primary btn-primary--color-primary btn-primary--thick dashboard-form__submit-btn"
-            >
-              <div className="btn-primary--text">Enviar</div>
-            </button>
-          </div>
-        </form>
+              <div className="dashboard-form__item">
+                <button
+                  onClick={() => setChangePassword(false)}
+                  className="dashboard-form__back-btn"
+                >
+                  <FaArrowLeft className="dashboard-form__back-btn--icon" />
+                  <p className="dashboard-form__back-btn--text">Voltar</p>
+                </button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleSubmit} className="dashboard-form">
+              <div className="dashboard-form__header">
+                <div className="dashboard-form__picture">
+                  <img
+                    src={profilePicture || DefaultProfilePic}
+                    alt="Profile"
+                  />
+                </div>
+                <div className="dashboard-form__user">
+                  <div className="dashboard-form__user--primary">{login}</div>
+                  <label
+                    className="dashboard-form__user-picture-label"
+                    htmlFor="dashboard-form__file-input"
+                  >
+                    <div className="dashboard-form__user--secondary">
+                      Alterar foto de perfil
+                    </div>
+                    {pictureUploading ? (
+                      <UseAnimation
+                        wrapperStyle={{ width: "3rem", height: "3rem" }}
+                        animation={loading}
+                        strokeColor="#0092db"
+                      />
+                    ) : null}
+                  </label>
+                  <input
+                    id="dashboard-form__file-input"
+                    type="file"
+                    className="dashboard-form__file-input"
+                    onChange={changeProfilePic}
+                  />
+                </div>
+              </div>
+              <div className="dashboard-form__item">
+                <label>Nome</label>
+                <ControlledInput
+                  type="text"
+                  placeholder="Insira seu nome"
+                  state={name}
+                  setState={setName}
+                  formatter={atMost100}
+                  error={errorName}
+                  inputClass="dashboard-form__input"
+                  errorClass="dashboard-form__error"
+                />
+              </div>
+              <div className="dashboard-form__item">
+                <label>Email</label>
+                <ControlledInput
+                  type="text"
+                  placeholder="Insira seu email"
+                  state={email}
+                  setState={setEmail}
+                  error={errorEmail}
+                  inputClass="dashboard-form__input"
+                  errorClass="dashboard-form__error"
+                />
+              </div>
+              <div className="dashboard-form__item">
+                <label>Login</label>
+                <ControlledInput
+                  type="text"
+                  placeholder="Insira seu login"
+                  state={login}
+                  formatter={loginRegEx}
+                  setState={setLogin}
+                  error={errorLogin}
+                  inputClass="dashboard-form__input"
+                  errorClass="dashboard-form__error"
+                />
+              </div>
+              <div className="dashboard-form__item">
+                <label>Senha</label>
+                <button
+                  type="button"
+                  onClick={() => setChangePassword(true)}
+                  className="dashboard-form__input-btn"
+                >
+                  Alterar senha
+                </button>
+              </div>
+              {user && user.isEditor ? (
+                <div className="dashboard-form__item">
+                  <label>Descrição</label>
+                  <ControlledInput
+                    element="textarea"
+                    placeholder="Insira sua descrição"
+                    type="text"
+                    formatter={atMost200}
+                    state={description}
+                    setState={setDescription}
+                    error={errorDescription}
+                    inputClass="dashboard-form__input"
+                    errorClass="dashboard-form__error"
+                  />
+                  <div className="dashboard-form__item-description">
+                    Escreva um pouco sobre você! Pode ser da forma como quiser.
+                    Assim, seus leitores podem te conhecer um pouco melhor!
+                  </div>
+                </div>
+              ) : null}
+              {user && user.isEditor && !user.isValidated ? (
+                <div className="dashboard-form__item">
+                  <label>Status</label>
+                  <div className="dashboard-form__warning dashboard-form__warning--red">
+                    Você não pode publicar no momento &nbsp;
+                    <span role="img" aria-label="sad emoji">
+                      &#128546;
+                    </span>
+                  </div>
+                </div>
+              ) : user && user.isEditor && user.isValidated ? (
+                <div className="dashboard-form__item">
+                  <label>Status</label>
+                  <div className="dashboard-form__warning dashboard-form__warning--green">
+                    Você pode publicar no momento &nbsp;
+                    <span role="img" aria-label="happy emoji">
+                      &#128513;
+                    </span>
+                  </div>
+                </div>
+              ) : null}
+              {user && user.isAdmin && !user.hasFullPermission ? (
+                <div className="dashboard-form__item">
+                  <label>Permissões</label>
+                  <div className="dashboard-form__warning dashboard-form__warning--red">
+                    Você não é um administrador pleno &nbsp;
+                    <span role="img" aria-label="sad emoji">
+                      &#128546;
+                    </span>
+                  </div>
+                </div>
+              ) : user && user.isAdmin && user.hasFullPermission ? (
+                <div className="dashboard-form__item">
+                  <label>Permissões</label>
+                  <div className="dashboard-form__warning dashboard-form__warning--green">
+                    Você é um administrador pleno &nbsp;
+                    <span role="img" aria-label="happy emoji">
+                      &#128513;
+                    </span>
+                  </div>
+                </div>
+              ) : null}
+              <div className="dashboard-form__item">
+                <button
+                  type="submit"
+                  className="btn-primary btn-primary--color-primary btn-primary--thick dashboard-form__submit-btn"
+                >
+                  <div className="btn-primary--text">Enviar</div>
+                </button>
+              </div>
+            </form>
+          )}
+        </>
       ) : null}
     </>
   )

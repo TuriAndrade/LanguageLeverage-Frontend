@@ -215,12 +215,12 @@ export default function ProfileSidebarLeft() {
         </div>
       </div>
       <div className="sidebar__footer">
-        <div className="sidebar__footer--secondary">LangLev design by</div>
+        <div className="sidebar__footer--secondary">Developed by</div>
         <a
-          href="https://www.instagram.com"
+          href="https://github.com/TuriAndrade"
           className="sidebar__footer--primary"
         >
-          Davi Colares
+          Turi Andrade
         </a>
       </div>
     </div>
