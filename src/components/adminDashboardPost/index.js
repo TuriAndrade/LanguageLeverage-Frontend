@@ -5,6 +5,8 @@ import getTimePassed from "../../utils/getTimePassed"
 import { Link } from "react-router-dom"
 import api from "../../services/api"
 import { CsrfContext } from "../context"
+import UseAnimation from "react-useanimations"
+import loading from "react-useanimations/lib/loading"
 
 export default function AdminDashboardPost({
   article,
@@ -19,6 +21,8 @@ export default function AdminDashboardPost({
   const [deleteIn, setDeleteIn] = useState(false)
   const [messageIn, setMessageIn] = useState(false)
   const [message, setMessage] = useState(null)
+  const [waitingOnDelete, setWaitingOnDelete] = useState(false)
+  const [waitingOnUnpublish, setWaitingOnUnpublish] = useState(false)
   const { csrfToken } = useContext(CsrfContext)
 
   useEffect(() => {
@@ -43,6 +47,8 @@ export default function AdminDashboardPost({
     e.preventDefault()
 
     try {
+      setWaitingOnUnpublish(true)
+
       await api.patch(`/unpublish/any/article/${article.id}`, null, {
         withCredentials: true,
         headers: {
@@ -69,6 +75,7 @@ export default function AdminDashboardPost({
       setPopupIn(true)
       setSuccess(false)
       setUnpublishIn(false)
+      setWaitingOnUnpublish(false) // no need for finally because this component is unmounted on success
     }
   }
 
@@ -76,6 +83,8 @@ export default function AdminDashboardPost({
     e.preventDefault()
 
     try {
+      setWaitingOnDelete(true)
+
       await api.delete(`/any/article/${article.id}`, {
         withCredentials: true,
         headers: {
@@ -102,6 +111,7 @@ export default function AdminDashboardPost({
       setPopupIn(true)
       setSuccess(false)
       setDeleteIn(false)
+      setWaitingOnDelete(false)
     }
   }
 
@@ -170,9 +180,20 @@ export default function AdminDashboardPost({
                     </p>
                     <button
                       type="submit"
-                      className="btn-primary btn-primary--color-red btn-primary--thick"
+                      className={
+                        !waitingOnUnpublish
+                          ? "btn-primary btn-primary--color-red btn-primary--thick"
+                          : "btn-primary btn-primary--color-red btn-primary--thick u-disabled-btn"
+                      }
                     >
-                      <p className="btn-primary--text">Confirmar</p>
+                      <div className="btn-primary--text">Confirmar</div>
+                      {waitingOnUnpublish ? (
+                        <UseAnimation
+                          wrapperStyle={{ width: "2.5rem", height: "2.5rem" }}
+                          animation={loading}
+                          strokeColor="#ffffff"
+                        />
+                      ) : null}
                     </button>
                   </form>
                 </div>
@@ -217,9 +238,20 @@ export default function AdminDashboardPost({
                     <p className="form__description">Essa ação é permanente!</p>
                     <button
                       type="submit"
-                      className="btn-primary btn-primary--color-red btn-primary--thick"
+                      className={
+                        !waitingOnDelete
+                          ? "btn-primary btn-primary--color-red btn-primary--thick"
+                          : "btn-primary btn-primary--color-red btn-primary--thick u-disabled-btn"
+                      }
                     >
-                      <p className="btn-primary--text">Confirmar</p>
+                      <div className="btn-primary--text">Confirmar</div>
+                      {waitingOnDelete ? (
+                        <UseAnimation
+                          wrapperStyle={{ width: "2.5rem", height: "2.5rem" }}
+                          animation={loading}
+                          strokeColor="#ffffff"
+                        />
+                      ) : null}
                     </button>
                   </form>
                 </div>

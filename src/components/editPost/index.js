@@ -42,6 +42,8 @@ export default function EditPost(props) {
   const [success, setSuccess] = useState(null)
   const [popupIn, setPopupIn] = useState(false)
 
+  const [waitingOnSubmit, setWaitingOnSubmit] = useState(false)
+
   const { csrfToken } = useContext(CsrfContext)
   const categoriesInput = useRef()
   const history = useHistory()
@@ -147,6 +149,8 @@ export default function EditPost(props) {
 
     if (data.title && data.cover) {
       try {
+        setWaitingOnSubmit(true)
+
         let articleId = props.post && props.post.id
 
         if (!props.post) {
@@ -218,162 +222,175 @@ export default function EditPost(props) {
           setSuccess(null)
           setPopupIn(true)
         }
+      } finally {
+        setWaitingOnSubmit(false)
       }
     }
   }
 
   return (
     <>
-      <>
-        <PopupMessage
-          error={error}
-          success={success}
-          setError={setError}
-          setSuccess={setSuccess}
-          modalIn={popupIn}
-          setModalIn={setPopupIn}
-        />
-        {isPostFinished ? (
-          <div className="dashboard-form">
-            <div className="dashboard-form__item">
-              <label>Título</label>
-              <ControlledInput
-                type="text"
-                placeholder="Crie um título"
-                state={title}
-                setState={setTitle}
-                formatter={atMost100}
-                error={errorTitle}
-                inputClass="dashboard-form__input"
-                errorClass="dashboard-form__error"
-              />
-            </div>
-            <div className="dashboard-form__item">
-              <label>Capa</label>
-              <div
-                className={
-                  errorCover
-                    ? "dashboard-form__cover dashboard-form__cover--error"
-                    : "dashboard-form__cover"
-                }
-              >
-                {coverUploading && !cover ? (
-                  <UseAnimation
-                    wrapperStyle={{
-                      width: "6rem",
-                      height: "6rem",
-                      alignSelf: "center",
-                    }}
-                    animation={loading}
-                    strokeColor="#0092db"
-                  />
-                ) : !coverUploading && !cover ? (
-                  <>
-                    <label htmlFor="dashboard-form__file-input">
-                      <HiPlusCircle className="dashboard-form__cover--icon" />
-                    </label>
-                    <input
-                      id="dashboard-form__file-input"
-                      type="file"
-                      className="dashboard-form__file-input"
-                      onChange={changeCover}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <img src={cover} alt="Cover"></img>
-                    <label
-                      htmlFor="dashboard-form__file-input"
-                      className="dashboard-form__change-cover-btn"
-                    >
-                      <FiEdit2 />
-                    </label>
-                    <input
-                      id="dashboard-form__file-input"
-                      type="file"
-                      className="dashboard-form__file-input"
-                      onChange={(e) => {
-                        setCover(null)
-                        changeCover(e)
-                      }}
-                    />
-                  </>
-                )}
-              </div>
-              {errorCover ? (
-                <p className="dashboard-form__error">{errorCover}</p>
-              ) : null}
-            </div>
-            <div className="dashboard-form__item">
-              <label>Categorias</label>
-              <div className="dashboard-form__add-stuff-box">
-                <input
-                  ref={categoriesInput}
-                  placeholder="Insira uma categoria"
-                  type="text"
+      <PopupMessage
+        error={error}
+        success={success}
+        setError={setError}
+        setSuccess={setSuccess}
+        modalIn={popupIn}
+        setModalIn={setPopupIn}
+      />
+      {isPostFinished ? (
+        <form onSubmit={handleSubmit} className="dashboard-form">
+          <div className="dashboard-form__item">
+            <label>Título</label>
+            <ControlledInput
+              type="text"
+              placeholder="Crie um título"
+              state={title}
+              setState={setTitle}
+              formatter={atMost100}
+              error={errorTitle}
+              inputClass="dashboard-form__input"
+              errorClass="dashboard-form__error"
+            />
+          </div>
+          <div className="dashboard-form__item">
+            <label>Capa</label>
+            <div
+              className={
+                errorCover
+                  ? "dashboard-form__cover dashboard-form__cover--error"
+                  : "dashboard-form__cover"
+              }
+            >
+              {coverUploading && !cover ? (
+                <UseAnimation
+                  wrapperStyle={{
+                    width: "6rem",
+                    height: "6rem",
+                    alignSelf: "center",
+                  }}
+                  animation={loading}
+                  strokeColor="#0092db"
                 />
-                <button onClick={addCategory}>
-                  <FaPlus />
-                </button>
-              </div>
-              <div className="dashboard-form__stuff-container">
-                {categories.map((category, index) => (
-                  <div key={index} className="dashboard-form__stuff">
-                    <button
-                      onClick={(e) => removeCategory(e, index)}
-                      className="dashboard-form__remove-stuff-btn"
-                    >
-                      <FaTimes />
-                    </button>
-                    {category}
-                  </div>
-                ))}
-              </div>
+              ) : !coverUploading && !cover ? (
+                <>
+                  <label htmlFor="dashboard-form__file-input">
+                    <HiPlusCircle className="dashboard-form__cover--icon" />
+                  </label>
+                  <input
+                    id="dashboard-form__file-input"
+                    type="file"
+                    className="dashboard-form__file-input"
+                    onChange={changeCover}
+                  />
+                </>
+              ) : (
+                <>
+                  <img src={cover} alt="Cover"></img>
+                  <label
+                    htmlFor="dashboard-form__file-input"
+                    className="dashboard-form__change-cover-btn"
+                  >
+                    <FiEdit2 />
+                  </label>
+                  <input
+                    id="dashboard-form__file-input"
+                    type="file"
+                    className="dashboard-form__file-input"
+                    onChange={(e) => {
+                      setCover(null)
+                      changeCover(e)
+                    }}
+                  />
+                </>
+              )}
             </div>
-            <div className="dashboard-form__item">
-              <label>Publicar</label>
-              <button
-                onClick={() => setIsPublished((prevstate) => !prevstate)}
-                className="dashboard-form__toggle-btn toggle-btn"
-              >
-                <div className="toggle-btn__option toggle-btn__option--red">
-                  <FaTimes />
+            {errorCover ? (
+              <p className="dashboard-form__error">{errorCover}</p>
+            ) : null}
+          </div>
+          <div className="dashboard-form__item">
+            <label>Categorias</label>
+            <div className="dashboard-form__add-stuff-box">
+              <input
+                ref={categoriesInput}
+                placeholder="Insira uma categoria"
+                type="text"
+              />
+              <button type="button" onClick={addCategory}>
+                <FaPlus />
+              </button>
+            </div>
+            <div className="dashboard-form__stuff-container">
+              {categories.map((category, index) => (
+                <div key={index} className="dashboard-form__stuff">
+                  <button
+                    onClick={(e) => removeCategory(e, index)}
+                    className="dashboard-form__remove-stuff-btn"
+                  >
+                    <FaTimes />
+                  </button>
+                  {category}
                 </div>
-                <div className="toggle-btn__option toggle-btn__option--green">
-                  <FaCheck />
-                </div>
-                <CSSTransition
-                  in={isPublished}
-                  appear
-                  classNames="toggle-btn__marker"
-                  timeout={{ appear: 0, enter: 300, exit: 300 }}
-                >
-                  <div className="toggle-btn__marker"></div>
-                </CSSTransition>
-              </button>
-            </div>
-            <div className="dashboard-form__item">
-              <button
-                onClick={handleSubmit}
-                className="btn-primary btn-primary--color-primary btn-primary--thick dashboard-form__submit-btn"
-              >
-                <div className="btn-primary--text">Enviar</div>
-              </button>
-            </div>
-            <div className="dashboard-form__item">
-              <button
-                onClick={() => setIsPostFinished(false)}
-                className="dashboard-form__back-btn"
-              >
-                <FaArrowLeft className="dashboard-form__back-btn--icon" />
-                <p className="dashboard-form__back-btn--text">Voltar</p>
-              </button>
+              ))}
             </div>
           </div>
-        ) : (
-          <TextEditor initDelta={delta} onSubmit={onPostSubmit} />
-        )}
-      </>
+          <div className="dashboard-form__item">
+            <label>Publicar</label>
+            <button
+              type="button"
+              onClick={() => setIsPublished((prevstate) => !prevstate)}
+              className="dashboard-form__toggle-btn toggle-btn"
+            >
+              <div className="toggle-btn__option toggle-btn__option--red">
+                <FaTimes />
+              </div>
+              <div className="toggle-btn__option toggle-btn__option--green">
+                <FaCheck />
+              </div>
+              <CSSTransition
+                in={isPublished}
+                appear
+                classNames="toggle-btn__marker"
+                timeout={{ appear: 0, enter: 300, exit: 300 }}
+              >
+                <div className="toggle-btn__marker"></div>
+              </CSSTransition>
+            </button>
+          </div>
+          <div className="dashboard-form__item">
+            <button
+              type="submit"
+              className={
+                !waitingOnSubmit
+                  ? "btn-primary btn-primary--color-primary btn-primary--thick dashboard-form__submit-btn"
+                  : "btn-primary btn-primary--color-primary btn-primary--thick dashboard-form__submit-btn u-disabled-btn"
+              }
+            >
+              <div className="btn-primary--text">Enviar</div>
+              {waitingOnSubmit ? (
+                <UseAnimation
+                  wrapperStyle={{ width: "2.5rem", height: "2.5rem" }}
+                  animation={loading}
+                  strokeColor="#ffffff"
+                />
+              ) : null}
+            </button>
+          </div>
+          <div className="dashboard-form__item">
+            <button
+              type="button"
+              onClick={() => setIsPostFinished(false)}
+              className="dashboard-form__back-btn"
+            >
+              <FaArrowLeft className="dashboard-form__back-btn--icon" />
+              <p className="dashboard-form__back-btn--text">Voltar</p>
+            </button>
+          </div>
+        </form>
+      ) : (
+        <TextEditor initDelta={delta} onSubmit={onPostSubmit} />
+      )}
     </>
   )
 }

@@ -61,6 +61,9 @@ function Profile() {
 
   const [popupIn, setPopupIn] = useState(false)
 
+  const [waitingOnSubmit, setWaitingOnSubmit] = useState(false)
+  const [waitingOnPasswordChange, setWaitingOnPasswordChange] = useState(false)
+
   const { user } = useContext(UserContext)
   const { csrfToken } = useContext(CsrfContext)
 
@@ -108,6 +111,8 @@ function Profile() {
         (user && !user.isEditor)
       ) {
         try {
+          setWaitingOnSubmit(true)
+
           await api.patch("/user/data", data, {
             withCredentials: true,
             headers: {
@@ -149,6 +154,8 @@ function Profile() {
           } else {
             setError("Algum erro ocorreu!")
           }
+        } finally {
+          setWaitingOnSubmit(false)
         }
       }
     }
@@ -224,6 +231,8 @@ function Profile() {
         setErrorCheckNewPassword("As senhas não são iguais!")
       } else {
         try {
+          setWaitingOnPasswordChange(true)
+
           await api.patch(
             "user/password",
             {
@@ -254,6 +263,8 @@ function Profile() {
           } else {
             setError("Algum erro ocorreu!")
           }
+        } finally {
+          setWaitingOnPasswordChange(false)
         }
       }
     }
@@ -348,9 +359,20 @@ function Profile() {
               <div className="dashboard-form__item">
                 <button
                   type="submit"
-                  className="btn-primary btn-primary--color-primary btn-primary--thick dashboard-form__submit-btn"
+                  className={
+                    !waitingOnPasswordChange
+                      ? "btn-primary btn-primary--color-primary btn-primary--thick dashboard-form__submit-btn"
+                      : "btn-primary btn-primary--color-primary btn-primary--thick dashboard-form__submit-btn u-disabled-btn"
+                  }
                 >
                   <div className="btn-primary--text">Confirmar</div>
+                  {waitingOnPasswordChange ? (
+                    <UseAnimation
+                      wrapperStyle={{ width: "2.5rem", height: "2.5rem" }}
+                      animation={loading}
+                      strokeColor="#ffffff"
+                    />
+                  ) : null}
                 </button>
               </div>
               <div className="dashboard-form__item">
@@ -510,9 +532,20 @@ function Profile() {
               <div className="dashboard-form__item">
                 <button
                   type="submit"
-                  className="btn-primary btn-primary--color-primary btn-primary--thick dashboard-form__submit-btn"
+                  className={
+                    !waitingOnSubmit
+                      ? "btn-primary btn-primary--color-primary btn-primary--thick dashboard-form__submit-btn"
+                      : "btn-primary btn-primary--color-primary btn-primary--thick dashboard-form__submit-btn u-disabled-btn"
+                  }
                 >
                   <div className="btn-primary--text">Enviar</div>
+                  {waitingOnSubmit ? (
+                    <UseAnimation
+                      wrapperStyle={{ width: "2.5rem", height: "2.5rem" }}
+                      animation={loading}
+                      strokeColor="#ffffff"
+                    />
+                  ) : null}
                 </button>
               </div>
             </form>

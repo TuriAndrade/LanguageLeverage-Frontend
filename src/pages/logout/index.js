@@ -14,6 +14,9 @@ import { verifyIfBlank } from "../../validators/general"
 
 import { UserContext, CsrfContext } from "../../components/context"
 
+import UseAnimation from "react-useanimations"
+import loading from "react-useanimations/lib/loading"
+
 function Logout() {
   const [sessions, setSessions] = useState(null)
 
@@ -26,6 +29,9 @@ function Logout() {
 
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
+
+  const [waitingOnCompleteLogout, setWaitingOnCompleteLogout] = useState(false)
+  const [waitingOnSimpleLogout, setWaitingOnSimpleLogout] = useState(false)
 
   const { setUser } = useContext(UserContext)
   const { csrfToken, setCsrfToken } = useContext(CsrfContext)
@@ -49,6 +55,8 @@ function Logout() {
     e.preventDefault()
 
     try {
+      setWaitingOnSimpleLogout(true)
+
       await api.delete("/session", {
         withCredentials: true,
         headers: {
@@ -72,6 +80,8 @@ function Logout() {
       setSuccess(null)
       setPopupIn(true)
       setSimpleLogoutIn(false)
+    } finally {
+      setWaitingOnSimpleLogout(false)
     }
   }
 
@@ -85,6 +95,8 @@ function Logout() {
 
     if (data.password) {
       try {
+        setWaitingOnCompleteLogout(true)
+
         await api.post("/delete/session", data, {
           withCredentials: true,
           headers: {
@@ -116,6 +128,8 @@ function Logout() {
           setPopupIn(true)
           setCompleteLogoutIn(false)
         }
+      } finally {
+        setWaitingOnCompleteLogout(false)
       }
     }
   }
@@ -169,9 +183,20 @@ function Logout() {
                     <p className="form__heading">Tem certeza?</p>
                     <button
                       type="submit"
-                      className="btn-primary btn-primary--color-red btn-primary--thick"
+                      className={
+                        !waitingOnSimpleLogout
+                          ? "btn-primary btn-primary--color-red btn-primary--thick"
+                          : "btn-primary btn-primary--color-red btn-primary--thick u-disabled-btn"
+                      }
                     >
-                      <p className="btn-primary--text">Sair</p>
+                      <div className="btn-primary--text">Sair</div>
+                      {waitingOnSimpleLogout ? (
+                        <UseAnimation
+                          wrapperStyle={{ width: "2.5rem", height: "2.5rem" }}
+                          animation={loading}
+                          strokeColor="#ffffff"
+                        />
+                      ) : null}
                     </button>
                   </form>
                 </div>
@@ -230,9 +255,20 @@ function Logout() {
                     </div>
                     <button
                       type="submit"
-                      className="btn-primary btn-primary--color-red btn-primary--thick"
+                      className={
+                        !waitingOnCompleteLogout
+                          ? "btn-primary btn-primary--color-red btn-primary--thick"
+                          : "btn-primary btn-primary--color-red btn-primary--thick u-disabled-btn"
+                      }
                     >
-                      <p className="btn-primary--text">Sair</p>
+                      <div className="btn-primary--text">Sair</div>
+                      {waitingOnCompleteLogout ? (
+                        <UseAnimation
+                          wrapperStyle={{ width: "2.5rem", height: "2.5rem" }}
+                          animation={loading}
+                          strokeColor="#ffffff"
+                        />
+                      ) : null}
                     </button>
                   </form>
                 </div>

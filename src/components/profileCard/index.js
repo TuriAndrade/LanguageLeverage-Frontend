@@ -13,6 +13,8 @@ import {
 import api from "../../services/api"
 import { CsrfContext } from "../context"
 import { Link } from "react-router-dom"
+import UseAnimation from "react-useanimations"
+import loading from "react-useanimations/lib/loading"
 
 export default function ProfileCard({
   user,
@@ -30,12 +32,16 @@ export default function ProfileCard({
   const [optionsIn, setOptionsIn] = useState(false)
   const [deleteIn, setDeleteIn] = useState(false)
   const [grantPermissionIn, setGrantPermissionIn] = useState(false)
+  const [waitingOnToggleValidate, setWaitingOnToggleValidate] = useState(false)
+  const [waitingOnDelete, setWaitingOnDelete] = useState(false)
 
   const { csrfToken } = useContext(CsrfContext)
 
   async function handleToggleValidate() {
     if (editor && editor.id) {
       try {
+        setWaitingOnToggleValidate(true)
+
         if (!editor.isValidated) {
           await api.patch(`/validate/editor/${editor.id}`, null, {
             withCredentials: true,
@@ -62,6 +68,7 @@ export default function ProfileCard({
         setSuccess(false)
         setError("Algum erro aconteceu!")
         setPopupIn(true)
+        setWaitingOnToggleValidate(false)
       }
     }
   }
@@ -71,6 +78,8 @@ export default function ProfileCard({
 
     if (user && user.id) {
       try {
+        setWaitingOnDelete(true)
+
         await api.delete(`/any/user/${user.id}`, {
           withCredentials: true,
           headers: {
@@ -97,6 +106,7 @@ export default function ProfileCard({
         setSuccess(null)
         setDeleteIn(false)
         setPopupIn(true)
+        setWaitingOnDelete(false)
       }
     }
   }
@@ -194,9 +204,20 @@ export default function ProfileCard({
                     </p>
                     <button
                       type="submit"
-                      className="btn-primary btn-primary--color-red btn-primary--thick"
+                      className={
+                        !waitingOnDelete
+                          ? "btn-primary btn-primary--color-red btn-primary--thick"
+                          : "btn-primary btn-primary--color-red btn-primary--thick u-disabled-btn"
+                      }
                     >
-                      <p className="btn-primary--text">Confirmar</p>
+                      <div className="btn-primary--text">Confirmar</div>
+                      {waitingOnDelete ? (
+                        <UseAnimation
+                          wrapperStyle={{ width: "2.5rem", height: "2.5rem" }}
+                          animation={loading}
+                          strokeColor="#ffffff"
+                        />
+                      ) : null}
                     </button>
                   </form>
                 </div>
@@ -262,9 +283,26 @@ export default function ProfileCard({
                     <>
                       <button
                         onClick={handleToggleValidate}
-                        className="profile-card__option"
+                        className={
+                          !waitingOnToggleValidate
+                            ? "dashboard__option"
+                            : "dashboard__option u-discreet-disabled-btn"
+                        }
                       >
                         {editor.isValidated ? "Invalidar" : "Validar"}
+                        {waitingOnToggleValidate ? (
+                          <>
+                            &nbsp;&nbsp;
+                            <UseAnimation
+                              wrapperStyle={{
+                                width: "2.5rem",
+                                height: "2.5rem",
+                              }}
+                              animation={loading}
+                              strokeColor="#0092db"
+                            />
+                          </>
+                        ) : null}
                       </button>
                       <Link
                         to={`/editor/posts/${editor.id}`}

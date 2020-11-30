@@ -19,6 +19,9 @@ import getTimePassed from "../../utils/getTimePassed"
 
 import { UserContext, CsrfContext } from "../../components/context"
 
+import UseAnimation from "react-useanimations"
+import loading from "react-useanimations/lib/loading"
+
 export default function DashboardSession({
   session,
   remove,
@@ -34,6 +37,8 @@ export default function DashboardSession({
   const [password, setPassword] = useState("")
   const [errorPassword, setErrorPassword] = useState(null)
 
+  const [waitingOnSubmit, setWaitingOnSubmit] = useState(false)
+
   async function handleSubmit(e) {
     e.preventDefault()
 
@@ -44,6 +49,8 @@ export default function DashboardSession({
 
     if (data.password) {
       try {
+        setWaitingOnSubmit(true)
+
         const response = await api.post("/delete/session", data, {
           withCredentials: true,
           headers: {
@@ -58,6 +65,7 @@ export default function DashboardSession({
           setSuccess(true)
           setPopupIn(true)
           setModalIn(false)
+          setWaitingOnSubmit(false)
 
           setTimeout(() => {
             setUser(null)
@@ -83,6 +91,8 @@ export default function DashboardSession({
           setPopupIn(true)
           setModalIn(false)
         }
+
+        setWaitingOnSubmit(false)
       }
     }
   }
@@ -164,9 +174,20 @@ export default function DashboardSession({
                     </div>
                     <button
                       type="submit"
-                      className="btn-primary btn-primary--color-red btn-primary--thick"
+                      className={
+                        !waitingOnSubmit
+                          ? "btn-primary btn-primary--color-red btn-primary--thick"
+                          : "btn-primary btn-primary--color-red btn-primary--thick u-disabled-btn"
+                      }
                     >
-                      <p className="btn-primary--text">Sair</p>
+                      <div className="btn-primary--text">Sair</div>
+                      {waitingOnSubmit ? (
+                        <UseAnimation
+                          wrapperStyle={{ width: "2.5rem", height: "2.5rem" }}
+                          animation={loading}
+                          strokeColor="#ffffff"
+                        />
+                      ) : null}
                     </button>
                   </form>
                 </div>

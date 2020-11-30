@@ -5,6 +5,9 @@ import getTimePassed from "../../utils/getTimePassed"
 import { Link } from "react-router-dom"
 import api from "../../services/api"
 import { CsrfContext } from "../context"
+import UseAnimation from "react-useanimations"
+import loading from "react-useanimations/lib/loading"
+import { UserContext } from "../context"
 
 export default function DashboardPost({
   article,
@@ -19,7 +22,13 @@ export default function DashboardPost({
   const [deleteIn, setDeleteIn] = useState(false)
   const [messageIn, setMessageIn] = useState(false)
   const [message, setMessage] = useState(null)
+  const [waitingOnTogglePublish, setWaitingOnTogglePublish] = useState(false)
+  const [waitingOnDelete, setWaitingOnDelete] = useState(false)
+  const [waitingOnConfirmUnpublish, setWaitingOnConfirmUnpublish] = useState(
+    false
+  )
   const { csrfToken } = useContext(CsrfContext)
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
     if (messageIn) {
@@ -44,6 +53,8 @@ export default function DashboardPost({
 
     if (article.isPublished) {
       try {
+        setWaitingOnTogglePublish(true)
+
         await api.patch(
           `/unpublish/article/${article.id}`,
           {
@@ -84,9 +95,12 @@ export default function DashboardPost({
 
         setSuccess(false)
         setOptionsIn(false)
+        setWaitingOnTogglePublish(false) // no need for finally because this component is unmounted on success
       }
     } else {
       try {
+        setWaitingOnTogglePublish(true)
+
         await api.patch(`/publish/article/${article.id}`, null, {
           withCredentials: true,
           headers: {
@@ -120,6 +134,7 @@ export default function DashboardPost({
         setPopupIn(true)
         setSuccess(false)
         setOptionsIn(false)
+        setWaitingOnTogglePublish(false) // no need for finally because this component is unmounted on success
       }
     }
   }
@@ -128,6 +143,8 @@ export default function DashboardPost({
     e.preventDefault()
 
     try {
+      setWaitingOnConfirmUnpublish(true)
+
       await api.patch(
         `/unpublish/article/${article.id}`,
         {
@@ -161,6 +178,7 @@ export default function DashboardPost({
       setPopupIn(true)
       setSuccess(false)
       setUnpublishIn(false)
+      setWaitingOnConfirmUnpublish(false) // no need for finally because this component is unmounted on success
     }
   }
 
@@ -168,6 +186,8 @@ export default function DashboardPost({
     e.preventDefault()
 
     try {
+      setWaitingOnDelete(true)
+
       await api.delete(`/article/${article.id}`, {
         withCredentials: true,
         headers: {
@@ -194,6 +214,7 @@ export default function DashboardPost({
       setPopupIn(true)
       setSuccess(false)
       setDeleteIn(false)
+      setWaitingOnDelete(false) // no need for finally because the component is unmounted on success
     }
   }
 
@@ -263,9 +284,20 @@ export default function DashboardPost({
                     </p>
                     <button
                       type="submit"
-                      className="btn-primary btn-primary--color-red btn-primary--thick"
+                      className={
+                        !waitingOnConfirmUnpublish
+                          ? "btn-primary btn-primary--color-red btn-primary--thick"
+                          : "btn-primary btn-primary--color-red btn-primary--thick u-disabled-btn"
+                      }
                     >
-                      <p className="btn-primary--text">Confirmar</p>
+                      <div className="btn-primary--text">Confirmar</div>
+                      {waitingOnConfirmUnpublish ? (
+                        <UseAnimation
+                          wrapperStyle={{ width: "2.5rem", height: "2.5rem" }}
+                          animation={loading}
+                          strokeColor="#ffffff"
+                        />
+                      ) : null}
                     </button>
                   </form>
                 </div>
@@ -310,9 +342,20 @@ export default function DashboardPost({
                     <p className="form__description">Essa ação é permanente!</p>
                     <button
                       type="submit"
-                      className="btn-primary btn-primary--color-red btn-primary--thick"
+                      className={
+                        !waitingOnDelete
+                          ? "btn-primary btn-primary--color-red btn-primary--thick"
+                          : "btn-primary btn-primary--color-red btn-primary--thick u-disabled-btn"
+                      }
                     >
-                      <p className="btn-primary--text">Confirmar</p>
+                      <div className="btn-primary--text">Confirmar</div>
+                      {waitingOnDelete ? (
+                        <UseAnimation
+                          wrapperStyle={{ width: "2.5rem", height: "2.5rem" }}
+                          animation={loading}
+                          strokeColor="#ffffff"
+                        />
+                      ) : null}
                     </button>
                   </form>
                 </div>
@@ -350,12 +393,14 @@ export default function DashboardPost({
                 <FaTimes />
               </button>
               <div className="modal__content modal__content--fit-content-small">
-                <Link
-                  to={`/update/post/${article.id}`}
-                  className="dashboard__option"
-                >
-                  Editar
-                </Link>
+                {user && user.isValidated ? (
+                  <Link
+                    to={`/update/post/${article.id}`}
+                    className="dashboard__option"
+                  >
+                    Editar
+                  </Link>
+                ) : null}
                 <Link
                   to={`/preview/post/${article.id}`}
                   className="dashboard__option"
@@ -364,9 +409,23 @@ export default function DashboardPost({
                 </Link>
                 <button
                   onClick={handleTogglePublish}
-                  className="dashboard__option"
+                  className={
+                    !waitingOnTogglePublish
+                      ? "dashboard__option"
+                      : "dashboard__option u-discreet-disabled-btn"
+                  }
                 >
                   {article.isPublished ? "Despublicar" : "Publicar"}
+                  {waitingOnTogglePublish ? (
+                    <>
+                      &nbsp;&nbsp;
+                      <UseAnimation
+                        wrapperStyle={{ width: "2.5rem", height: "2.5rem" }}
+                        animation={loading}
+                        strokeColor="#0092db"
+                      />
+                    </>
+                  ) : null}
                 </button>
                 {article.isPublished ? (
                   <button

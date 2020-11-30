@@ -21,6 +21,9 @@ import api from "../../services/api"
 
 import { CsrfContext, UserContext } from "../../components/context"
 
+import UseAnimation from "react-useanimations"
+import loading from "react-useanimations/lib/loading"
+
 function Login() {
   const { csrfToken, setCsrfToken } = useContext(CsrfContext)
   const { setUser } = useContext(UserContext)
@@ -38,6 +41,8 @@ function Login() {
 
   const [popupIn, setPopupIn] = useState(false)
 
+  const [waitingOnSubmit, setWaitingOnSubmit] = useState(false)
+
   async function handleSubmit(e) {
     e.preventDefault()
 
@@ -48,6 +53,8 @@ function Login() {
 
     if (data.login && data.password) {
       try {
+        setWaitingOnSubmit(true)
+
         const UserContext = await api.post("/session", data, {
           withCredentials: true,
           headers: {
@@ -85,6 +92,8 @@ function Login() {
           setError("Algo de errado aconteceu!")
           setPopupIn(true)
         }
+      } finally {
+        setWaitingOnSubmit(false)
       }
     }
   }
@@ -161,9 +170,20 @@ function Login() {
           </div>
           <button
             type="submit"
-            className="btn-primary btn-primary--color-primary btn-primary--thick btn-primary--w100"
+            className={
+              !waitingOnSubmit
+                ? "btn-primary btn-primary--color-primary btn-primary--thick btn-primary--w100"
+                : "btn-primary btn-primary--color-primary btn-primary--thick btn-primary--w100 u-disabled-btn"
+            }
           >
             <div className="btn-primary--text">Entrar</div>
+            {waitingOnSubmit ? (
+              <UseAnimation
+                wrapperStyle={{ width: "2.5rem", height: "2.5rem" }}
+                animation={loading}
+                strokeColor="#ffffff"
+              />
+            ) : null}
           </button>
         </form>
       </div>
