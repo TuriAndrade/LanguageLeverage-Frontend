@@ -23,21 +23,21 @@ function UpdatePost(props) {
 
           if (article) {
             setPost(article)
-          }
 
-          const subjects = response.data.subjects
+            const subjects = article.Subjects
 
-          if (subjects) {
-            subjects.map((subject) => {
-              setCategories((prevstate) => {
-                if (prevstate) {
-                  return [...prevstate, subject.subject]
-                } else {
-                  return [subject.subject]
-                }
+            if (subjects) {
+              subjects.map((subject) => {
+                setCategories((prevstate) => {
+                  if (Array.isArray(prevstate)) {
+                    return [...prevstate, subject.subject]
+                  } else {
+                    return [subject.subject]
+                  }
+                })
+                return null
               })
-              return null
-            })
+            }
           }
         })
         .catch((e) => {

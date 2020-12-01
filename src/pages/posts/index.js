@@ -20,11 +20,10 @@ function Posts() {
     api
       .get("/editor/articles", { withCredentials: true })
       .then((response) => {
-        setArticles(
-          response.data.map((articleAndSubjects) => {
-            return articleAndSubjects.article // I only need the article, not the subjects/categories
-          })
-        )
+        const articles = response.data.articles
+
+        setArticles(articles)
+
         setLoadingContent(false)
       })
       .catch((e) => {
