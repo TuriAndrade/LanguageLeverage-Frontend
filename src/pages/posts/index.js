@@ -7,7 +7,7 @@ import PopupMessage from "../../components/popupMessage"
 
 function Posts() {
   const [loadingContent, setLoadingContent] = useState(true)
-  const [articles, setArticles] = useState(null)
+  const [articles, setArticles] = useState([])
 
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
@@ -34,40 +34,30 @@ function Posts() {
   }, [])
 
   function removeArticle(id) {
-    setArticles((prevstate) =>
-      Array.isArray(prevstate)
-        ? prevstate.filter((entry) => entry.id !== id)
-        : prevstate
-    )
+    setArticles((prevstate) => prevstate.filter((entry) => entry.id !== id))
   }
 
   function togglePublishArticle(id) {
     setArticles((prevstate) =>
-      Array.isArray(prevstate)
-        ? prevstate.map((entry) => {
-            if (entry.id === id) {
-              return {
-                ...entry,
-                isPublished: !entry.isPublished,
-              }
-            } else {
-              return entry
-            }
-          })
-        : prevstate
+      prevstate.map((entry) => {
+        if (entry.id === id) {
+          return {
+            ...entry,
+            isPublished: !entry.isPublished,
+          }
+        } else {
+          return entry
+        }
+      })
     )
   }
 
   function getPosts() {
-    const published =
-      Array.isArray(articles) &&
-      articles.filter((article) => !!article.isPublished)
-    const unpublished =
-      Array.isArray(articles) &&
-      articles.filter((article) => !article.isPublished)
+    const published = articles.filter((article) => !!article.isPublished)
+    const unpublished = articles.filter((article) => !article.isPublished)
 
     if (filter === "published") {
-      if (!Array.isArray(published) || (published && published.length === 0)) {
+      if (published.length === 0) {
         return (
           <div className="dashboard__item u-no-transitions dashboard__item--warning u-discreet-disabled-btn">
             Nenhum post publicado!
@@ -89,10 +79,7 @@ function Posts() {
         })
       }
     } else if (filter === "unpublished") {
-      if (
-        !Array.isArray(unpublished) ||
-        (unpublished && unpublished.length === 0)
-      ) {
+      if (unpublished.length === 0) {
         return (
           <div className="dashboard__item u-no-transitions dashboard__item--warning u-discreet-disabled-btn">
             Nenhum rascunho!

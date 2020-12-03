@@ -6,7 +6,7 @@ import api from "../../services/api"
 import PopupMessage from "../../components/popupMessage"
 
 function Editors() {
-  const [editors, setEditors] = useState(null)
+  const [editors, setEditors] = useState([])
   const [filter, setFilter] = useState("validated")
   const [loadingContent, setLoadingContent] = useState(true)
 
@@ -19,9 +19,9 @@ function Editors() {
     api
       .get("/editors", { withCredentials: true })
       .then((response) => {
-        if (response.data.editors) {
-          setEditors(response.data.editors)
-        }
+        const editors = response.data.editors
+
+        setEditors(editors)
 
         setLoadingContent(false)
       })
@@ -34,37 +34,29 @@ function Editors() {
 
   function toggleValidateEditor(id) {
     setEditors((prevstate) =>
-      Array.isArray(prevstate)
-        ? prevstate.map((entry) => {
-            if (entry.id === id) {
-              return {
-                ...entry,
-                isValidated: !entry.isValidated,
-              }
-            } else {
-              return entry
-            }
-          })
-        : prevstate
+      prevstate.map((entry) => {
+        if (entry.id === id) {
+          return {
+            ...entry,
+            isValidated: !entry.isValidated,
+          }
+        } else {
+          return entry
+        }
+      })
     )
   }
 
   function removeEditor(id) {
-    setEditors((prevstate) =>
-      Array.isArray(prevstate)
-        ? prevstate.filter((entry) => entry.id !== id)
-        : null
-    )
+    setEditors((prevstate) => prevstate.filter((entry) => entry.id !== id))
   }
 
   function getEditors() {
-    const validated =
-      Array.isArray(editors) && editors.filter((editor) => !!editor.isValidated)
-    const invalidated =
-      Array.isArray(editors) && editors.filter((editor) => !editor.isValidated)
+    const validated = editors.filter((editor) => !!editor.isValidated)
+    const invalidated = editors.filter((editor) => !editor.isValidated)
 
     if (filter === "validated") {
-      if (!Array.isArray(validated) || (validated && validated.length === 0)) {
+      if (validated.length === 0) {
         return (
           <div className="dashboard__item dashboard__item--min-content u-no-transitions dashboard__item--warning u-discreet-disabled-btn">
             Nenhum editor validado!
@@ -91,10 +83,7 @@ function Editors() {
         )
       }
     } else {
-      if (
-        !Array.isArray(invalidated) ||
-        (invalidated && invalidated.length === 0)
-      ) {
+      if (invalidated.length === 0) {
         return (
           <div className="dashboard__item dashboard__item--min-content u-no-transitions dashboard__item--warning u-discreet-disabled-btn">
             Nenhum editor invalidado!

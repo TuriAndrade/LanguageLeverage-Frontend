@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import Meme from "../../assets/meme_static.webp"
 import Comment from "../comment"
 import {
   AiOutlineHeart,
@@ -8,20 +7,48 @@ import {
   AiOutlineMinusCircle,
   GoComment,
 } from "react-icons/all"
+import getTimePassed from "../../utils/getTimePassed"
+import DefaultProfilePicture from "../../assets/default-profile-picture.png"
 
-export default function Post() {
+export default function Post({ article, fowardedRef }) {
   const [isOpened, setIsOpened] = useState(false)
 
+  function convertTime(timestamp) {
+    const time = getTimePassed(timestamp)
+
+    if (!time) {
+      return "Data não encontrada!"
+    } else {
+      return `${time.n}${time.unit}`
+    }
+  }
+
   return (
-    <div className="post-box">
+    <div ref={fowardedRef} className="post-box">
       <div className="post-header">
         <div className="post-header__header">
-          <div className="post-header__profile-picture"></div>
-          <div className="post-header__title">titulo do post</div>
-          <div className="post-header__publish-time"> 7h</div>
+          <div className="post-header__profile-picture">
+            <img
+              src={
+                (article.Editor &&
+                  article.Editor.User &&
+                  article.Editor.User.picture) ||
+                DefaultProfilePicture
+              }
+              alt="EditorPic"
+            />
+          </div>
+          <div className="post-header__login">
+            <div className="post-header__login--text">
+              {article.Editor.User.login}
+            </div>
+          </div>
+          <div className="post-header__publish-time">
+            {convertTime(new Date(article.createdAt).getTime())}
+          </div>
         </div>
         <div className="post-header__cover">
-          <img src={Meme} alt="Meme" />
+          <img src={article.cover} alt="Capa" />
         </div>
         <div className="post-header__btn-box">
           <div className="post-header__btn">
@@ -66,30 +93,23 @@ export default function Post() {
             : "post-content post-content--closed"
         }
       >
-        <div className="post-content__content-box">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus
-          alias quia, deleniti nulla voluptatibus animi necessitatibus provident
-          doloribus labore quos culpa. Incidunt inventore doloremque dolores
-          esse eveniet quae perferendis amet ducimus, saepe dignissimos dolorem
-          earum at nesciunt ab commodi minima deleniti officia cumque obcaecati
-          aliquid similique. Tenetur ratione dolor placeat? Distinctio, suscipit
-          exercitationem fuga enim quisquam adipisci recusandae velit
-          accusantium dolorum. Autem labore, minus maxime magnam quidem fugiat.
-          Id dolore aliquid iure est dignissimos aut officia quam nihil iste
-          sed. Voluptatem atque consequuntur ipsam id aperiam iusto at, fugiat
-          illum, quo ducimus repudiandae deserunt expedita eius ab possimus
-          distinctio non.
-        </div>
-        <div className="post-content__categories-box">
-          <div className="post-content__category">Art</div>
-          <div className="post-content__category">Politcs</div>
-          <div className="post-content__category">Cringe</div>
-          <div className="post-content__category">History</div>
-          <div className="post-content__category">Animals</div>
-          <div className="post-content__category">Programming</div>
-          <div className="post-content__category">Good Vibes</div>
-          <div className="post-content__category">Shitpost</div>
-        </div>
+        <div
+          dangerouslySetInnerHTML={{ __html: article.html }}
+          className="post-content__content-box"
+        ></div>
+        {article.Subjects && article.Subjects.length > 0 && (
+          <div className="post-content__categories-box">
+            {article.Subjects.map((category, index) => {
+              if (category.subject) {
+                return (
+                  <div key={index} className="post-content__category">
+                    {category.subject}
+                  </div>
+                )
+              } else return null
+            })}
+          </div>
+        )}
         <div className="post-content__comments-box">
           <div className="post-content__comments-header">4 Comentários</div>
           <input

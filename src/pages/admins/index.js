@@ -6,7 +6,7 @@ import api from "../../services/api"
 import PopupMessage from "../../components/popupMessage"
 
 function Admins() {
-  const [admins, setAdmins] = useState(null)
+  const [admins, setAdmins] = useState([])
   const [filter, setFilter] = useState("full")
   const [loadingContent, setLoadingContent] = useState(true)
 
@@ -19,9 +19,9 @@ function Admins() {
     api
       .get("/admins", { withCredentials: true })
       .then((response) => {
-        if (response.data) {
-          setAdmins(response.data)
-        }
+        const admins = response.data.admins
+
+        setAdmins(admins)
 
         setLoadingContent(false)
       })
@@ -52,15 +52,11 @@ function Admins() {
   }
 
   function getAdmins() {
-    const full =
-      Array.isArray(admins) &&
-      admins.filter((admin) => !!admin.hasFullPermission)
-    const notFull =
-      Array.isArray(admins) &&
-      admins.filter((admin) => !admin.hasFullPermission)
+    const full = admins.filter((admin) => !!admin.hasFullPermission)
+    const notFull = admins.filter((admin) => !admin.hasFullPermission)
 
     if (filter === "full") {
-      if (!Array.isArray(full) || (full && full.length === 0)) {
+      if (full.length === 0) {
         return (
           <div className="dashboard__item dashboard__item--min-content u-no-transitions dashboard__item--warning u-discreet-disabled-btn">
             Nenhum admin pleno!
@@ -87,7 +83,7 @@ function Admins() {
         )
       }
     } else {
-      if (!Array.isArray(notFull) || (notFull && notFull.length === 0)) {
+      if (notFull.length === 0) {
         return (
           <div className="dashboard__item dashboard__item--min-content u-no-transitions dashboard__item--warning u-discreet-disabled-btn">
             Nenhum admin não pleno!

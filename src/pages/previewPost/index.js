@@ -11,7 +11,7 @@ function PreviewPost(props) {
   const [loadingContent, setLoadingContent] = useState(true)
   const [error, setError] = useState(null)
   const [post, setPost] = useState(null)
-  const [categories, setCategories] = useState(null)
+  const [categories, setCategories] = useState([])
   const [popupIn, setPopupIn] = useState(false)
 
   const { user } = useContext(UserContext)
@@ -33,13 +33,7 @@ function PreviewPost(props) {
 
               if (subjects) {
                 subjects.map((subject) => {
-                  setCategories((prevstate) => {
-                    if (Array.isArray(prevstate)) {
-                      return [...prevstate, subject.subject]
-                    } else {
-                      return [subject.subject]
-                    }
-                  })
+                  setCategories((prevstate) => [...prevstate, subject.subject])
                   return null
                 })
               }
@@ -57,7 +51,7 @@ function PreviewPost(props) {
             }
             setPopupIn(true)
             setPost(null)
-            setCategories(null)
+            setCategories([])
           })
           .finally(() => setLoadingContent(false))
       } else {
@@ -75,13 +69,7 @@ function PreviewPost(props) {
 
               if (subjects) {
                 subjects.map((subject) => {
-                  setCategories((prevstate) => {
-                    if (Array.isArray(prevstate)) {
-                      return [...prevstate, subject.subject]
-                    } else {
-                      return [subject.subject]
-                    }
-                  })
+                  setCategories((prevstate) => [...prevstate, subject.subject])
                   return null
                 })
               }
@@ -100,7 +88,7 @@ function PreviewPost(props) {
             }
             setPopupIn(true)
             setPost(null)
-            setCategories(null)
+            setCategories([])
           })
           .finally(() => setLoadingContent(false))
       }
@@ -164,19 +152,18 @@ function PreviewPost(props) {
                 </div>
               </div>
             </div>
-            <div className="post-content post-content--opened post-content--no-comments">
+            <div className="post-content post-content--opened">
               <div
                 dangerouslySetInnerHTML={{ __html: post.html }}
                 className="post-content__content-box"
               ></div>
               {categories ? (
                 <div className="post-content__categories-box">
-                  {Array.isArray(categories) &&
-                    categories.map((category, index) => (
-                      <div key={index} className="post-content__category">
-                        {category}
-                      </div>
-                    ))}
+                  {categories.map((category, index) => (
+                    <div key={index} className="post-content__category">
+                      {category}
+                    </div>
+                  ))}
                 </div>
               ) : null}
             </div>

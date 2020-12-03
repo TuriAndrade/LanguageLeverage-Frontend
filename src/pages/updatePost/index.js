@@ -7,7 +7,7 @@ import LoadingContent from "../../components/loadingContent"
 
 function UpdatePost(props) {
   const [post, setPost] = useState(null)
-  const [categories, setCategories] = useState(null)
+  const [categories, setCategories] = useState([])
   const [loadingContent, setLoadingContent] = useState(true)
   const [error, setError] = useState(null)
   const [popupIn, setPopupIn] = useState(false)
@@ -28,13 +28,7 @@ function UpdatePost(props) {
 
             if (subjects) {
               subjects.map((subject) => {
-                setCategories((prevstate) => {
-                  if (Array.isArray(prevstate)) {
-                    return [...prevstate, subject.subject]
-                  } else {
-                    return [subject.subject]
-                  }
-                })
+                setCategories((prevstate) => [...prevstate, subject.subject])
                 return null
               })
             }
@@ -53,7 +47,7 @@ function UpdatePost(props) {
           }
           setPopupIn(true)
           setPost(null)
-          setCategories(null)
+          setCategories([])
         })
         .finally(() => setLoadingContent(false))
     } else {

@@ -190,9 +190,6 @@ export default class TextEditor extends Component {
             Quill.sources.USER
           )
           this.editor.setSelection(position + 1, Quill.sources.SILENT)
-
-          const selectionEl = window.getSelection().focusNode
-          selectionEl.scrollIntoView(true)
         })
         .catch((e) => {
           if (

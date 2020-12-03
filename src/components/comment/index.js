@@ -11,12 +11,12 @@ export default function Comment({ replyTo }) {
       <div className="post-comment__header">
         <div className="post-comment__header--primary">Ednaldo Pereira</div>
         <div className="post-comment__header--secondary">7h</div>
-        <div
+        <button
           onClick={() => setReplyInputIn((prevState) => !prevState)}
           className="post-comment__reply-btn"
         >
           {replyInputIn ? "Close" : "Reply"}
-        </div>
+        </button>
       </div>
       <div className="post-comment__text">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid earum
