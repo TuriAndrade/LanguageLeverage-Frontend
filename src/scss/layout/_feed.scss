@@ -41,6 +41,29 @@
   max-width: 70rem;
   width: 100%;
   justify-self: center;
+
+  &--nothing-else {
+    border-radius: 3px;
+    @include theme-aware("background-color", "color-primary");
+    height: 50rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  &__icon {
+    font-size: 6rem;
+    color: $color-white;
+    display: flex;
+  }
+
+  &__text {
+    font-size: 4rem;
+    color: $color-white;
+    font-weight: 600;
+  }
 }
 
 .post-header {
@@ -118,12 +141,13 @@
     grid-row: row-cover-start / row-cover-end;
     grid-column: padding-left-1 / padding-right-1;
     max-height: 50rem;
+    height: 100%;
     overflow: hidden;
 
     img {
       width: 100%;
-      object-fit: cover;
-      object-position: center;
+      height: 100%;
+      object-fit: contain;
     }
   }
 

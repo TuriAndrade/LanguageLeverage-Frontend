@@ -7,6 +7,7 @@ import api from "../../services/api"
 import { CSSTransition } from "react-transition-group"
 import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
+import { GoVerified } from "react-icons/all"
 
 function Main() {
   const [articles, setArticles] = useState([])
@@ -91,6 +92,14 @@ function Main() {
               />
             </div>
           </CSSTransition>
+          {!hasMoreArticles && articles.length > 0 && (
+            <div className="post-box post-box--nothing-else">
+              <div className="post-box__icon">
+                <GoVerified />
+              </div>
+              <div className="post-box__text">Isso é tudo!</div>
+            </div>
+          )}
         </div>
       ) : null}
     </>
