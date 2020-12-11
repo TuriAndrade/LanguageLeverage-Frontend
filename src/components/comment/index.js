@@ -1,16 +1,109 @@
-import React, { useState } from "react"
+import React, { useState, useContext } from "react"
 import { CSSTransition } from "react-transition-group"
+import getTimePassed from "../../utils/getTimePassed"
+import api from "../../services/api"
+import { atMost200 } from "../../validators/general"
+import { CsrfContext, UserContext } from "../context"
+import CommentModal from "../commentModal"
 
-export default function Comment({ replyTo }) {
+export default function Comment({
+  comment,
+  insertComment,
+  setError,
+  setSuccess,
+  setPopupIn,
+}) {
   const [replyInputIn, setReplyInputIn] = useState(false)
+  const [reply, setReply] = useState("")
+
+  const { csrfToken } = useContext(CsrfContext)
+  const { user } = useContext(UserContext)
+
+  const [commentIn, setCommentIn] = useState(false)
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+
+    if (reply) {
+      if (
+        (localStorage.getItem("name") && localStorage.getItem("email")) ||
+        (user && !user.loading)
+      ) {
+        try {
+          const response = await api.post(
+            "/comment",
+            {
+              name: localStorage.getItem("name") || undefined,
+              email: localStorage.getItem("email") || undefined,
+              text: reply,
+              replyTo: comment.replyTo || comment.id,
+              articleId: comment.articleId,
+            },
+            {
+              withCredentials: true,
+              headers: {
+                csrftoken: csrfToken,
+              },
+            }
+          )
+
+          const createdComment = response.data.comment
+
+          setError(null)
+          setSuccess(true)
+          setReply("")
+          insertComment({
+            articleId: comment.articleId,
+            comment: createdComment,
+          })
+        } catch (e) {
+          console.log(e.response)
+          setError("Algum erro aconteceu!")
+          setSuccess(false)
+        } finally {
+          setPopupIn(true)
+          setReplyInputIn(false)
+        }
+      } else {
+        setCommentIn(true)
+        setReplyInputIn(false)
+      }
+    }
+  }
+
+  function convertTime(timestamp) {
+    const time = getTimePassed(timestamp)
+
+    if (!time) {
+      return "Data não encontrada!"
+    } else {
+      return `${time.n}${time.unit}`
+    }
+  }
 
   return (
     <div
-      className={replyTo ? "post-comment post-comment--reply" : "post-comment"}
+      className={
+        comment.replyTo ? "post-comment post-comment--reply" : "post-comment"
+      }
     >
+      <CommentModal
+        modalIn={commentIn}
+        setModalIn={setCommentIn}
+        comment={reply}
+        articleId={comment.articleId}
+        setError={setError}
+        replyTo={comment.replyTo || comment.id}
+        setSuccess={setSuccess}
+        setPopupIn={setPopupIn}
+        setComment={setReply}
+        insertComment={insertComment}
+      />
       <div className="post-comment__header">
-        <div className="post-comment__header--primary">Ednaldo Pereira</div>
-        <div className="post-comment__header--secondary">7h</div>
+        <div className="post-comment__header--primary">{comment.name}</div>
+        <div className="post-comment__header--secondary">
+          {convertTime(new Date(comment.createdAt).getTime())}
+        </div>
         <button
           onClick={() => setReplyInputIn((prevState) => !prevState)}
           className="post-comment__reply-btn"
@@ -18,20 +111,21 @@ export default function Comment({ replyTo }) {
           {replyInputIn ? "Close" : "Reply"}
         </button>
       </div>
-      <div className="post-comment__text">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid earum
-        debitis placeat saepe repellendus nam omnis ipsum, sed sunt qui!
-      </div>
+      <div className="post-comment__text">{comment.text}</div>
       <CSSTransition
         in={replyInputIn}
         timeout={2000}
         classNames="post-comment__reply-input"
         unmountOnExit
       >
-        <input
-          placeholder="Comente aqui"
-          className="post-comment__reply-input"
-        ></input>
+        <form onSubmit={handleSubmit}>
+          <input
+            onChange={(e) => atMost200(e.target.value, setReply)}
+            value={reply}
+            placeholder="Comente aqui"
+            className="post-comment__reply-input"
+          ></input>
+        </form>
       </CSSTransition>
     </div>
   )

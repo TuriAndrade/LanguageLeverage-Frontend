@@ -231,6 +231,9 @@
       margin-right: 0.5rem;
       margin-bottom: 0.5rem;
     }
+
+    //for some reason gap causes a crash here. I think it is because the parent of this element is a grid
+    //so i have to use margins
   }
 
   &__stuff {

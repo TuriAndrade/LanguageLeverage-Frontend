@@ -16,7 +16,7 @@ export default function DefaultSidebarRight() {
         <div className="sidebar__social-media-icon-box">
           <a href="https://twitter.com" className="sidebar__social-media-icon">
             <FiTwitter />
-            <span className="sidebar__social-media-icon--number">456</span>
+            {/*<span className="sidebar__social-media-icon--number">456</span>*/}
           </a>
         </div>
         <div className="sidebar__social-media-icon-box">
@@ -25,7 +25,7 @@ export default function DefaultSidebarRight() {
             className="sidebar__social-media-icon"
           >
             <FiInstagram />
-            <span className="sidebar__social-media-icon--number">855</span>
+            {/*<span className="sidebar__social-media-icon--number">855</span>*/}
           </a>
         </div>
       </div>

@@ -11,12 +11,16 @@ import { CgProfile, FiSearch } from "react-icons/all"
 import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
 import { Link } from "react-router-dom"
+import { FiltersContext } from "../context"
+import { atMost50 } from "../../validators/general"
 
 export default function DefaultNavbar() {
   const [searchbarIn, setSearchbarIn] = useState(false)
   const { language } = useContext(LanguageContext)
   const { user } = useContext(UserContext)
+  const [category, setCategory] = useState("")
   const { sidebarIn, setSidebarIn } = useContext(HiddenSidebarContext)
+  const { setFilters } = useContext(FiltersContext)
 
   return (
     <div className="navbar">
@@ -39,7 +43,14 @@ export default function DefaultNavbar() {
         <form
           onSubmit={(e) => {
             e.preventDefault()
-            setSearchbarIn((prevState) => !prevState)
+            if (category) {
+              setSearchbarIn(false)
+              setCategory("")
+              setFilters((prevstate) => {
+                if (prevstate.includes(category)) return prevstate
+                else return [...prevstate, category]
+              })
+            }
           }}
           className="navbar__search-form"
         >
@@ -50,6 +61,8 @@ export default function DefaultNavbar() {
             unmountOnExit
           >
             <input
+              value={category}
+              onChange={(e) => atMost50(e.target.value, setCategory)}
               className="navbar__search-input"
               type="text"
               placeholder="Pesquise no LangLev"
@@ -61,7 +74,8 @@ export default function DefaultNavbar() {
                 ? "navbar__search-btn navbar__search-btn--active"
                 : "navbar__search-btn"
             }
-            type="submit"
+            onClick={() => setSearchbarIn((prevState) => !prevState)}
+            type="button"
           >
             <div className="navbar__search-icon">
               <FiSearch />

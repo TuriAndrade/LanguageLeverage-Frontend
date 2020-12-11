@@ -1,10 +1,12 @@
-import React, { useState, useContext } from "react"
+import React, { useState, useContext, useEffect } from "react"
 import { CSSTransition } from "react-transition-group"
 import BrazilIcon from "../../assets/Icons/icon-brazil-flag.png"
 import SapinlIcon from "../../assets/Icons/icon-spain-flag.png"
 import UkIcon from "../../assets/Icons/icon-uk-flag.png"
 import {
   FaCheck,
+  FaTimes,
+  FaPlusCircle,
   AiOutlineUser,
   RiHomeLine,
   MdTrendingUp,
@@ -12,15 +14,41 @@ import {
   BsInfoCircle,
   BsGrid3X3Gap,
 } from "react-icons/all"
-import { ThemeContext, LanguageContext } from "../context"
+import { ThemeContext, LanguageContext, FiltersContext } from "../context"
 import { Link, useRouteMatch } from "react-router-dom"
+import api from "../../services/api"
+import UseAnimation from "react-useanimations"
+import loading from "react-useanimations/lib/loading"
 
 export default function DefaultSidebarLeft() {
   const { theme, setTheme } = useContext(ThemeContext)
   const { language, setLanguage } = useContext(LanguageContext)
+  const { filters, setFilters } = useContext(FiltersContext)
 
   const [categoriesIn, setCategoriesIn] = useState(false)
   const [optionsIn, setOptionsIn] = useState(false)
+
+  const [categories, setCategories] = useState([])
+  const [chooseCategories, setChooseCategories] = useState([])
+  const [errorCategories, setErrorCategories] = useState(null)
+  const [loadingCategories, setLoadingCategories] = useState(true)
+
+  useEffect(() => {
+    api
+      .post("/get/subjects")
+      .then((response) => {
+        const subjects = response.data.subjects
+
+        setCategories((prevSubjects) => {
+          setChooseCategories((prevChosen) => {
+            return [...prevChosen, ...subjects.map(() => false)]
+          })
+          return [...prevSubjects, ...subjects]
+        })
+      })
+      .catch((e) => setErrorCategories("Algum erro ocorreu!"))
+      .finally(() => setLoadingCategories(false))
+  }, [])
 
   const home = useRouteMatch({
     path: "/",
@@ -218,21 +246,88 @@ export default function DefaultSidebarLeft() {
             unmountOnExit
           >
             <div className="sidebar__menu-item-expand-box">
-              <div className="sidebar__menu-categories-box">
-                <div className="sidebar__menu-category">Animais</div>
-                <div className="sidebar__menu-category">Slang</div>
-                <div className="sidebar__menu-category">Fanart</div>
-                <div className="sidebar__menu-category">Games</div>
-                <div className="sidebar__menu-category">Creppypasta</div>
-                <div className="sidebar__menu-category">Hoax</div>
-                <div className="sidebar__menu-category">Parody</div>
-                <div className="sidebar__menu-category">Animais</div>
-                <div className="sidebar__menu-category">Slang</div>
-                <div className="sidebar__menu-category">Fanart</div>
-                <div className="sidebar__menu-category">Games</div>
-                <div className="sidebar__menu-category">Creppypasta</div>
-                <div className="sidebar__menu-category">Hoax</div>
-                <div className="sidebar__menu-category">Parody</div>
+              <div
+                className={
+                  errorCategories
+                    ? "sidebar__menu-categories-box sidebar__menu-categories-box--error"
+                    : "sidebar__menu-categories-box"
+                }
+              >
+                {errorCategories ? (
+                  <p>{errorCategories}</p>
+                ) : loadingCategories ? (
+                  <UseAnimation
+                    wrapperStyle={{ width: "3rem", height: "3rem" }}
+                    animation={loading}
+                    strokeColor="#0092db"
+                  />
+                ) : (
+                  <>
+                    <div className="sidebar__menu-categories">
+                      {categories.map((category, index) => {
+                        return (
+                          <div
+                            key={index}
+                            onClick={() => {
+                              setChooseCategories((prevstate) =>
+                                prevstate.map((entry, i) =>
+                                  index === i ? true : entry
+                                )
+                              )
+                              setFilters((prevstate) =>
+                                prevstate.includes(category)
+                                  ? prevstate.filter(
+                                      (entry) => entry !== category
+                                    )
+                                  : [...prevstate, category]
+                              )
+                            }}
+                            className={
+                              filters.includes(category)
+                                ? "sidebar__menu-category sidebar__menu-category--active"
+                                : "sidebar__menu-category sidebar__menu-category--inactive"
+                            }
+                          >
+                            {category}
+                            <CSSTransition
+                              in={chooseCategories[index]}
+                              onEntered={() => {
+                                setChooseCategories((prevstate) =>
+                                  prevstate.map((entry, i) =>
+                                    index === i ? false : entry
+                                  )
+                                )
+                              }}
+                              timeout={1000}
+                              classNames="sidebar__menu-chosen-category"
+                              unmountOnExit
+                            >
+                              <div
+                                className={
+                                  filters.includes(category)
+                                    ? "sidebar__menu-chosen-category sidebar__menu-chosen-category--add"
+                                    : "sidebar__menu-chosen-category sidebar__menu-chosen-category--remove"
+                                }
+                              >
+                                {filters.includes(category) ? (
+                                  <FaCheck />
+                                ) : (
+                                  <FaTimes />
+                                )}
+                              </div>
+                            </CSSTransition>
+                          </div>
+                        )
+                      })}
+                    </div>
+                    <Link
+                      to="/categories"
+                      className="sidebar__menu-categories-btn"
+                    >
+                      <FaPlusCircle />
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </CSSTransition>
