@@ -1,11 +1,9 @@
 import React, { useContext } from "react"
 import Logo from "../../assets/Logo.png"
-import BrazilIcon from "../../assets/Icons/icon-brazil-flag.png"
-import SapinlIcon from "../../assets/Icons/icon-spain-flag.png"
-import UkIcon from "../../assets/Icons/icon-uk-flag.png"
 import { CgProfile } from "react-icons/cg"
 import { LanguageContext } from "../context"
 import { Link } from "react-router-dom"
+import Flags from "country-flag-icons/react/3x2"
 
 export default function ProfileNavbar() {
   const { language } = useContext(LanguageContext)
@@ -23,19 +21,15 @@ export default function ProfileNavbar() {
         </Link>
       </div>
       <div className="navbar__btn-box">
-        <button className="btn-flag">
-          <img
-            src={
-              language === "pt"
-                ? BrazilIcon
-                : language === "en"
-                ? UkIcon
-                : SapinlIcon
-            }
-            alt="Language"
-            className="btn-flag__flag"
-          />
-        </button>
+        <div className="btn-flag">
+          {language === "pt" ? (
+            <Flags.BR title="Português" className="btn-flag__flag"></Flags.BR>
+          ) : language === "en" ? (
+            <Flags.GB title="English" className="btn-flag__flag"></Flags.GB>
+          ) : language === "es" ? (
+            <Flags.ES title="Español" className="btn-flag__flag"></Flags.ES>
+          ) : null}
+        </div>
         <Link to="/profile" className="btn-icon">
           <div className="btn-icon--icon">
             <CgProfile />

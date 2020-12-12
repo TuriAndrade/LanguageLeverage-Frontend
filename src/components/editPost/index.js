@@ -6,7 +6,7 @@ import PopupMessage from "../popupMessage"
 
 import { CSSTransition } from "react-transition-group"
 
-import { atMost100, verifyIfBlank } from "../../validators/general"
+import { atMost100, atMost50, verifyIfBlank } from "../../validators/general"
 
 import api from "../../services/api"
 
@@ -43,6 +43,8 @@ export default function EditPost(props) {
   const [popupIn, setPopupIn] = useState(false)
 
   const [waitingOnSubmit, setWaitingOnSubmit] = useState(false)
+
+  const [category, setCategory] = useState("")
 
   const { csrfToken } = useContext(CsrfContext)
   const categoriesInput = useRef()
@@ -124,10 +126,8 @@ export default function EditPost(props) {
 
   function addCategory(e) {
     e.preventDefault()
-
-    if (categoriesInput.current && categoriesInput.current.value) {
-      setCategories([...categories, categoriesInput.current.value])
-    }
+    setCategories([...categories, category])
+    setCategory("")
   }
 
   function removeCategory(e, index) {
@@ -313,6 +313,8 @@ export default function EditPost(props) {
             <label>Categorias</label>
             <div className="dashboard-form__add-stuff-box">
               <input
+                value={category}
+                onChange={(e) => atMost50(e.target.value, setCategory)}
                 ref={categoriesInput}
                 placeholder="Insira uma categoria"
                 type="text"

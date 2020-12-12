@@ -22,6 +22,7 @@ export default function Post({
   fowardedRef,
   insertComment,
   insertLike,
+  removeLike,
 }) {
   const [isOpened, setIsOpened] = useState(false)
   const [comment, setComment] = useState("")
@@ -85,13 +86,36 @@ export default function Post({
 
           const createdLike = response.data.like
 
-          insertLike({ articleId: article.id, comment: createdLike })
+          insertLike({ articleId: article.id, like: createdLike })
         } catch (e) {
           setError("Algum erro aconteceu!")
           setPopupIn(true)
         }
       } else {
         setLikeIn(true)
+      }
+    } else {
+      try {
+        const response = await api.post(
+          "/dislike",
+          {
+            email: localStorage.getItem("email") || undefined,
+            articleId: article.id,
+          },
+          {
+            withCredentials: true,
+            headers: {
+              csrftoken: csrfToken,
+            },
+          }
+        )
+
+        const likeId = response.data.likeId
+
+        removeLike({ articleId: article.id, likeId })
+      } catch (e) {
+        setError("Algum erro aconteceu!")
+        setPopupIn(true)
       }
     }
   }

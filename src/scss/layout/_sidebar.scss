@@ -33,6 +33,11 @@
     align-items: flex-start;
   }
 
+  &__menu-loading {
+    width: 100%;
+    padding: 0.3rem 1.5rem;
+  }
+
   &__menu-item {
     text-decoration: none;
     position: relative;
@@ -353,6 +358,10 @@
       @include theme-aware("background-color", "color-primary-thin");
       grid-row: row-big-start / row-big-end;
     }
+  }
+
+  &__footer-btn {
+    text-decoration: none;
   }
 
   &__social-media-box {

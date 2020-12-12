@@ -12,7 +12,10 @@ import DefaultBottombar from "../../components/defaultBottombar"
 import scrollToTop from "../../components/scrollToTop"
 import { FiltersContext } from "../../components/context"
 import LoadingContent from "../../components/loadingContent"
+import PopupMessage from "../../components/popupMessage"
 import api from "../../services/api"
+import UseAnimation from "react-useanimations"
+import loading from "react-useanimations/lib/loading"
 
 function Categories({ location }) {
   const { filters, setFilters } = useContext(FiltersContext)
@@ -21,12 +24,14 @@ function Categories({ location }) {
   const [chooseCategories, setChooseCategories] = useState([])
   const [error, setError] = useState(null)
   const [loadingContent, setLoadingContent] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [offset, setOffset] = useState(0)
   const [hasMore, setHasMore] = useState(false)
+  const [popupIn, setPopupIn] = useState(false)
 
   useEffect(() => {
     api
-      .post("/get/subjects")
+      .post("/get/subjects", { offset, limit: 30 })
       .then((response) => {
         const subjects = response.data.subjects
 
@@ -39,12 +44,44 @@ function Categories({ location }) {
 
         setHasMore(subjects.length > 0)
       })
-      .catch((e) => setError(true))
-      .finally(() => setLoadingContent(false))
-  }, [])
+      .catch((e) => {
+        setError("Algum erro aconteceu!")
+        setPopupIn(true)
+      })
+      .finally(() => {
+        setLoadingContent(false)
+        setLoadingMore(false)
+      })
+  }, [offset])
+
+  const observer = useRef()
+
+  const lastCategory = useCallback(
+    (node) => {
+      if (loadingMore) return null
+
+      if (observer.current) observer.current.disconnect()
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setOffset(categories.length)
+          setLoadingMore(true)
+        }
+      })
+
+      if (node) observer.current.observe(node)
+    },
+    [loadingMore, hasMore, categories]
+  )
 
   return (
     <>
+      <PopupMessage
+        modalIn={popupIn}
+        setModalIn={setPopupIn}
+        error={error}
+        setError={setError}
+      />
       <LoadingContent loadingIn={loadingContent} />
       {!loadingContent ? (
         <div className="settings">
@@ -65,70 +102,87 @@ function Categories({ location }) {
               </div>
             </div>
             <div className="settings__menu-item">
-              {!loadingContent ? (
-                <div className="categories__box">
-                  {categories.map((category, index) => {
-                    return (
-                      <div
-                        key={index}
-                        onClick={() => {
+              <div className="categories__box">
+                {categories.map((category, index) => {
+                  return (
+                    <div
+                      ref={
+                        index === categories.length - 1
+                          ? lastCategory
+                          : undefined
+                      }
+                      key={index}
+                      onClick={() => {
+                        setChooseCategories((prevstate) =>
+                          prevstate.map((entry, i) =>
+                            index === i ? true : entry
+                          )
+                        )
+                        setFilters((prevstate) =>
+                          prevstate.includes(category)
+                            ? prevstate.filter((entry) => entry !== category)
+                            : [...prevstate, category]
+                        )
+                      }}
+                      className={
+                        filters.includes(category)
+                          ? "categories__item categories__item--active"
+                          : "categories__item categories__item--inactive"
+                      }
+                    >
+                      {category}
+                      <CSSTransition
+                        in={chooseCategories[index]}
+                        onEntered={() => {
                           setChooseCategories((prevstate) =>
                             prevstate.map((entry, i) =>
-                              index === i ? true : entry
+                              index === i ? false : entry
                             )
-                          )
-                          setFilters((prevstate) =>
-                            prevstate.includes(category)
-                              ? prevstate.filter((entry) => entry !== category)
-                              : [...prevstate, category]
                           )
                         }}
-                        className={
-                          filters.includes(category)
-                            ? "categories__item categories__item--active"
-                            : "categories__item categories__item--inactive"
-                        }
+                        timeout={1000}
+                        classNames="categories__chosen-item"
+                        unmountOnExit
                       >
-                        {category}
-                        <CSSTransition
-                          in={chooseCategories[index]}
-                          onEntered={() => {
-                            setChooseCategories((prevstate) =>
-                              prevstate.map((entry, i) =>
-                                index === i ? false : entry
-                              )
-                            )
-                          }}
-                          timeout={1000}
-                          classNames="categories__chosen-item"
-                          unmountOnExit
+                        <div
+                          className={
+                            filters.includes(category)
+                              ? "categories__chosen-item categories__chosen-item--add"
+                              : "categories__chosen-item categories__chosen-item--remove"
+                          }
                         >
-                          <div
-                            className={
-                              filters.includes(category)
-                                ? "categories__chosen-item categories__chosen-item--add"
-                                : "categories__chosen-item categories__chosen-item--remove"
-                            }
-                          >
-                            {filters.includes(category) ? (
-                              <FaCheck />
-                            ) : (
-                              <FaTimes />
-                            )}
-                          </div>
-                        </CSSTransition>
-                      </div>
-                    )
-                  })}
-                </div>
-              ) : null}
+                          {filters.includes(category) ? (
+                            <FaCheck />
+                          ) : (
+                            <FaTimes />
+                          )}
+                        </div>
+                      </CSSTransition>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
-          </div>
-          <div className="settings__footer">
-            <DefaultBottombar />
+            <CSSTransition
+              in={loadingMore}
+              timeout={300}
+              classNames="feed__loading"
+              unmountOnExit
+            >
+              <div className="feed__loading">
+                <UseAnimation
+                  wrapperStyle={{ width: "4rem", height: "4rem" }}
+                  animation={loading}
+                  strokeColor="#0092db"
+                />
+              </div>
+            </CSSTransition>
           </div>
         </div>
       ) : null}
+      <div className="settings__footer">
+        <DefaultBottombar />
+      </div>
     </>
   )
 }

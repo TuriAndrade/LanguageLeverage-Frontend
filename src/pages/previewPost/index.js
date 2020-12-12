@@ -6,6 +6,7 @@ import PopupMessage from "../../components/popupMessage"
 import getTimePassed from "../../utils/getTimePassed"
 import api from "../../services/api"
 import { UserContext } from "../../components/context"
+import DefaultProfilePic from "../../assets/default-profile-picture.png"
 
 function PreviewPost(props) {
   const [loadingContent, setLoadingContent] = useState(true)
@@ -119,8 +120,22 @@ function PreviewPost(props) {
           <div className="post-box">
             <div className="post-header">
               <div className="post-header__header">
-                <div className="post-header__profile-picture"></div>
-                <div className="post-header__title">{post.title}</div>
+                <div className="post-header__profile-picture">
+                  <img
+                    src={
+                      (post.Editor &&
+                        post.Editor.User &&
+                        post.Editor.User.picture) ||
+                      DefaultProfilePic
+                    }
+                    alt="Profile pic"
+                  />
+                </div>
+                <div className="post-header__login">
+                  <div className="post-header__login--text">
+                    {post.Editor && post.Editor.User && post.Editor.User.login}
+                  </div>
+                </div>
                 <div className="post-header__publish-time">
                   {convertTime(new Date(post.createdAt).getTime())}
                 </div>

@@ -1,14 +1,64 @@
 .bottombar {
-  @include theme-aware("background-color", "color-background");
   width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-auto-flow: column;
-  grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
-  overflow-x: auto;
-  align-items: center;
-  justify-items: center;
+  overflow: hidden;
+  position: relative;
+
+  &__section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    @include theme-aware("background-color", "color-background");
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(auto-fit, minmax(4rem, 1fr));
+    overflow-x: auto;
+    align-items: center;
+    justify-items: center;
+
+    &--1 {
+      &-enter {
+        transform: translateX(-100%);
+      }
+
+      &-enter-active {
+        transform: translateX(0);
+        transition: all 0.4s;
+      }
+
+      &-exit {
+        transform: translateX(0);
+      }
+
+      &-exit-active {
+        transform: translateX(-100%);
+        transition: all 0.4s;
+      }
+    }
+
+    &--2 {
+      &-enter {
+        transform: translateX(100%);
+      }
+
+      &-enter-active {
+        transform: translateX(0);
+        transition: all 0.4s;
+      }
+
+      &-exit {
+        transform: translateX(0);
+      }
+
+      &-exit-active {
+        transform: translateX(100%);
+        transition: all 0.4s;
+      }
+    }
+  }
 
   &::after {
     left: 2rem;
@@ -35,7 +85,7 @@
     height: 100%;
     background: transparent;
     display: flex;
-    padding: 2rem;
+    padding: 1rem;
     align-items: center;
     @include theme-aware("color", "color-text");
 

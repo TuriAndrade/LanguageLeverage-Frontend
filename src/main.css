@@ -1568,17 +1568,45 @@ textarea {
 .bottombar {
   width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-auto-flow: column;
-  grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
-  overflow-x: auto;
-  align-items: center;
-  justify-items: center; }
-  .theme-light .bottombar {
-    background-color: #fff; }
-  .theme-dark .bottombar {
-    background-color: #08090a; }
+  overflow: hidden;
+  position: relative; }
+  .bottombar__section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(auto-fit, minmax(4rem, 1fr));
+    overflow-x: auto;
+    align-items: center;
+    justify-items: center; }
+    .theme-light .bottombar__section {
+      background-color: #fff; }
+    .theme-dark .bottombar__section {
+      background-color: #08090a; }
+    .bottombar__section--1-enter {
+      transform: translateX(-100%); }
+    .bottombar__section--1-enter-active {
+      transform: translateX(0);
+      transition: all 0.4s; }
+    .bottombar__section--1-exit {
+      transform: translateX(0); }
+    .bottombar__section--1-exit-active {
+      transform: translateX(-100%);
+      transition: all 0.4s; }
+    .bottombar__section--2-enter {
+      transform: translateX(100%); }
+    .bottombar__section--2-enter-active {
+      transform: translateX(0);
+      transition: all 0.4s; }
+    .bottombar__section--2-exit {
+      transform: translateX(0); }
+    .bottombar__section--2-exit-active {
+      transform: translateX(100%);
+      transition: all 0.4s; }
   .bottombar::after {
     left: 2rem;
     top: 0;
@@ -1602,7 +1630,7 @@ textarea {
     height: 100%;
     background: transparent;
     display: flex;
-    padding: 2rem;
+    padding: 1rem;
     align-items: center; }
     .theme-light .bottombar__btn-icon {
       color: #141716; }
@@ -1766,6 +1794,10 @@ textarea {
     .dashboard__header::-webkit-scrollbar {
       height: 0;
       width: 0; }
+    @media (max-width: 31.25em) {
+      .dashboard__header {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0; } }
     .dashboard__header > *:not(:last-child) {
       margin-right: 5rem; }
       @media (max-width: 31.25em) {
@@ -3080,14 +3112,16 @@ textarea {
     .hidden-sidebar__item--text-secondary {
       color: #fff;
       font-size: 2.1rem;
-      font-weight: 300;
-      padding-right: 1rem; }
+      font-weight: 300; }
   .hidden-sidebar__item-btn {
     position: absolute;
     right: 4rem;
     bottom: 4rem;
     color: #fff;
     font-size: 2.5rem; }
+    @media (max-width: 22rem) {
+      .hidden-sidebar__item-btn {
+        display: none; } }
   .hidden-sidebar__login-box {
     grid-row: 2 / 3; }
     .theme-light .hidden-sidebar__login-box {
@@ -3390,7 +3424,8 @@ textarea {
     width: 100%;
     height: 8rem;
     bottom: 0;
-    left: 0; }
+    left: 0;
+    z-index: 500; }
   .settings__menu-box {
     width: 100%;
     overflow-y: auto;
@@ -3469,6 +3504,9 @@ textarea {
     display: flex;
     flex-direction: column;
     align-items: flex-start; }
+  .sidebar__menu-loading {
+    width: 100%;
+    padding: 0.3rem 1.5rem; }
   .sidebar__menu-item {
     text-decoration: none;
     position: relative;
@@ -3756,6 +3794,8 @@ textarea {
         background-color: rgba(0, 146, 219, 0.65); }
       .theme-dark .sidebar__advertisement-box--big {
         background-color: rgba(0, 146, 219, 0.45); }
+  .sidebar__footer-btn {
+    text-decoration: none; }
   .sidebar__social-media-box {
     padding-left: 1rem;
     grid-row: row-small-start-1 / row-small-end-1;

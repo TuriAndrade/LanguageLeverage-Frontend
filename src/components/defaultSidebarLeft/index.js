@@ -1,8 +1,6 @@
 import React, { useState, useContext, useEffect } from "react"
 import { CSSTransition } from "react-transition-group"
-import BrazilIcon from "../../assets/Icons/icon-brazil-flag.png"
-import SapinlIcon from "../../assets/Icons/icon-spain-flag.png"
-import UkIcon from "../../assets/Icons/icon-uk-flag.png"
+import Flags from "country-flag-icons/react/3x2"
 import {
   FaCheck,
   FaTimes,
@@ -14,7 +12,12 @@ import {
   BsInfoCircle,
   BsGrid3X3Gap,
 } from "react-icons/all"
-import { ThemeContext, LanguageContext, FiltersContext } from "../context"
+import {
+  ThemeContext,
+  LanguageContext,
+  FiltersContext,
+  UserContext,
+} from "../context"
 import { Link, useRouteMatch } from "react-router-dom"
 import api from "../../services/api"
 import UseAnimation from "react-useanimations"
@@ -24,6 +27,7 @@ export default function DefaultSidebarLeft() {
   const { theme, setTheme } = useContext(ThemeContext)
   const { language, setLanguage } = useContext(LanguageContext)
   const { filters, setFilters } = useContext(FiltersContext)
+  const { user } = useContext(UserContext)
 
   const [categoriesIn, setCategoriesIn] = useState(false)
   const [optionsIn, setOptionsIn] = useState(false)
@@ -114,11 +118,10 @@ export default function DefaultSidebarLeft() {
                     }}
                     className="btn-flag"
                   >
-                    <img
-                      src={BrazilIcon}
-                      alt="Language"
+                    <Flags.BR
+                      tile="Português"
                       className="btn-flag__flag"
-                    />
+                    ></Flags.BR>
                     <div className="btn-flag__text">Português</div>
                     {language === "pt" ? (
                       <div className="btn-flag__active">
@@ -131,13 +134,12 @@ export default function DefaultSidebarLeft() {
                       setLanguage("es")
                       localStorage.setItem("language", "es")
                     }}
-                    className="btn-flag"
+                    className="btn-flag u-disabled-btn"
                   >
-                    <img
-                      src={SapinlIcon}
-                      alt="Language"
+                    <Flags.ES
+                      tile="Español"
                       className="btn-flag__flag"
-                    />
+                    ></Flags.ES>
                     <div className="btn-flag__text">Español</div>
                     {language === "es" ? (
                       <div className="btn-flag__active">
@@ -150,13 +152,12 @@ export default function DefaultSidebarLeft() {
                       setLanguage("en")
                       localStorage.setItem("language", "en")
                     }}
-                    className="btn-flag"
+                    className="btn-flag u-disabled-btn"
                   >
-                    <img
-                      src={UkIcon}
-                      alt="Language"
+                    <Flags.GB
+                      tile="English"
                       className="btn-flag__flag"
-                    />
+                    ></Flags.GB>
                     <div className="btn-flag__text">English</div>
                     {language === "en" ? (
                       <div className="btn-flag__active">
@@ -197,7 +198,7 @@ export default function DefaultSidebarLeft() {
                   </button>
                 </div>
                 <div className="sidebar__menu-options-footer">
-                  <button className="u-margin-top-tiny btn-primary btn-primary--thin btn-primary--w100 btn-primary--color-primary">
+                  <button className="u-margin-top-tiny btn-primary btn-primary--thin btn-primary--w100 btn-primary--color-primary u-disabled-btn">
                     <div className="btn-primary--text">Personalizar o feed</div>
                   </button>
                 </div>
@@ -350,22 +351,32 @@ export default function DefaultSidebarLeft() {
             </button>
           </CSSTransition>
         </div>
-        <div className="sidebar__menu-item-box">
-          <Link to="/register" className="sidebar__menu-item">
-            <div className="sidebar__menu-icon">
-              <AiOutlineUser />
-            </div>
-            <div className="sidebar__menu-text">Cadastro</div>
-          </Link>
-        </div>
+        {user && user.loading ? (
+          <div className="sidebar__menu-loading">
+            <UseAnimation
+              wrapperStyle={{ width: "3rem", height: "3rem" }}
+              animation={loading}
+              strokeColor="#0092db"
+            />
+          </div>
+        ) : user ? null : (
+          <div className="sidebar__menu-item-box">
+            <Link to="/register" className="sidebar__menu-item">
+              <div className="sidebar__menu-icon">
+                <AiOutlineUser />
+              </div>
+              <div className="sidebar__menu-text">Cadastro</div>
+            </Link>
+          </div>
+        )}
       </div>
       <div className="sidebar__footer">
-        <div className="sidebar__footer--secondary">Developed by</div>
         <a
+          className="sidebar__footer-btn"
           href="https://github.com/TuriAndrade"
-          className="sidebar__footer--primary"
         >
-          Turi Andrade
+          <div className="sidebar__footer--secondary">Developed by</div>
+          <div className="sidebar__footer--primary">Turi Andrade</div>
         </a>
       </div>
     </div>

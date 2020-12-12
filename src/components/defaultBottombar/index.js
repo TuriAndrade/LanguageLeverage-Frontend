@@ -34,75 +34,77 @@ export default function DefaultBottombar() {
 
   return (
     <div className="bottombar">
-      <div className="bottombar__item">
-        <Link
-          to="/"
-          className={
-            home
-              ? "bottombar__btn-icon bottombar__btn-icon--active"
-              : "bottombar__btn-icon"
-          }
-        >
-          <RiHomeLine />
-        </Link>
-      </div>
-      <div className="bottombar__item">
-        <Link
-          to="/trending"
-          className={
-            trending
-              ? "bottombar__btn-icon bottombar__btn-icon--active"
-              : "bottombar__btn-icon"
-          }
-        >
-          <MdTrendingUp />
-        </Link>
-      </div>
-      <div className="bottombar__item">
-        <Link
-          to={{
-            pathname: "/preferences",
-            state: {
-              prevLocation: location.pathname,
-            },
-          }}
-          className={
-            preferences
-              ? "bottombar__btn-icon bottombar__btn-icon--active"
-              : "bottombar__btn-icon"
-          }
-        >
-          <RiSettingsLine />
-        </Link>
-      </div>
-      <div className="bottombar__item">
-        <Link
-          to="/about"
-          className={
-            about
-              ? "bottombar__btn-icon bottombar__btn-icon--active"
-              : "bottombar__btn-icon"
-          }
-        >
-          <BsInfoCircle />
-        </Link>
-      </div>
-      <div className="bottombar__item">
-        <Link
-          to={{
-            pathname: "/categories",
-            state: {
-              prevLocation: location.pathname,
-            },
-          }}
-          className={
-            categories
-              ? "bottombar__btn-icon bottombar__btn-icon--active"
-              : "bottombar__btn-icon"
-          }
-        >
-          <BsGrid3X3Gap />
-        </Link>
+      <div className="bottombar__section">
+        <div className="bottombar__item">
+          <Link
+            to="/"
+            className={
+              home
+                ? "bottombar__btn-icon bottombar__btn-icon--active"
+                : "bottombar__btn-icon"
+            }
+          >
+            <RiHomeLine />
+          </Link>
+        </div>
+        <div className="bottombar__item">
+          <Link
+            to="/trending"
+            className={
+              trending
+                ? "bottombar__btn-icon bottombar__btn-icon--active"
+                : "bottombar__btn-icon"
+            }
+          >
+            <MdTrendingUp />
+          </Link>
+        </div>
+        <div className="bottombar__item">
+          <Link
+            to={{
+              pathname: "/preferences",
+              state: {
+                prevLocation: location.pathname,
+              },
+            }}
+            className={
+              preferences
+                ? "bottombar__btn-icon bottombar__btn-icon--active"
+                : "bottombar__btn-icon"
+            }
+          >
+            <RiSettingsLine />
+          </Link>
+        </div>
+        <div className="bottombar__item">
+          <Link
+            to="/about"
+            className={
+              about
+                ? "bottombar__btn-icon bottombar__btn-icon--active"
+                : "bottombar__btn-icon"
+            }
+          >
+            <BsInfoCircle />
+          </Link>
+        </div>
+        <div className="bottombar__item">
+          <Link
+            to={{
+              pathname: "/categories",
+              state: {
+                prevLocation: location.pathname,
+              },
+            }}
+            className={
+              categories
+                ? "bottombar__btn-icon bottombar__btn-icon--active"
+                : "bottombar__btn-icon"
+            }
+          >
+            <BsGrid3X3Gap />
+          </Link>
+        </div>
       </div>
     </div>
   )

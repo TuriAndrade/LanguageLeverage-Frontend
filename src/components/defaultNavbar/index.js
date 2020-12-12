@@ -1,9 +1,6 @@
 import React, { useState, useContext } from "react"
 import Logo from "../../assets/Logo.png"
 import { CSSTransition } from "react-transition-group"
-import BrazilIcon from "../../assets/Icons/icon-brazil-flag.png"
-import SapinlIcon from "../../assets/Icons/icon-spain-flag.png"
-import UkIcon from "../../assets/Icons/icon-uk-flag.png"
 import { LanguageContext } from "../../components/context"
 import { UserContext } from "../../components/context"
 import { HiddenSidebarContext } from "../defaultHiddenSidebar/context"
@@ -13,6 +10,7 @@ import loading from "react-useanimations/lib/loading"
 import { Link } from "react-router-dom"
 import { FiltersContext } from "../context"
 import { atMost50 } from "../../validators/general"
+import Flags from "country-flag-icons/react/3x2"
 
 export default function DefaultNavbar() {
   const [searchbarIn, setSearchbarIn] = useState(false)
@@ -25,18 +23,32 @@ export default function DefaultNavbar() {
   return (
     <div className="navbar">
       <div className="navbar__menu-box">
-        <button
-          onClick={() => setSidebarIn((prevState) => !prevState)}
-          className="navbar__menu-btn-box"
-        >
-          <CSSTransition
-            in={sidebarIn}
-            timeout={500}
-            classNames="navbar__menu-btn"
+        {user && user.loading ? (
+          <UseAnimation
+            wrapperStyle={{ width: "3rem", height: "3rem" }}
+            animation={loading}
+            strokeColor="#0092db"
+          />
+        ) : user ? (
+          <Link to="/profile" className="btn-icon">
+            <div className="btn-icon--icon">
+              <CgProfile />
+            </div>
+          </Link>
+        ) : (
+          <button
+            onClick={() => setSidebarIn((prevState) => !prevState)}
+            className="navbar__menu-btn-box"
           >
-            <div className="navbar__menu-btn"></div>
-          </CSSTransition>
-        </button>
+            <CSSTransition
+              in={sidebarIn}
+              timeout={500}
+              classNames="navbar__menu-btn"
+            >
+              <div className="navbar__menu-btn"></div>
+            </CSSTransition>
+          </button>
+        )}
         <img src={Logo} alt="Logo" className="navbar__logo" />
       </div>
       <div className="navbar__search-box">
@@ -84,19 +96,15 @@ export default function DefaultNavbar() {
         </form>
       </div>
       <div className="navbar__btn-box">
-        <button className="btn-flag">
-          <img
-            src={
-              language === "pt"
-                ? BrazilIcon
-                : language === "en"
-                ? UkIcon
-                : SapinlIcon
-            }
-            alt="Language"
-            className="btn-flag__flag"
-          />
-        </button>
+        <div className="btn-flag">
+          {language === "pt" ? (
+            <Flags.BR title="Português" className="btn-flag__flag"></Flags.BR>
+          ) : language === "en" ? (
+            <Flags.GB title="English" className="btn-flag__flag"></Flags.GB>
+          ) : language === "es" ? (
+            <Flags.ES title="Español" className="btn-flag__flag"></Flags.ES>
+          ) : null}
+        </div>
         {user && user.loading ? (
           <UseAnimation
             wrapperStyle={{ width: "3rem", height: "3rem" }}

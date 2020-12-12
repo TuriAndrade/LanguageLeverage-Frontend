@@ -54,6 +54,11 @@
       width: 0;
     }
 
+    @include respond(small-phone) {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
     & > *:not(:last-child) {
       margin-right: 5rem;
 

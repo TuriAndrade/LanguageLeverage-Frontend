@@ -128,6 +128,20 @@ function Main() {
     )
   }
 
+  function removeLike({ articleId, likeId }) {
+    setArticles((prevstate) =>
+      prevstate.map((article) => {
+        if (articleId === article.id) {
+          return {
+            ...article,
+            Likes: article.Likes.filter((like) => like.id !== likeId),
+            isLiked: false,
+          }
+        } else return article
+      })
+    )
+  }
+
   function removeCategory(index) {
     setFilters((prevstate) => prevstate.filter((entry, i) => i !== index))
   }
@@ -175,38 +189,20 @@ function Main() {
             </div>
           ) : null}
           {articles.map((article, index) => {
-            return index === articles.length - 1 ? (
+            return (
               <Post
-                fowardedRef={lastArticle}
+                fowardedRef={
+                  index === articles.length - 1 ? lastArticle : undefined
+                }
                 key={article.id}
                 article={article}
                 insertComment={insertComment}
                 insertLike={insertLike}
-              />
-            ) : (
-              <Post
-                key={article.id}
-                article={article}
-                insertComment={insertComment}
-                insertLike={insertLike}
+                removeLike={removeLike}
               />
             )
           })}
-          <CSSTransition
-            in={loadingMoreArticles}
-            timeout={300}
-            classNames="feed__loading"
-            unmountOnExit
-          >
-            <div className="feed__loading">
-              <UseAnimation
-                wrapperStyle={{ width: "4rem", height: "4rem" }}
-                animation={loading}
-                strokeColor="#0092db"
-              />
-            </div>
-          </CSSTransition>
-          {!hasMoreArticles && articles.length > 0 && (
+          {!hasMoreArticles && articles.length > 0 ? (
             <div className="post-box post-box--thats-it">
               <div className="post-box__icon post-box__icon--primary">
                 <GoVerified />
@@ -215,6 +211,21 @@ function Main() {
                 Isso é tudo!
               </div>
             </div>
+          ) : (
+            <CSSTransition
+              in={loadingMoreArticles}
+              timeout={300}
+              classNames="feed__loading"
+              unmountOnExit
+            >
+              <div className="feed__loading">
+                <UseAnimation
+                  wrapperStyle={{ width: "4rem", height: "4rem" }}
+                  animation={loading}
+                  strokeColor="#0092db"
+                />
+              </div>
+            </CSSTransition>
           )}
           {articles.length === 0 && (
             <div className="no-content">
