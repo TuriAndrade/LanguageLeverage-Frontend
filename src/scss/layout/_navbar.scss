@@ -164,6 +164,14 @@
     }
   }
 
+  &__profile-btn-box {
+    display: none;
+
+    @include respond(tab-port) {
+      display: flex;
+    }
+  }
+
   &__logo {
     height: 4rem;
 

@@ -25,12 +25,13 @@ export default function DefaultNavbar() {
       <div className="navbar__menu-box">
         {user && user.loading ? (
           <UseAnimation
+            className="navbar__profile-btn-box"
             wrapperStyle={{ width: "3rem", height: "3rem" }}
             animation={loading}
             strokeColor="#0092db"
           />
         ) : user ? (
-          <Link to="/profile" className="btn-icon">
+          <Link to="/profile" className="btn-icon navbar__profile-btn-box">
             <div className="btn-icon--icon">
               <CgProfile />
             </div>

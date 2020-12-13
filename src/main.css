@@ -3290,6 +3290,11 @@ textarea {
     @media (max-width: 56.25em) {
       .navbar__menu-btn-box--profile {
         display: none; } }
+  .navbar__profile-btn-box {
+    display: none; }
+    @media (max-width: 56.25em) {
+      .navbar__profile-btn-box {
+        display: flex; } }
   .navbar__logo {
     height: 4rem; }
     @media (max-width: 56.25em) {
