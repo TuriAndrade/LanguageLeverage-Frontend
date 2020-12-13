@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react"
+import React, { useState, useContext } from "react"
 import { FiClock, FaTimes, RiSettingsLine } from "react-icons/all"
 import { CSSTransition } from "react-transition-group"
 import getTimePassed from "../../utils/getTimePassed"
@@ -8,6 +8,7 @@ import { CsrfContext } from "../context"
 import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
 import { UserContext } from "../context"
+import "dotenv"
 
 export default function DashboardPost({
   article,
@@ -29,14 +30,6 @@ export default function DashboardPost({
   )
   const { csrfToken } = useContext(CsrfContext)
   const { user } = useContext(UserContext)
-
-  useEffect(() => {
-    if (messageIn) {
-      const messageTimeout = setTimeout(() => setMessageIn(false), 2000)
-
-      return () => clearTimeout(messageTimeout)
-    }
-  }, [messageIn])
 
   function convertTime(timestamp) {
     const time = getTimePassed(timestamp)
@@ -220,7 +213,7 @@ export default function DashboardPost({
 
   function copyToClipboard() {
     navigator.clipboard
-      .writeText(`localhost:3000/post/${article.id}`)
+      .writeText(`${process.env.REACT_APP_URL}/post/${article.id}`)
       .then(
         function () {
           setMessage("Link copiado!")
@@ -240,7 +233,9 @@ export default function DashboardPost({
       <CSSTransition
         in={messageIn}
         classNames="bottom-message"
-        timeout={400}
+        timeout={{ enter: 1200, exit: 400 }}
+        onEntered={() => setMessageIn(false)}
+        onExited={() => setMessage(null)}
         unmountOnExit
       >
         <div className="bottom-message">{message}</div>

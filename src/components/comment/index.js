@@ -5,6 +5,7 @@ import api from "../../services/api"
 import { atMost200 } from "../../validators/general"
 import { CsrfContext, UserContext } from "../context"
 import CommentModal from "../commentModal"
+import { GoVerified } from "react-icons/all"
 
 export default function Comment({
   comment,
@@ -101,15 +102,26 @@ export default function Comment({
       />
       <div className="post-comment__header">
         <div className="post-comment__header--primary">{comment.name}</div>
+        {comment.userType === "editor" ? (
+          <div className="post-comment__header--green-icon">
+            <GoVerified />
+          </div>
+        ) : comment.userType === "admin" ? (
+          <div className="post-comment__header--primary-icon">
+            <GoVerified />
+          </div>
+        ) : null}
         <div className="post-comment__header--secondary">
           {convertTime(new Date(comment.createdAt).getTime())}
         </div>
-        <button
-          onClick={() => setReplyInputIn((prevState) => !prevState)}
-          className="post-comment__reply-btn"
-        >
-          {replyInputIn ? "Close" : "Reply"}
-        </button>
+        {!comment.replyTo ? (
+          <button
+            onClick={() => setReplyInputIn((prevState) => !prevState)}
+            className="post-comment__reply-btn"
+          >
+            {replyInputIn ? "Close" : "Reply"}
+          </button>
+        ) : null}
       </div>
       <div className="post-comment__text">{comment.text}</div>
       <CSSTransition

@@ -33,7 +33,8 @@ import NewPost from "./pages/newPost"
 import AllPosts from "./pages/allPosts"
 import UpdatePost from "./pages/updatePost"
 import PreviewPost from "./pages/previewPost"
-import EditorPosts from ".//pages/editorPosts"
+import EditorPosts from "./pages/editorPosts"
+import Post from "./pages/post"
 
 import { ProfileLayout, DefaultLayout } from "./components/layout"
 
@@ -183,6 +184,11 @@ export default function Routes() {
                             restricted={false}
                             path="/trending"
                             component={Trending}
+                          />
+                          <PublicRoute
+                            restricted={false}
+                            path="/post/:id"
+                            component={Post}
                           />
                           <PublicRoute
                             restricted={false}

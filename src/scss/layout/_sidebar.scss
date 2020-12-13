@@ -348,16 +348,29 @@
 
   &__advertisement-box {
     border-radius: 1.5rem;
+    overflow: hidden;
 
     &--small {
-      @include theme-aware("background-color", "color-primary");
       grid-row: row-medium-start / row-medium-end;
     }
 
     &--big {
-      @include theme-aware("background-color", "color-primary-thin");
       grid-row: row-big-start / row-big-end;
     }
+  }
+
+  &__no-ads-message {
+    @include theme-aware("background-color", "color-primary-thin");
+    text-align: center;
+    padding: 2rem;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: $default-font-size;
+    font-weight: 500;
+    color: $color-white;
   }
 
   &__footer-btn {

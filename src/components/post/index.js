@@ -1,6 +1,7 @@
 import React, { useState, useContext, useRef, useEffect } from "react"
 import Comment from "../comment"
 import { CsrfContext, UserContext } from "../context"
+import { CSSTransition } from "react-transition-group"
 import CommentModal from "../commentModal"
 import LikeModal from "../likeModal"
 import {
@@ -30,6 +31,9 @@ export default function Post({
   const [likeIn, setLikeIn] = useState(false)
   const [popupIn, setPopupIn] = useState(false)
 
+  const [message, setMessage] = useState(null)
+  const [messageIn, setMessageIn] = useState(false)
+
   const [scrollToComments, setScrollToComments] = useState(false)
 
   const [error, setError] = useState(null)
@@ -45,8 +49,8 @@ export default function Post({
     if (isOpened && scrollToComments && commentInput && commentInput.current) {
       commentInput.current.scrollIntoView({
         behavior: "smooth",
-        block: "end",
-        inline: "end",
+        block: "center",
+        inline: "center",
       })
 
       setScrollToComments(false)
@@ -163,8 +167,34 @@ export default function Post({
     }
   }
 
+  function copyToClipboard() {
+    navigator.clipboard
+      .writeText(`${process.env.REACT_APP_URL}/post/${article.id}`)
+      .then(
+        function () {
+          setMessage("Link copiado!")
+        },
+        function () {
+          setMessage("Falha ao copiar o link!")
+        }
+      )
+      .finally(() => {
+        setMessageIn(true)
+      })
+  }
+
   return (
     <div ref={fowardedRef} className="post-box">
+      <CSSTransition
+        in={messageIn}
+        classNames="bottom-message"
+        timeout={{ enter: 1200, exit: 400 }}
+        onEntered={() => setMessageIn(false)}
+        onExited={() => setMessage(null)}
+        unmountOnExit
+      >
+        <div className="bottom-message">{message}</div>
+      </CSSTransition>
       <PopupMessage
         modalIn={popupIn}
         setModalIn={setPopupIn}
@@ -253,7 +283,10 @@ export default function Post({
             </button>
           </div>
           <div className="post-header__btn">
-            <button className="btn-icon btn-icon--primary">
+            <button
+              onClick={copyToClipboard}
+              className="btn-icon btn-icon--primary"
+            >
               <div className="btn-icon--icon">
                 <AiOutlineShareAlt />
               </div>

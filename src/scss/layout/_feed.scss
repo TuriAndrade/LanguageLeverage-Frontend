@@ -378,6 +378,18 @@
       margin-right: 2rem;
     }
 
+    &--primary-icon {
+      @include theme-aware("color", "color-primary");
+      font-size: 1.5rem;
+      display: flex;
+    }
+
+    &--green-icon {
+      @include theme-aware("color", "color-green");
+      font-size: 1.5rem;
+      display: flex;
+    }
+
     &--primary {
       font-weight: 500;
       @include theme-aware("color", "color-text");

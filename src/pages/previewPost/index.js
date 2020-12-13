@@ -12,7 +12,6 @@ function PreviewPost(props) {
   const [loadingContent, setLoadingContent] = useState(true)
   const [error, setError] = useState(null)
   const [post, setPost] = useState(null)
-  const [categories, setCategories] = useState([])
   const [popupIn, setPopupIn] = useState(false)
 
   const { user } = useContext(UserContext)
@@ -27,18 +26,7 @@ function PreviewPost(props) {
           .then((response) => {
             const article = response.data.article
 
-            if (article) {
-              setPost(article)
-
-              const subjects = article.Subjects
-
-              if (subjects) {
-                subjects.map((subject) => {
-                  setCategories((prevstate) => [...prevstate, subject.subject])
-                  return null
-                })
-              }
-            }
+            setPost(article)
           })
           .catch((e) => {
             if (
@@ -52,7 +40,6 @@ function PreviewPost(props) {
             }
             setPopupIn(true)
             setPost(null)
-            setCategories([])
           })
           .finally(() => setLoadingContent(false))
       } else {
@@ -63,18 +50,7 @@ function PreviewPost(props) {
           .then((response) => {
             const article = response.data.article
 
-            if (article) {
-              setPost(article)
-
-              const subjects = article.Subjects
-
-              if (subjects) {
-                subjects.map((subject) => {
-                  setCategories((prevstate) => [...prevstate, subject.subject])
-                  return null
-                })
-              }
-            }
+            setPost(article)
           })
           .catch((e) => {
             if (
@@ -89,7 +65,6 @@ function PreviewPost(props) {
             }
             setPopupIn(true)
             setPost(null)
-            setCategories([])
           })
           .finally(() => setLoadingContent(false))
       }
@@ -172,11 +147,11 @@ function PreviewPost(props) {
                 dangerouslySetInnerHTML={{ __html: post.html }}
                 className="post-content__content-box"
               ></div>
-              {categories ? (
+              {post.Subjects && post.Subjects.length > 0 ? (
                 <div className="post-content__categories-box">
-                  {categories.map((category, index) => (
+                  {post.Subjects.map((subject, index) => (
                     <div key={index} className="post-content__category">
-                      {category}
+                      {subject.subject}
                     </div>
                   ))}
                 </div>
