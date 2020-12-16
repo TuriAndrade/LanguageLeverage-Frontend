@@ -126,8 +126,10 @@ export default function EditPost(props) {
 
   function addCategory(e) {
     e.preventDefault()
-    setCategories([...categories, category])
-    setCategory("")
+    if (category) {
+      setCategories([...categories, category])
+      setCategory("")
+    }
   }
 
   function removeCategory(e, index) {
