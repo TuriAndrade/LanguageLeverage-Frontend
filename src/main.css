@@ -584,6 +584,10 @@ textarea {
   .border-btn::after {
     bottom: 0;
     right: 0; }
+  .theme-light .border-btn {
+    color: #141716; }
+  .theme-dark .border-btn {
+    color: #fff; }
   .theme-light .border-btn--active {
     color: #0092db; }
   .theme-dark .border-btn--active {

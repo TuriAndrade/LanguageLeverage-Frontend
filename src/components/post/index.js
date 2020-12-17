@@ -17,6 +17,7 @@ import DefaultProfilePicture from "../../assets/default-profile-picture.png"
 import { atMost200 } from "../../validators/general"
 import api from "../../services/api"
 import PopupMessage from "../popupMessage"
+import Img from "react-cool-img"
 
 export default function Post({
   article,
@@ -227,7 +228,7 @@ export default function Post({
       <div className="post-header">
         <div className="post-header__header">
           <div className="post-header__profile-picture">
-            <img
+            <Img
               src={
                 (article.Editor &&
                   article.Editor.User &&
@@ -247,7 +248,7 @@ export default function Post({
           </div>
         </div>
         <div className="post-header__cover">
-          <img src={article.cover} alt="Capa" />
+          <Img src={article.cover} alt="Capa" />
         </div>
         <div className="post-header__btn-box">
           <div className="post-header__btn">

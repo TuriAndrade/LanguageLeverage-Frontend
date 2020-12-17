@@ -5,6 +5,7 @@ import DefaultProfilePic from "../../assets/default-profile-picture.png"
 import ControlledInput from "../../components/controlledInput"
 import LoadingContent from "../../components/loadingContent"
 import PopupMessage from "../../components/popupMessage"
+import Img from "react-cool-img"
 
 import {
   atMost100,
@@ -287,7 +288,7 @@ function Profile() {
             <form onSubmit={handleChangePassword} className="dashboard-form">
               <div className="dashboard-form__header">
                 <div className="dashboard-form__picture">
-                  <img
+                  <Img
                     src={profilePicture || DefaultProfilePic}
                     alt="Profile"
                   />

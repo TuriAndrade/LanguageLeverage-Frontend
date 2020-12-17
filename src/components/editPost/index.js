@@ -24,6 +24,8 @@ import {
 import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
 
+import Img from "react-cool-img"
+
 export default function EditPost(props) {
   const [html, setHtml] = useState(null)
   const [delta, setDelta] = useState(null)
@@ -288,7 +290,7 @@ export default function EditPost(props) {
                 </>
               ) : (
                 <>
-                  <img src={cover} alt="Cover"></img>
+                  <Img src={cover} alt="Cover" />
                   <label
                     htmlFor="dashboard-form__file-input"
                     className="dashboard-form__change-cover-btn"

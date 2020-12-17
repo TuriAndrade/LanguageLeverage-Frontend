@@ -17,6 +17,7 @@ import Comment from "../../components/comment"
 import CommentModal from "../../components/commentModal"
 import LikeModal from "../../components/likeModal"
 import { CSSTransition } from "react-transition-group"
+import Img from "react-cool-img"
 import "dotenv"
 
 function Post(props) {
@@ -289,7 +290,7 @@ function Post(props) {
             <div className="post-header">
               <div className="post-header__header">
                 <div className="post-header__profile-picture">
-                  <img
+                  <Img
                     src={
                       (post.Editor &&
                         post.Editor.User &&
@@ -309,7 +310,7 @@ function Post(props) {
                 </div>
               </div>
               <div className="post-header__cover">
-                <img src={post.cover} alt="Meme" />
+                <Img src={post.cover} alt="Meme" />
               </div>
               <div className="post-header__btn-box">
                 <div className="post-header__btn">

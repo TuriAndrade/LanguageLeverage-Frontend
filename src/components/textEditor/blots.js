@@ -70,6 +70,8 @@ export class ImageBlot extends BlockEmbed {
     const imgElement = document.createElement("img")
     imgElement.classList.add("quill__image")
 
+    imgElement.setAttribute("loading", "lazy")
+
     if (value.src) imgElement.setAttribute("src", value.src)
     if (value.alt) imgElement.setAttribute("alt", value.alt)
     if (value.key) imgElement.setAttribute("key", value.key)
@@ -99,6 +101,8 @@ export class VideoBlot extends BlockEmbed {
     videoWrapper.classList.add("quill__video-wrapper")
     const iframeElement = document.createElement("iframe")
     iframeElement.classList.add("quill__video")
+
+    iframeElement.setAttribute("loading", "lazy")
 
     if (value.src) iframeElement.setAttribute("src", value.src)
     if (value.alt) iframeElement.setAttribute("alt", value.alt)

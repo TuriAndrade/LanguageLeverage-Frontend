@@ -308,6 +308,8 @@
     right: 0;
   }
 
+  @include theme-aware("color", "color-text");
+
   &--active {
     @include theme-aware("color", "color-primary");
   }
