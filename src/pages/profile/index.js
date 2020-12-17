@@ -205,6 +205,13 @@ function Profile() {
           e.response.data.error === "File too large"
         ) {
           setError("Arquivo muito grande!")
+        } else if (
+          e.response &&
+          e.response.data &&
+          (e.response.data.error === "No admin found with this id!" ||
+            e.response.data.error === "No validated editor found with this id!")
+        ) {
+          setError("Você não tem permissão para isso!")
         } else {
           setError("Algum erro ocorreu!")
         }
