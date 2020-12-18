@@ -19,6 +19,9 @@ import LikeModal from "../../components/likeModal"
 import { CSSTransition } from "react-transition-group"
 import Img from "react-cool-img"
 import "dotenv"
+import axios from "axios"
+import UseAnimation from "react-useanimations"
+import loading from "react-useanimations/lib/loading"
 
 function Post(props) {
   const [loadingContent, setLoadingContent] = useState(true)
@@ -27,16 +30,21 @@ function Post(props) {
   const [post, setPost] = useState(null)
   const [popupIn, setPopupIn] = useState(false)
   const [comment, setComment] = useState("")
+  const [loadingComment, setLoadingComment] = useState(false)
   const [commentIn, setCommentIn] = useState(false)
   const [likeIn, setLikeIn] = useState(false)
   const [scrollToComments, setScrollToComments] = useState(false)
   const [message, setMessage] = useState(null)
   const [messageIn, setMessageIn] = useState(false)
+  const [like, setLike] = useState(false)
+  const [nLikes, setNLikes] = useState(0)
 
   const { user } = useContext(UserContext)
   const { csrfToken } = useContext(CsrfContext)
 
   const commentInput = useRef()
+
+  const cancelLike = useRef(null)
 
   useEffect(() => {
     if (scrollToComments && commentInput && commentInput.current) {
@@ -64,6 +72,12 @@ function Post(props) {
           const article = response.data.article
 
           setPost(article)
+
+          setNLikes(article.Likes.length)
+
+          if (article.isLiked) {
+            setLike(true)
+          }
         })
         .catch((e) => {
           if (
@@ -93,12 +107,16 @@ function Post(props) {
   }
 
   async function handleLike() {
-    if (!post.isLiked) {
+    cancelLike.current && cancelLike.current()
+
+    if (!like) {
       if (
         (localStorage.getItem("name") && localStorage.getItem("email")) ||
         (user && !user.loading)
       ) {
         try {
+          setLike(true)
+          setNLikes((prevstate) => prevstate + 1)
           const response = await api.post(
             "/like",
             {
@@ -107,6 +125,9 @@ function Post(props) {
             },
             {
               withCredentials: true,
+              cancelToken: new axios.CancelToken(
+                (c) => (cancelLike.current = c)
+              ),
               headers: {
                 csrftoken: csrfToken,
               },
@@ -117,14 +138,15 @@ function Post(props) {
 
           insertLike({ like: createdLike })
         } catch (e) {
-          setError("Algum erro aconteceu!")
-          setPopupIn(true)
+          return
         }
       } else {
         setLikeIn(true)
       }
     } else {
       try {
+        setLike(false)
+        setNLikes((prevstate) => prevstate - 1)
         const response = await api.post(
           "/dislike",
           {
@@ -133,6 +155,7 @@ function Post(props) {
           },
           {
             withCredentials: true,
+            cancelToken: new axios.CancelToken((c) => (cancelLike.current = c)),
             headers: {
               csrftoken: csrfToken,
             },
@@ -143,8 +166,7 @@ function Post(props) {
 
         removeLike({ likeId })
       } catch (e) {
-        setError("Algum erro aconteceu!")
-        setPopupIn(true)
+        return
       }
     }
   }
@@ -152,12 +174,13 @@ function Post(props) {
   async function handleComment(e) {
     e.preventDefault()
 
-    if (comment) {
+    if (comment && !loadingComment) {
       if (
         (localStorage.getItem("name") && localStorage.getItem("email")) ||
         (user && !user.loading)
       ) {
         try {
+          setLoadingComment(true)
           const response = await api.post(
             "/comment",
             {
@@ -175,16 +198,13 @@ function Post(props) {
           )
 
           const createdComment = response.data.comment
-
-          setError(null)
-          setSuccess(true)
           setComment("")
           insertComment({ comment: createdComment })
         } catch (e) {
           setError("Algum erro aconteceu!")
-          setSuccess(false)
-        } finally {
           setPopupIn(true)
+        } finally {
+          setLoadingComment(false)
         }
       } else {
         setCommentIn(true)
@@ -330,16 +350,16 @@ function Post(props) {
                   <button
                     onClick={handleLike}
                     className={
-                      post.isLiked
+                      like
                         ? "btn-icon btn-icon--active btn-icon--red"
                         : "btn-icon btn-icon--red"
                     }
                   >
                     <div className="btn-icon--icon">
-                      {post.isLiked ? <AiFillHeart /> : <AiOutlineHeart />}
+                      {like ? <AiFillHeart /> : <AiOutlineHeart />}
                     </div>
                     <div className="btn-icon--number post-header__btn-number">
-                      {post.Likes ? post.Likes.length : 0}
+                      {nLikes}
                     </div>
                   </button>
                 </div>
@@ -384,8 +404,21 @@ function Post(props) {
                     onChange={(e) => atMost200(e.target.value, setComment)}
                     value={comment}
                     placeholder="Comente aqui"
-                    className="post-content__comments-input"
-                  ></input>
+                    className={
+                      loadingComment
+                        ? "post-content__comments-input post-content__comments-input--loading"
+                        : "post-content__comments-input"
+                    }
+                  />
+                  {loadingComment ? (
+                    <div className="post-content__comments-loading">
+                      <UseAnimation
+                        wrapperStyle={{ width: "3rem", height: "3rem" }}
+                        animation={loading}
+                        strokeColor="#fff"
+                      />
+                    </div>
+                  ) : null}
                 </form>
                 <div className="post-content__comments">
                   {post.Comments &&

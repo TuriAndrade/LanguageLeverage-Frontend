@@ -17,7 +17,8 @@ export default function PopupMessage({
         setError && setError(null)
       }}
       in={modalIn}
-      timeout={500}
+      timeout={{ enter: 1000, exit: 500 }}
+      onEntered={() => setModalIn(false)}
       classNames="modal"
       unmountOnExit
     >
@@ -30,7 +31,7 @@ export default function PopupMessage({
         ></div>
         <CSSTransition
           in={modalIn}
-          timeout={500}
+          timeout={{ enter: 1000, exit: 500 }}
           classNames="modal__box"
           appear
         >

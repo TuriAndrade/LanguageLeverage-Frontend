@@ -1,4 +1,10 @@
-import React, { useState, useContext, useRef, useEffect } from "react"
+import React, {
+  useState,
+  useContext,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+} from "react"
 import Comment from "../comment"
 import { CsrfContext, UserContext } from "../context"
 import { CSSTransition } from "react-transition-group"
@@ -18,6 +24,9 @@ import { atMost200 } from "../../validators/general"
 import api from "../../services/api"
 import PopupMessage from "../popupMessage"
 import Img from "react-cool-img"
+import axios from "axios"
+import UseAnimation from "react-useanimations"
+import loading from "react-useanimations/lib/loading"
 
 export default function Post({
   article,
@@ -28,6 +37,9 @@ export default function Post({
 }) {
   const [isOpened, setIsOpened] = useState(false)
   const [comment, setComment] = useState("")
+  const [loadingComment, setLoadingComment] = useState(false)
+  const [like, setLike] = useState(false)
+  const [nLikes, setNLikes] = useState(0)
   const [commentIn, setCommentIn] = useState(false)
   const [likeIn, setLikeIn] = useState(false)
   const [popupIn, setPopupIn] = useState(false)
@@ -45,6 +57,16 @@ export default function Post({
   const { user } = useContext(UserContext)
 
   const commentInput = useRef()
+
+  const cancelLike = useRef(null)
+
+  useLayoutEffect(() => {
+    if (article.isLiked) {
+      setLike(true)
+    }
+
+    setNLikes(article.Likes.length)
+  }, [article])
 
   useEffect(() => {
     if (isOpened && scrollToComments && commentInput && commentInput.current) {
@@ -69,12 +91,16 @@ export default function Post({
   }
 
   async function handleLike() {
-    if (!article.isLiked) {
+    cancelLike.current && cancelLike.current()
+
+    if (!like) {
       if (
         (localStorage.getItem("name") && localStorage.getItem("email")) ||
         (user && !user.loading)
       ) {
         try {
+          setLike(true)
+          setNLikes((prevstate) => prevstate + 1)
           const response = await api.post(
             "/like",
             {
@@ -83,6 +109,9 @@ export default function Post({
             },
             {
               withCredentials: true,
+              cancelToken: new axios.CancelToken(
+                (c) => (cancelLike.current = c)
+              ),
               headers: {
                 csrftoken: csrfToken,
               },
@@ -93,14 +122,15 @@ export default function Post({
 
           insertLike({ articleId: article.id, like: createdLike })
         } catch (e) {
-          setError("Algum erro aconteceu!")
-          setPopupIn(true)
+          return
         }
       } else {
         setLikeIn(true)
       }
     } else {
       try {
+        setLike(false)
+        setNLikes((prevstate) => prevstate - 1)
         const response = await api.post(
           "/dislike",
           {
@@ -109,6 +139,7 @@ export default function Post({
           },
           {
             withCredentials: true,
+            cancelToken: new axios.CancelToken((c) => (cancelLike.current = c)),
             headers: {
               csrftoken: csrfToken,
             },
@@ -119,8 +150,7 @@ export default function Post({
 
         removeLike({ articleId: article.id, likeId })
       } catch (e) {
-        setError("Algum erro aconteceu!")
-        setPopupIn(true)
+        return
       }
     }
   }
@@ -128,12 +158,13 @@ export default function Post({
   async function handleComment(e) {
     e.preventDefault()
 
-    if (comment) {
+    if (comment && !loadingComment) {
       if (
         (localStorage.getItem("name") && localStorage.getItem("email")) ||
         (user && !user.loading)
       ) {
         try {
+          setLoadingComment(true)
           const response = await api.post(
             "/comment",
             {
@@ -152,15 +183,13 @@ export default function Post({
 
           const createdComment = response.data.comment
 
-          setError(null)
-          setSuccess(true)
           setComment("")
           insertComment({ articleId: article.id, comment: createdComment })
         } catch (e) {
           setError("Algum erro aconteceu!")
-          setSuccess(false)
-        } finally {
           setPopupIn(true)
+        } finally {
+          setLoadingComment(false)
         }
       } else {
         setCommentIn(true)
@@ -270,16 +299,16 @@ export default function Post({
           <div className="post-header__btn">
             <button
               className={
-                article.isLiked
+                like
                   ? "btn-icon btn-icon--active btn-icon--red"
                   : "btn-icon btn-icon--red"
               }
             >
               <div onClick={handleLike} className="btn-icon--icon">
-                {article.isLiked ? <AiFillHeart /> : <AiOutlineHeart />}
+                {like ? <AiFillHeart /> : <AiOutlineHeart />}
               </div>
               <div className="btn-icon--number post-header__btn-number">
-                {article.Likes ? article.Likes.length : 0}
+                {nLikes}
               </div>
             </button>
           </div>
@@ -335,17 +364,27 @@ export default function Post({
               ? "1 Comentário"
               : `${article.Comments.length} Comentários`}
           </div>
-          <form
-            onSubmit={handleComment}
-            className="post-content__comments-input-box"
-          >
+          <form onSubmit={handleComment} className="post-comment__input-box">
             <input
               ref={commentInput}
               onChange={(e) => atMost200(e.target.value, setComment)}
               value={comment}
               placeholder="Comente aqui"
-              className="post-content__comments-input"
-            ></input>
+              className={
+                loadingComment
+                  ? "post-content__comments-input post-content__comments-input--loading"
+                  : "post-content__comments-input"
+              }
+            />
+            {loadingComment ? (
+              <div className="post-content__comments-loading">
+                <UseAnimation
+                  wrapperStyle={{ width: "3rem", height: "3rem" }}
+                  animation={loading}
+                  strokeColor="#fff"
+                />
+              </div>
+            ) : null}
           </form>
           <div className="post-content__comments">
             {article.Comments &&

@@ -306,6 +306,10 @@
     @include theme-aware("color", "color-text");
     align-items: center;
 
+    &--loading {
+      opacity: 0.6;
+    }
+
     @include theme-aware("background-color", "color-primary-thin");
 
     &::placeholder {
@@ -349,6 +353,13 @@
     }
   }
 
+  &__comments-loading {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+  }
+
   &--closed {
     display: none;
   }
@@ -366,6 +377,10 @@
 
   &--reply {
     padding-left: 4rem;
+  }
+
+  &__input-box {
+    position: relative;
   }
 
   &__header {
@@ -432,6 +447,10 @@
     padding: 0 1rem;
     @include theme-aware("color", "color-text");
     align-items: center;
+
+    &--loading {
+      opacity: 0.6;
+    }
 
     @include theme-aware("background-color", "color-primary-thin");
 

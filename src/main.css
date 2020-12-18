@@ -2688,6 +2688,8 @@ textarea {
       color: #141716; }
     .theme-dark .post-content__comments-input {
       color: #fff; }
+    .post-content__comments-input--loading {
+      opacity: 0.6; }
     .theme-light .post-content__comments-input {
       background-color: rgba(0, 146, 219, 0.65); }
     .theme-dark .post-content__comments-input {
@@ -2731,6 +2733,11 @@ textarea {
     flex-direction: column; }
     .post-content__comments > *:not(:last-child) {
       margin-bottom: 1rem; }
+  .post-content__comments-loading {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%); }
   .post-content--closed {
     display: none; }
   .post-content--opened {
@@ -2743,6 +2750,8 @@ textarea {
   row-gap: 0.5rem; }
   .post-comment--reply {
     padding-left: 4rem; }
+  .post-comment__input-box {
+    position: relative; }
   .post-comment__header {
     position: relative;
     grid-row: 1 / 2;
@@ -2810,6 +2819,8 @@ textarea {
       color: #141716; }
     .theme-dark .post-comment__reply-input {
       color: #fff; }
+    .post-comment__reply-input--loading {
+      opacity: 0.6; }
     .theme-light .post-comment__reply-input {
       background-color: rgba(0, 146, 219, 0.65); }
     .theme-dark .post-comment__reply-input {

@@ -8,6 +8,8 @@ import { verifyIfBlank } from "../../validators/general"
 import { validateEmail } from "../../validators/email"
 import ControlledInput from "../controlledInput"
 import { CsrfContext } from "../context"
+import UseAnimation from "react-useanimations"
+import loading from "react-useanimations/lib/loading"
 
 export default function CommentModal({
   modalIn,
@@ -27,6 +29,8 @@ export default function CommentModal({
   const [email, setEmail] = useState("")
   const [errorEmail, setErrorEmail] = useState(null)
 
+  const [loadingComment, setLoadingComment] = useState(false)
+
   const [isSubscriber, setIsSubscriber] = useState(false)
 
   const { csrfToken } = useContext(CsrfContext)
@@ -44,6 +48,8 @@ export default function CommentModal({
 
     if (data.name && data.email && data.text && data.articleId) {
       try {
+        setLoadingComment(true)
+
         localStorage.setItem("name", data.name)
         localStorage.setItem("email", data.email)
 
@@ -87,6 +93,7 @@ export default function CommentModal({
       } finally {
         setModalIn(false)
         setPopupIn(true)
+        setLoadingComment(false)
       }
     }
   }
@@ -179,9 +186,20 @@ export default function CommentModal({
                   <div className="post-comment-modal__submit-btn">
                     <button
                       type="submit"
-                      className="post-comment-modal__submit-btn btn-primary--thin btn-primary btn-primary--color-primary"
+                      className={
+                        !loadingComment
+                          ? "post-comment-modal__submit-btn btn-primary--thin btn-primary btn-primary--color-primary"
+                          : "post-comment-modal__submit-btn btn-primary--thin btn-primary btn-primary--color-primary u-disabled-btn"
+                      }
                     >
-                      <p className="btn-primary--text">Ok</p>
+                      <div className="btn-primary--text">Ok</div>
+                      {loadingComment ? (
+                        <UseAnimation
+                          wrapperStyle={{ width: "2rem", height: "2rem" }}
+                          animation={loading}
+                          strokeColor="#ffffff"
+                        />
+                      ) : null}
                     </button>
                   </div>
                 </form>

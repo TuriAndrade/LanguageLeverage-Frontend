@@ -6,6 +6,8 @@ import { atMost200 } from "../../validators/general"
 import { CsrfContext, UserContext } from "../context"
 import CommentModal from "../commentModal"
 import { GoVerified } from "react-icons/all"
+import UseAnimation from "react-useanimations"
+import loading from "react-useanimations/lib/loading"
 
 export default function Comment({
   comment,
@@ -22,15 +24,18 @@ export default function Comment({
 
   const [commentIn, setCommentIn] = useState(false)
 
+  const [loadingReply, setLoadingReply] = useState(false)
+
   async function handleSubmit(e) {
     e.preventDefault()
 
-    if (reply) {
+    if (reply && !loadingReply) {
       if (
         (localStorage.getItem("name") && localStorage.getItem("email")) ||
         (user && !user.loading)
       ) {
         try {
+          setLoadingReply(true)
           const response = await api.post(
             "/comment",
             {
@@ -50,20 +55,17 @@ export default function Comment({
 
           const createdComment = response.data.comment
 
-          setError(null)
-          setSuccess(true)
           setReply("")
           insertComment({
             articleId: comment.articleId,
             comment: createdComment,
           })
         } catch (e) {
-          console.log(e.response)
           setError("Algum erro aconteceu!")
-          setSuccess(false)
-        } finally {
           setPopupIn(true)
+        } finally {
           setReplyInputIn(false)
+          setLoadingReply(false)
         }
       } else {
         setCommentIn(true)
@@ -130,13 +132,29 @@ export default function Comment({
         classNames="post-comment__reply-input"
         unmountOnExit
       >
-        <form onSubmit={handleSubmit}>
+        <form
+          className="post-content__comments-input-box"
+          onSubmit={handleSubmit}
+        >
           <input
             onChange={(e) => atMost200(e.target.value, setReply)}
             value={reply}
             placeholder="Comente aqui"
-            className="post-comment__reply-input"
-          ></input>
+            className={
+              loadingReply
+                ? "post-comment__reply-input post-comment__reply-input--loading"
+                : "post-comment__reply-input"
+            }
+          />
+          {loadingReply ? (
+            <div className="post-content__comments-loading">
+              <UseAnimation
+                wrapperStyle={{ width: "3rem", height: "3rem" }}
+                animation={loading}
+                strokeColor="#fff"
+              />
+            </div>
+          ) : null}
         </form>
       </CSSTransition>
     </div>
