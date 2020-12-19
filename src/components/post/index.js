@@ -14,9 +14,9 @@ import {
   AiOutlineHeart,
   AiFillHeart,
   AiOutlineShareAlt,
-  AiOutlinePlusCircle,
-  AiOutlineMinusCircle,
   GoComment,
+  AiOutlineEyeInvisible,
+  AiOutlineEye,
 } from "react-icons/all"
 import getTimePassed from "../../utils/getTimePassed"
 import DefaultProfilePicture from "../../assets/default-profile-picture.png"
@@ -328,7 +328,7 @@ export default function Post({
               className="btn-icon btn-icon--green"
             >
               <div className="btn-icon--icon">
-                {isOpened ? <AiOutlineMinusCircle /> : <AiOutlinePlusCircle />}
+                {isOpened ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
               </div>
             </button>
           </div>
