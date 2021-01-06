@@ -250,13 +250,8 @@
       animation-fill-mode: backwards;
 
       @include respond(phone) {
-        width: 3.5rem;
-        height: 3.5rem;
-      }
-
-      @include respond(small-phone) {
-        width: 3rem;
-        height: 3rem;
+        width: 4rem;
+        height: 4rem;
       }
     }
 
