@@ -1,7 +1,35 @@
 .categories {
+  width: 100%;
+  max-width: 40rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+
+  &__go-btn {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    justify-content: center;
+    padding: 0.4rem 2rem;
+    border-radius: 100rem;
+    transition: all 0.2s;
+    background: transparent;
+    color: $color-primary;
+    border: 2px solid $color-primary;
+    font-size: $default-font-size;
+    font-weight: 500;
+
+    @include not-touch-device() {
+      &:hover {
+        background-color: $color-primary;
+        color: $color-white;
+      }
+    }
+  }
+
   &__box {
     width: 100%;
-    max-width: 40rem;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;

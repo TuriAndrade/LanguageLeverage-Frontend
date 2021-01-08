@@ -3931,75 +3931,101 @@ textarea {
       .theme-dark .sidebar__social-media-icon:hover .sidebar__social-media-icon--number {
         color: #0092db; } }
 
-.categories__box {
+.categories {
   width: 100%;
   max-width: 40rem;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem; }
-
-.categories__item {
-  display: flex;
-  cursor: pointer;
-  font-size: 1.5rem;
-  position: relative;
-  font-weight: 500;
-  border-radius: 100rem;
-  padding: 0 0.5rem;
-  border-width: 1px;
-  overflow: hidden;
-  border-style: solid; }
-  .theme-light .categories__item {
-    color: #383838; }
-  .theme-dark .categories__item {
-    color: #d0d0d0; }
-  .theme-light .categories__item--active {
-    border-color: #1db954; }
-  .theme-dark .categories__item--active {
-    border-color: #1db954; }
-  .theme-light .categories__item--inactive {
-    border-color: #0092db; }
-  .theme-dark .categories__item--inactive {
-    border-color: #0092db; }
-
-.categories__chosen-item {
-  position: absolute;
-  top: 0;
-  left: 0;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.3rem;
-  width: 100%;
-  height: 100%;
-  border-radius: 100rem; }
-  .theme-light .categories__chosen-item--add {
-    background-color: #1db954; }
-  .theme-dark .categories__chosen-item--add {
-    background-color: #1db954; }
-  .theme-light .categories__chosen-item--remove {
-    background-color: #0092db; }
-  .theme-dark .categories__chosen-item--remove {
-    background-color: #0092db; }
-  .categories__chosen-item-enter {
-    transform: translateX(100%);
-    opacity: 0;
-    visibility: hidden; }
-  .categories__chosen-item-enter-active {
-    transform: translateX(0);
-    opacity: 1;
-    visibility: visible;
-    transition: all 0.4s; }
-  .categories__chosen-item-exit {
-    transform: translateX(0);
-    opacity: 1;
-    visibility: visible; }
-  .categories__chosen-item-exit-active {
-    transform: translateX(100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.4s; }
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem; }
+  .categories__go-btn {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    justify-content: center;
+    padding: 0.4rem 2rem;
+    border-radius: 100rem;
+    transition: all 0.2s;
+    background: transparent;
+    color: #0092db;
+    border: 2px solid #0092db;
+    font-size: 1.6rem;
+    font-weight: 500;
+    /*
+    This disables hover on firefox,
+    but it fixes hover related problems in
+    mobile devices, so it's worth it
+  */ }
+    @media not all and (pointer: coarse) {
+      .categories__go-btn:hover {
+        background-color: #0092db;
+        color: #fff; } }
+  .categories__box {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem; }
+  .categories__item {
+    display: flex;
+    cursor: pointer;
+    font-size: 1.5rem;
+    position: relative;
+    font-weight: 500;
+    border-radius: 100rem;
+    padding: 0 0.5rem;
+    border-width: 1px;
+    overflow: hidden;
+    border-style: solid; }
+    .theme-light .categories__item {
+      color: #383838; }
+    .theme-dark .categories__item {
+      color: #d0d0d0; }
+    .theme-light .categories__item--active {
+      border-color: #1db954; }
+    .theme-dark .categories__item--active {
+      border-color: #1db954; }
+    .theme-light .categories__item--inactive {
+      border-color: #0092db; }
+    .theme-dark .categories__item--inactive {
+      border-color: #0092db; }
+  .categories__chosen-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.3rem;
+    width: 100%;
+    height: 100%;
+    border-radius: 100rem; }
+    .theme-light .categories__chosen-item--add {
+      background-color: #1db954; }
+    .theme-dark .categories__chosen-item--add {
+      background-color: #1db954; }
+    .theme-light .categories__chosen-item--remove {
+      background-color: #0092db; }
+    .theme-dark .categories__chosen-item--remove {
+      background-color: #0092db; }
+    .categories__chosen-item-enter {
+      transform: translateX(100%);
+      opacity: 0;
+      visibility: hidden; }
+    .categories__chosen-item-enter-active {
+      transform: translateX(0);
+      opacity: 1;
+      visibility: visible;
+      transition: all 0.4s; }
+    .categories__chosen-item-exit {
+      transform: translateX(0);
+      opacity: 1;
+      visibility: visible; }
+    .categories__chosen-item-exit-active {
+      transform: translateX(100%);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s; }
 
 .logout__modal {
   display: flex;

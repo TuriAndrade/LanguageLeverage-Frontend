@@ -102,65 +102,70 @@ function Categories({ location }) {
               </div>
             </div>
             <div className="settings__menu-item">
-              <div className="categories__box">
-                {categories.map((category, index) => {
-                  return (
-                    <div
-                      ref={
-                        index === categories.length - 1
-                          ? lastCategory
-                          : undefined
-                      }
-                      key={index}
-                      onClick={() => {
-                        setChooseCategories((prevstate) =>
-                          prevstate.map((entry, i) =>
-                            index === i ? true : entry
-                          )
-                        )
-                        setFilters((prevstate) =>
-                          prevstate.includes(category)
-                            ? prevstate.filter((entry) => entry !== category)
-                            : [...prevstate, category]
-                        )
-                      }}
-                      className={
-                        filters.includes(category)
-                          ? "categories__item categories__item--active"
-                          : "categories__item categories__item--inactive"
-                      }
-                    >
-                      {category}
-                      <CSSTransition
-                        in={chooseCategories[index]}
-                        onEntered={() => {
+              <div className="categories">
+                <Link to="/" className="categories__go-btn">
+                  Ir
+                </Link>
+                <div className="categories__box">
+                  {categories.map((category, index) => {
+                    return (
+                      <div
+                        ref={
+                          index === categories.length - 1
+                            ? lastCategory
+                            : undefined
+                        }
+                        key={index}
+                        onClick={() => {
                           setChooseCategories((prevstate) =>
                             prevstate.map((entry, i) =>
-                              index === i ? false : entry
+                              index === i ? true : entry
                             )
                           )
+                          setFilters((prevstate) =>
+                            prevstate.includes(category)
+                              ? prevstate.filter((entry) => entry !== category)
+                              : [...prevstate, category]
+                          )
                         }}
-                        timeout={1000}
-                        classNames="categories__chosen-item"
-                        unmountOnExit
+                        className={
+                          filters.includes(category)
+                            ? "categories__item categories__item--active"
+                            : "categories__item categories__item--inactive"
+                        }
                       >
-                        <div
-                          className={
-                            filters.includes(category)
-                              ? "categories__chosen-item categories__chosen-item--add"
-                              : "categories__chosen-item categories__chosen-item--remove"
-                          }
+                        {category}
+                        <CSSTransition
+                          in={chooseCategories[index]}
+                          onEntered={() => {
+                            setChooseCategories((prevstate) =>
+                              prevstate.map((entry, i) =>
+                                index === i ? false : entry
+                              )
+                            )
+                          }}
+                          timeout={1000}
+                          classNames="categories__chosen-item"
+                          unmountOnExit
                         >
-                          {filters.includes(category) ? (
-                            <FaCheck />
-                          ) : (
-                            <FaTimes />
-                          )}
-                        </div>
-                      </CSSTransition>
-                    </div>
-                  )
-                })}
+                          <div
+                            className={
+                              filters.includes(category)
+                                ? "categories__chosen-item categories__chosen-item--add"
+                                : "categories__chosen-item categories__chosen-item--remove"
+                            }
+                          >
+                            {filters.includes(category) ? (
+                              <FaCheck />
+                            ) : (
+                              <FaTimes />
+                            )}
+                          </div>
+                        </CSSTransition>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             </div>
             <CSSTransition
