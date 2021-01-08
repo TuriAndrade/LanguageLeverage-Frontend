@@ -7,7 +7,7 @@ import { HiddenSidebarContext } from "../defaultHiddenSidebar/context"
 import { CgProfile, FiSearch } from "react-icons/all"
 import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
-import { Link } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
 import { FiltersContext } from "../context"
 import { atMost50 } from "../../validators/general"
 import Flags from "country-flag-icons/react/3x2"
@@ -19,6 +19,8 @@ export default function DefaultNavbar() {
   const [category, setCategory] = useState("")
   const { sidebarIn, setSidebarIn } = useContext(HiddenSidebarContext)
   const { setFilters } = useContext(FiltersContext)
+
+  const history = useHistory()
 
   return (
     <div className="navbar">
@@ -63,6 +65,8 @@ export default function DefaultNavbar() {
                 if (prevstate.includes(category)) return prevstate
                 else return [...prevstate, category]
               })
+
+              history.push("/")
             }
           }}
           className="navbar__search-form"
