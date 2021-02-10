@@ -16,6 +16,7 @@
 @import "./components/popup-message";
 @import "./components/post";
 @import "./components/profile-card";
+@import "./components/team-card";
 @import "./components/text-editor";
 
 @import "./layout/bottombar";
@@ -23,12 +24,15 @@
 @import "./layout/dashboard";
 @import "./layout/dashboard-form";
 @import "./layout/feed";
+@import "./layout/footer";
 @import "./layout/fullpage-form";
 @import "./layout/hidden-sidebar";
 @import "./layout/navbar";
 @import "./layout/settings";
 @import "./layout/sidebar";
+@import "./layout/text-header";
 
+@import "./pages/about";
 @import "./pages/categories";
 @import "./pages/logout";
 @import "./pages/preferences";

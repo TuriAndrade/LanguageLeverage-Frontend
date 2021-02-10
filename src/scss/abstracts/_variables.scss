@@ -1,6 +1,8 @@
 //COLORS
 $color-white: #fff;
 
+$color-white-2: #f2f2f2;
+
 $color-grey-light: #d0d0d0;
 
 $color-grey-light-2: #d2dcdf;
@@ -11,7 +13,9 @@ $color-grey-light-4: #8c8c8c;
 
 $color-grey-dark: #383838;
 
+$color-primary-light: #009eed;
 $color-primary: #0092db;
+$color-primary-dark: #006ea5;
 
 $color-primary-thin: rgba($color-primary, 0.45);
 $color-primary-thin-dark: rgba($color-primary, 0.65);
@@ -39,6 +43,8 @@ $modal-close-area-dark: rgba($color-black-2, 0.9);
 
 $themes: (
   light: (
+    text-shadow: 0.5rem 1rem 2rem rgba($color-black-1, 0.2),
+    color-description: $color-white,
     color-modal-close-area: $modal-close-area-light,
     color-modal: $color-white,
     color-input: $color-input-light,
@@ -47,6 +53,7 @@ $themes: (
     color-menu-box: $color-grey-light-2,
     color-background: $color-white,
     color-primary: $color-primary,
+    color-secondary: $color-primary-dark,
     color-primary-thin: $color-primary-thin-dark,
     color-border: $color-grey-light,
     color-text: $color-black-1,
@@ -67,6 +74,8 @@ $themes: (
     big-box-shadow: 0 1.5rem 3rem rgba($color-black-2, 0.5),
   ),
   dark: (
+    text-shadow: 0.2rem 0.4rem 2rem rgba($color-grey-dark, 0.2),
+    color-description: $color-white-2,
     color-modal-close-area: $modal-close-area-dark,
     color-modal: $color-black-1,
     color-input: $color-input-dark,
@@ -75,6 +84,7 @@ $themes: (
     color-menu-box: $color-black-1,
     color-background: $color-black-2,
     color-primary: $color-primary,
+    color-secondary: $color-primary-light,
     color-primary-thin: $color-primary-thin,
     color-border: $color-black-3,
     color-text: $color-white,
@@ -87,7 +97,7 @@ $themes: (
     color-orange: $color-orange,
     color-green: $color-green,
     blurred-border:
-      linear-gradient(to bottom, rgba($color-black-3, 1), transparent),
+      linear-gradient(to bottom, rgba($color-grey-dark, 1), transparent),
     bottom-thin-box-shadow: 0 0.4rem 1px rgba($color-black-3, 1),
     fade-gradient:
       linear-gradient(to bottom, transparent 0 40%, rgba($color-black-2, 1)),

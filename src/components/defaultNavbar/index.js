@@ -52,7 +52,9 @@ export default function DefaultNavbar() {
             </CSSTransition>
           </button>
         )}
-        <img src={Logo} alt="Logo" className="navbar__logo" />
+        <Link to="/" className="navbar__logo">
+          <img src={Logo} alt="Logo" />
+        </Link>
       </div>
       <div className="navbar__search-box">
         <form

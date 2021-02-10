@@ -95,6 +95,11 @@ export default function Routes() {
                     component={Categories}
                   />
                   <PublicRoute
+                    restricted={false}
+                    path="/about"
+                    component={About}
+                  />
+                  <PublicRoute
                     restricted={true}
                     path="/login"
                     component={Login}
@@ -174,11 +179,6 @@ export default function Routes() {
                             exact
                             path="/"
                             component={Main}
-                          />
-                          <PublicRoute
-                            restricted={false}
-                            path="/about"
-                            component={About}
                           />
                           <PublicRoute
                             restricted={false}

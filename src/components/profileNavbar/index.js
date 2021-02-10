@@ -11,7 +11,9 @@ export default function ProfileNavbar() {
   return (
     <div className="navbar">
       <div className="navbar__menu-box navbar__menu-box--profile">
-        <img src={Logo} alt="Logo" className="navbar__logo" />
+        <Link to="/" className="navbar__logo">
+          <img src={Logo} alt="Logo" />
+        </Link>
       </div>
       <div className="navbar__profile-box">
         <Link to="/profile" className="btn-icon">

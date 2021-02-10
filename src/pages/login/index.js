@@ -7,10 +7,6 @@ import PopupMessage from "../../components/popupMessage"
 
 import { FiArrowDownCircle } from "react-icons/all"
 
-import Typist from "react-typist"
-
-import { CSSTransition } from "react-transition-group"
-
 import Logo from "../../assets/Logo.png"
 
 import { passwordRegEx } from "../../validators/password"
@@ -108,22 +104,12 @@ function Login() {
         success={success}
         setSuccess={setSuccess}
       />
-      <div className="fullpage-form__heading">
-        <div className="fullpage-form__heading-text">
-          <CSSTransition
-            in={true}
-            timeout={500}
-            appear
-            classNames="fullpage-form__heading-text--secondary"
-            unmountOnExit
-          >
-            <div className="fullpage-form__heading-text--secondary">Entre</div>
-          </CSSTransition>
-          <Typist cursor={{ show: false }} startDelay={600}>
-            <div className="fullpage-form__heading-text--primary">
-              e ajude pessoas de todo Brasil a aprender inglês!
-            </div>
-          </Typist>
+      <div className="text-header text-header--bottombar">
+        <div className="text-header__heading">
+          <div className="text-header__heading--secondary">Entre</div>
+          <div className="text-header__heading--primary">
+            e ajude pessoas de todo Brasil a aprender inglês!
+          </div>
         </div>
         <button
           onClick={() => {
@@ -131,7 +117,7 @@ function Login() {
               behavior: "smooth",
             })
           }}
-          className="fullpage-form__heading-btn"
+          className="text-header__scroll-down-btn"
         >
           <FiArrowDownCircle />
         </button>
@@ -188,7 +174,7 @@ function Login() {
         </form>
       </div>
       <div className="fullpage-form__footer">
-        <DefaultBottombar />
+        <DefaultBottombar fullBorder />
       </div>
     </div>
   )

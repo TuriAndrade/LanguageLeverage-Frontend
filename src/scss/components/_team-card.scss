@@ -1,0 +1,56 @@
+.team-card {
+  display: grid;
+  grid-template-rows: [row-picture-start] min-content [row-picture-end row-caption-start] min-content [row-caption-end];
+  grid-template-columns: minmax(min-content, 35rem);
+  row-gap: 1rem;
+
+  &__picture {
+    grid-row: row-picture-start / row-picture-end;
+    width: 100%;
+    height: 48rem;
+    @include theme-aware("box-shadow", "default-box-shadow");
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: all 0.5s;
+
+    @include not-touch-device() {
+      &:hover {
+        transform: translateY(-1rem) rotateZ(3deg);
+        transform-origin: center;
+        @include theme-aware("box-shadow", "big-box-shadow");
+      }
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__caption {
+    grid-row: row-caption-start / row-caption-end;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+
+    &--icon {
+      color: $color-primary;
+      display: inline-flex;
+      align-items: center;
+      font-size: 8rem;
+    }
+
+    &--text {
+      @include theme-aware("color", "color-text");
+      font-size: $default-font-size;
+      font-weight: 500;
+    }
+
+    &--name {
+      @include theme-aware("color", "color-text");
+      font-size: $default-font-size;
+      font-weight: 600;
+    }
+  }
+}

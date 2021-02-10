@@ -8,7 +8,7 @@ import {
   RiSettingsLine,
 } from "react-icons/all"
 
-export default function DefaultBottombar() {
+export default function DefaultBottombar({ fullBorder }) {
   const home = useRouteMatch({
     path: "/",
     exact: true,
@@ -33,7 +33,9 @@ export default function DefaultBottombar() {
   const location = useLocation()
 
   return (
-    <div className="bottombar">
+    <div
+      className={fullBorder ? "bottombar bottombar--fullborder" : "bottombar"}
+    >
       <div className="bottombar__section">
         <div className="bottombar__item">
           <Link

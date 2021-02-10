@@ -110,12 +110,12 @@
 
   &__login-box {
     grid-row: 2 / 3;
-    @include theme-aware("background-color", "color-primary");
+    background-color: $color-primary;
   }
 
   &__register-box {
     grid-row: 3 / 4;
-    @include theme-aware("background-color", "color-primary-thin");
+    background-color: $color-primary-dark;
   }
 
   &__close-btn-box {

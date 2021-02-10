@@ -8,10 +8,6 @@ import PopupMessage from "../../components/popupMessage"
 
 import { FiArrowDownCircle } from "react-icons/all"
 
-import Typist from "react-typist"
-
-import { CSSTransition } from "react-transition-group"
-
 import Logo from "../../assets/Logo.png"
 
 import api from "../../services/api"
@@ -146,25 +142,13 @@ function Register() {
         sucess={sucess}
         setSuccess={setSuccess}
       />
-      <div className="fullpage-form__heading">
-        <div className="fullpage-form__heading-text">
-          <CSSTransition
-            in={true}
-            timeout={500}
-            appear
-            classNames="fullpage-form__heading-text--secondary"
-            unmountOnExit
-          >
-            <div className="fullpage-form__heading-text--secondary">
-              No LangLev
-            </div>
-          </CSSTransition>
-          <Typist cursor={{ show: false }} startDelay={600}>
-            <div className="fullpage-form__heading-text--primary">
-              você se cadastra e escreve textos incríveis para ajudar pessoas de
-              todo o Brasil a aprender inglês!
-            </div>
-          </Typist>
+      <div className="text-header text-header--bottombar">
+        <div className="text-header__heading">
+          <div className="text-header__heading--secondary">No Langlev</div>
+          <div className="text-header__heading--primary">
+            você pode escrever textos incríveis para ajudar pessoas de todo o
+            Brasil a aprender inglês!
+          </div>
         </div>
         <button
           onClick={() => {
@@ -172,7 +156,7 @@ function Register() {
               behavior: "smooth",
             })
           }}
-          className="fullpage-form__heading-btn"
+          className="text-header__scroll-down-btn"
         >
           <FiArrowDownCircle />
         </button>
@@ -293,7 +277,7 @@ function Register() {
         </form>
       </div>
       <div className="fullpage-form__footer">
-        <DefaultBottombar />
+        <DefaultBottombar fullBorder />
       </div>
     </div>
   )
