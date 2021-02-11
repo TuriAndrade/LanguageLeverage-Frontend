@@ -21,8 +21,9 @@ export default function LazyImage({ src, alt }) {
   return (
     <img
       ref={lazyImage}
-      src={isVisible ? src : null}
-      alt={isVisible ? alt : null}
+      style={!isVisible ? { height: "30rem" } : null}
+      src={src}
+      alt={alt}
     ></img>
   )
 }
