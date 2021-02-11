@@ -1114,7 +1114,7 @@ textarea {
   border-radius: 3px;
   display: grid;
   width: 100%;
-  grid-template-rows: [row-header-start] minmax(6rem, min-content) [row-header-end row-cover-start] min-content [row-cover-end row-footer-start] minmax(6rem, min-content) [row-footer-end row-grid-end];
+  grid-template-rows: [row-header-start] minmax(6rem, min-content) [row-header-end row-cover-start] minmax(30rem, 50rem) [row-cover-end row-footer-start] minmax(6rem, min-content) [row-footer-end row-grid-end];
   grid-template-columns: [padding-left-1] 2rem [padding-left-2] 2rem [col-content-start] 1fr [col-content-end] 2rem [padding-right-2] 2rem [padding-right-1]; }
   .theme-light .post-header {
     border-color: #d2dcdf; }
@@ -1169,7 +1169,6 @@ textarea {
     position: relative;
     grid-row: row-cover-start / row-cover-end;
     grid-column: padding-left-1 / padding-right-1;
-    max-height: 50rem;
     height: 100%;
     overflow: hidden; }
     .post-header__cover::after {

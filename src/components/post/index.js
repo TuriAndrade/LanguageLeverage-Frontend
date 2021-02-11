@@ -27,6 +27,7 @@ import Img from "react-cool-img"
 import axios from "axios"
 import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
+import LazyImage from "../lazyImage"
 
 export default function Post({
   article,
@@ -277,7 +278,7 @@ export default function Post({
           </div>
         </div>
         <div className="post-header__cover">
-          <Img src={article.cover} alt="Capa" />
+          <LazyImage src={article.cover} alt="Capa" />
         </div>
         <div className="post-header__btn-box">
           <div className="post-header__btn">

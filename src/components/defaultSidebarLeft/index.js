@@ -224,7 +224,7 @@ export default function DefaultSidebarLeft() {
             </button>
           </CSSTransition>
         </div>
-        <div className="sidebar__menu-item-box">
+        <div className="sidebar__menu-item-box u-disabled-btn">
           <Link
             to="/about"
             className={

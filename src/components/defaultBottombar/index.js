@@ -78,7 +78,7 @@ export default function DefaultBottombar({ fullBorder }) {
             <RiSettingsLine />
           </Link>
         </div>
-        <div className="bottombar__item">
+        <div className="bottombar__item u-disabled-btn">
           <Link
             to="/about"
             className={
