@@ -18,12 +18,9 @@ export default function LazyImage({ src, alt }) {
     if (lazyImage.current) observer.current.observe(lazyImage.current)
   }, [observer, lazyImage])
 
-  return (
-    <img
-      ref={lazyImage}
-      style={!isVisible ? { height: "30rem" } : null}
-      src={src}
-      alt={alt}
-    ></img>
+  return isVisible ? (
+    <img ref={lazyImage} src={src} alt={alt}></img>
+  ) : (
+    <img ref={lazyImage} style={{ height: "30rem" }}></img>
   )
 }
