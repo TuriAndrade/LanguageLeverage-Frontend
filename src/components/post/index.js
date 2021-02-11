@@ -23,7 +23,6 @@ import DefaultProfilePicture from "../../assets/default-profile-picture.png"
 import { atMost200 } from "../../validators/general"
 import api from "../../services/api"
 import PopupMessage from "../popupMessage"
-import Img from "react-cool-img"
 import axios from "axios"
 import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
@@ -258,7 +257,7 @@ export default function Post({
       <div className="post-header">
         <div className="post-header__header">
           <div className="post-header__profile-picture">
-            <Img
+            <LazyImage
               src={
                 (article.Editor &&
                   article.Editor.User &&

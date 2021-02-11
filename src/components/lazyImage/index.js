@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react"
+import { CSSTransition } from "react-transition-group"
 
-export default function LazyImage({ src, alt }) {
+export default function LazyImage({ alt, ...rest }) {
   const [isVisible, setIsVisible] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -20,14 +21,25 @@ export default function LazyImage({ src, alt }) {
   }, [observer, lazyImage])
 
   return isVisible ? (
-    <img
-      ref={lazyImage}
-      onLoad={() => setIsLoaded(true)}
-      src={src}
-      alt={alt}
-      style={!isLoaded ? { visibility: "hidden" } : { visibility: "visible" }}
-    ></img>
+    <CSSTransition in={isLoaded} timeout={600} classNames="lazyImage">
+      <img
+        {...rest}
+        ref={lazyImage}
+        alt={alt}
+        onLoad={() => setIsLoaded(true)}
+        style={!isLoaded ? { display: "none" } : null}
+      ></img>
+    </CSSTransition>
   ) : (
-    <div ref={lazyImage}></div>
+    <div
+      ref={lazyImage}
+      style={{
+        visibility: "hidden",
+        pointerEvents: "none",
+        zIndex: "-100",
+        width: "0",
+        height: "0",
+      }}
+    ></div>
   )
 }

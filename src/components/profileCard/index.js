@@ -15,7 +15,7 @@ import { CsrfContext } from "../context"
 import { Link } from "react-router-dom"
 import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
-import Img from "react-cool-img"
+import LazyImage from "../lazyImage"
 
 export default function ProfileCard({
   user,
@@ -370,7 +370,10 @@ export default function ProfileCard({
         >
           <div className="profile-card__picture-box">
             <div className="profile-card__picture">
-              <Img src={user.picture || DefaultProfilePic} alt="Profile" />
+              <LazyImage
+                src={user.picture || DefaultProfilePic}
+                alt="Profile"
+              />
               {admin && admin.isYou ? (
                 <div className="profile-card__picture-identifier">
                   <GoVerified /> <p>Você!</p>

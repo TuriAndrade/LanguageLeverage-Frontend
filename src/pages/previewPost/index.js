@@ -7,7 +7,7 @@ import getTimePassed from "../../utils/getTimePassed"
 import api from "../../services/api"
 import { UserContext } from "../../components/context"
 import DefaultProfilePic from "../../assets/default-profile-picture.png"
-import Img from "react-cool-img"
+import LazyImage from "../../components/lazyImage"
 
 function PreviewPost(props) {
   const [loadingContent, setLoadingContent] = useState(true)
@@ -97,7 +97,7 @@ function PreviewPost(props) {
             <div className="post-header">
               <div className="post-header__header">
                 <div className="post-header__profile-picture">
-                  <Img
+                  <LazyImage
                     src={
                       (post.Editor &&
                         post.Editor.User &&
@@ -117,7 +117,7 @@ function PreviewPost(props) {
                 </div>
               </div>
               <div className="post-header__cover">
-                <Img src={post.cover} alt="Meme" />
+                <LazyImage src={post.cover} alt="Meme" />
               </div>
               <div className="post-header__btn-box">
                 <div className="post-header__btn">

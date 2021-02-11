@@ -5,7 +5,6 @@ import DefaultProfilePic from "../../assets/default-profile-picture.png"
 import ControlledInput from "../../components/controlledInput"
 import LoadingContent from "../../components/loadingContent"
 import PopupMessage from "../../components/popupMessage"
-import Img from "react-cool-img"
 
 import {
   atMost100,
@@ -26,6 +25,7 @@ import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
 
 import { FaArrowLeft } from "react-icons/all"
+import LazyImage from "../../components/lazyImage"
 
 function Profile() {
   const [name, setName] = useState("")
@@ -295,7 +295,7 @@ function Profile() {
             <form onSubmit={handleChangePassword} className="dashboard-form">
               <div className="dashboard-form__header">
                 <div className="dashboard-form__picture">
-                  <Img
+                  <LazyImage
                     src={profilePicture || DefaultProfilePic}
                     alt="Profile"
                   />
@@ -397,7 +397,7 @@ function Profile() {
             <form onSubmit={handleSubmit} className="dashboard-form">
               <div className="dashboard-form__header">
                 <div className="dashboard-form__picture">
-                  <img
+                  <LazyImage
                     src={profilePicture || DefaultProfilePic}
                     alt="Profile"
                   />

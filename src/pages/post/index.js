@@ -17,7 +17,7 @@ import Comment from "../../components/comment"
 import CommentModal from "../../components/commentModal"
 import LikeModal from "../../components/likeModal"
 import { CSSTransition } from "react-transition-group"
-import Img from "react-cool-img"
+import LazyImage from "../../components/lazyImage"
 import "dotenv"
 import axios from "axios"
 import UseAnimation from "react-useanimations"
@@ -310,7 +310,7 @@ function Post(props) {
             <div className="post-header">
               <div className="post-header__header">
                 <div className="post-header__profile-picture">
-                  <Img
+                  <LazyImage
                     src={
                       (post.Editor &&
                         post.Editor.User &&
@@ -330,7 +330,7 @@ function Post(props) {
                 </div>
               </div>
               <div className="post-header__cover">
-                <Img src={post.cover} alt="Meme" />
+                <LazyImage src={post.cover} alt="Meme" />
               </div>
               <div className="post-header__btn-box">
                 <div className="post-header__btn">

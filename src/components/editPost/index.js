@@ -288,7 +288,7 @@ export default function EditPost(props) {
                 </>
               ) : (
                 <>
-                  <img src={cover} alt="Cover" loading="lazy" />
+                  <img src={cover} alt="Cover" />
                   <label
                     htmlFor="dashboard-form__file-input"
                     className="dashboard-form__change-cover-btn"

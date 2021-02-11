@@ -12,7 +12,7 @@ import {
   FiTwitter,
   FiInstagram,
 } from "react-icons/all"
-import Img from "react-cool-img"
+import LazyImage from "../../components/lazyImage"
 
 import DefaultBottombar from "../../components/defaultBottombar"
 
@@ -108,7 +108,7 @@ function About() {
         <div className="about__members-grid">
           <div className="team-card">
             <div className="team-card__picture">
-              <Img src={Arthur} alt="Arthur" />
+              <LazyImage src={Arthur} alt="Arthur" />
             </div>
             <div className="team-card__caption">
               <AiOutlineCopyright className="team-card__caption--icon" />
@@ -122,7 +122,7 @@ function About() {
           </div>
           <div className="team-card">
             <div className="team-card__picture">
-              <Img src={Turi} alt="Turi" />
+              <LazyImage src={Turi} alt="Turi" />
             </div>
             <div className="team-card__caption">
               <AiOutlineCode className="team-card__caption--icon" />
@@ -134,7 +134,7 @@ function About() {
           </div>
           <div className="team-card">
             <div className="team-card__picture">
-              <Img src={Mafe} alt="Mafê" />
+              <LazyImage src={Mafe} alt="Mafê" />
             </div>
             <div className="team-card__caption">
               <AiOutlineShareAlt className="team-card__caption--icon" />
