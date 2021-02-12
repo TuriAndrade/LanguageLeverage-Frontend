@@ -148,79 +148,81 @@ function Main() {
         error={error}
         setError={setError}
       />
-      <LoadingContent loadingIn={loadingContent} />
-      {filters.length > 0 ? (
-        <div className="filters__container">
-          {filters.map((filter, index) => (
-            <div key={index} className="filters__category">
-              <button
-                onClick={() =>
-                  setFilters((prevstate) =>
-                    prevstate.filter((entry, i) => i !== index)
-                  )
-                }
-                className="filters__remove-category-btn"
-              >
-                <FaTimes />
-              </button>
-              {filter}
-            </div>
-          ))}
-        </div>
-      ) : null}
-      {!loadingContent ? (
-        <div className="feed">
-          {articles.map((article, index) => {
-            return (
-              <Post
-                fowardedRef={
-                  index === articles.length - 1 ? lastArticle : undefined
-                }
-                key={article.id}
-                article={article}
-                insertComment={insertComment}
-                insertLike={insertLike}
-                removeLike={removeLike}
-              />
-            )
-          })}
-          {!hasMoreArticles && articles.length > 0 ? (
-            <div className="post-box post-box--thats-it">
-              <div className="post-box__icon post-box__icon--primary">
-                <GoVerified />
+      <div className={filters.length > 0 ? "feed feed--filters" : "feed"}>
+        <LoadingContent loadingIn={loadingContent} />
+        {filters.length > 0 ? (
+          <div className="filters__container">
+            {filters.map((filter, index) => (
+              <div key={index} className="filters__category">
+                <button
+                  onClick={() =>
+                    setFilters((prevstate) =>
+                      prevstate.filter((entry, i) => i !== index)
+                    )
+                  }
+                  className="filters__remove-category-btn"
+                >
+                  <FaTimes />
+                </button>
+                {filter}
               </div>
-              <div className="post-box__text post-box__text--primary">
-                Isso é tudo!
-              </div>
-            </div>
-          ) : (
-            <CSSTransition
-              in={loadingMoreArticles}
-              timeout={300}
-              classNames="feed__loading"
-              unmountOnExit
-            >
-              <div className="feed__loading">
-                <UseAnimation
-                  wrapperStyle={{ width: "4rem", height: "4rem" }}
-                  animation={loading}
-                  strokeColor="#0092db"
+            ))}
+          </div>
+        ) : null}
+        {!loadingContent ? (
+          <>
+            {articles.map((article, index) => {
+              return (
+                <Post
+                  fowardedRef={
+                    index === articles.length - 1 ? lastArticle : undefined
+                  }
+                  key={article.id}
+                  article={article}
+                  insertComment={insertComment}
+                  insertLike={insertLike}
+                  removeLike={removeLike}
                 />
+              )
+            })}
+            {!hasMoreArticles && articles.length > 0 ? (
+              <div className="post-box post-box--thats-it">
+                <div className="post-box__icon post-box__icon--primary">
+                  <GoVerified />
+                </div>
+                <div className="post-box__text post-box__text--primary">
+                  Isso é tudo!
+                </div>
               </div>
-            </CSSTransition>
-          )}
-          {articles.length === 0 && (
-            <div className="no-content">
-              <div className="no-content__icon no-content__icon--red">
-                <FaTimesCircle />
+            ) : articles.length > 0 ? (
+              <CSSTransition
+                in={loadingMoreArticles}
+                timeout={300}
+                classNames="feed__loading"
+                unmountOnExit
+              >
+                <div className="feed__loading">
+                  <UseAnimation
+                    wrapperStyle={{ width: "4rem", height: "4rem" }}
+                    animation={loading}
+                    strokeColor="#0092db"
+                  />
+                </div>
+              </CSSTransition>
+            ) : null}
+            {articles.length === 0 && (
+              <div className="no-content">
+                <div className="no-content__icon no-content__icon--red">
+                  <FaTimesCircle />
+                </div>
+                <div className="no-content__text no-content__text--red">
+                  Nada publicado!
+                </div>
               </div>
-              <div className="no-content__text no-content__text--red">
-                Nada publicado!
-              </div>
-            </div>
-          )}
-        </div>
-      ) : null}
+            )}
+          </>
+        ) : null}
+      </div>
     </>
   )
 }
