@@ -1,0 +1,60 @@
+.filters {
+  &__container {
+    position: relative;
+    z-index: 10000;
+    padding: 2rem 0 0 0;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    @include respond(phone) {
+      gap: 0.8rem;
+    }
+
+    @include respond(small-phone) {
+      padding: 2rem;
+    }
+  }
+
+  &__category {
+    @include theme-aware("color", "color-text-secondary");
+    display: flex;
+    cursor: default;
+    border: 1px solid $color-primary;
+    font-size: $default-font-size;
+    font-weight: 500;
+    border-radius: 100rem;
+    position: relative;
+    padding: 0 0.5rem 0 4rem;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow: hidden;
+
+    @include respond(phone) {
+      font-size: 1.7rem;
+      padding: 0 0.5rem 0 4.5rem;
+    }
+  }
+
+  &__remove-category-btn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-top-left-radius: 100rem;
+    border-bottom-left-radius: 100rem;
+    background-color: $color-primary;
+    height: 100%;
+    width: 3.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: $color-white;
+
+    @include respond(phone) {
+      font-size: $default-font-size;
+      width: 4rem;
+    }
+  }
+}

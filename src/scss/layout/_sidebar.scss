@@ -232,11 +232,11 @@
     cursor: pointer;
     border-width: 1px;
     border-style: solid;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     line-height: 1.3rem;
     font-weight: 500;
     border-radius: 100rem;
-    padding: 0 2px;
+    padding: 2px 3px;
     overflow: hidden;
 
     &--active {
@@ -249,7 +249,7 @@
   }
 
   &__menu-categories-btn {
-    font-size: 1.5rem;
+    font-size: 2rem;
     @include theme-aware("color", "color-primary");
     display: flex;
     background: transparent;

@@ -25,7 +25,6 @@ function Main() {
   const [loadingMoreArticles, setLoadingMoreArticles] = useState(false)
   const [hasMoreArticles, setHasMoreArticles] = useState(false)
   const [offset, setOffset] = useState(0)
-  const [removeCategoriesIn, setRemoveCategoriesIn] = useState([])
 
   const { filters, setFilters } = useContext(FiltersContext)
 
@@ -33,7 +32,6 @@ function Main() {
     setArticles([])
     setOffset(0)
     setLoadingContent(true)
-    setRemoveCategoriesIn(filters.map(() => false))
   }, [filters])
 
   useEffect(() => {
@@ -142,10 +140,6 @@ function Main() {
     )
   }
 
-  function removeCategory(index) {
-    setFilters((prevstate) => prevstate.filter((entry, i) => i !== index))
-  }
-
   return (
     <>
       <PopupMessage
@@ -155,39 +149,27 @@ function Main() {
         setError={setError}
       />
       <LoadingContent loadingIn={loadingContent} />
-      {!loadingContent ? (
-        <div className={filters.length > 0 ? "feed feed--filters" : "feed"}>
-          {filters.length > 0 ? (
-            <div className="feed__categories-container">
-              {filters.map((filter, index) => (
-                <div
-                  onClick={() =>
-                    setRemoveCategoriesIn((prevstate) =>
-                      prevstate.map((entry, i) => {
-                        if (index !== i) return entry
-                        else return true
-                      })
-                    )
-                  }
-                  key={index}
-                  className="feed__category"
-                >
-                  <CSSTransition
-                    in={removeCategoriesIn[index]}
-                    timeout={800}
-                    classNames="feed__active-category"
-                    onEntered={() => removeCategory(index)}
-                    unmountOnExit
-                  >
-                    <div className="feed__active-category">
-                      <FaTimes />
-                    </div>
-                  </CSSTransition>
-                  {filter}
-                </div>
-              ))}
+      {filters.length > 0 ? (
+        <div className="filters__container">
+          {filters.map((filter, index) => (
+            <div key={index} className="filters__category">
+              <button
+                onClick={() =>
+                  setFilters((prevstate) =>
+                    prevstate.filter((entry, i) => i !== index)
+                  )
+                }
+                className="filters__remove-category-btn"
+              >
+                <FaTimes />
+              </button>
+              {filter}
             </div>
-          ) : null}
+          ))}
+        </div>
+      ) : null}
+      {!loadingContent ? (
+        <div className="feed">
           {articles.map((article, index) => {
             return (
               <Post
