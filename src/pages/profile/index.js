@@ -294,12 +294,11 @@ function Profile() {
           {changePassword ? (
             <form onSubmit={handleChangePassword} className="dashboard-form">
               <div className="dashboard-form__header">
-                <div className="dashboard-form__picture">
-                  <LazyImage
-                    src={profilePicture || DefaultProfilePic}
-                    alt="Profile"
-                  />
-                </div>
+                <LazyImage
+                  containerClass="dashboard-form__picture"
+                  src={profilePicture || DefaultProfilePic}
+                  alt="Profile"
+                />
                 <div className="dashboard-form__user">
                   <div className="dashboard-form__user--primary">{login}</div>
                   <label
@@ -396,12 +395,11 @@ function Profile() {
           ) : (
             <form onSubmit={handleSubmit} className="dashboard-form">
               <div className="dashboard-form__header">
-                <div className="dashboard-form__picture">
-                  <LazyImage
-                    src={profilePicture || DefaultProfilePic}
-                    alt="Profile"
-                  />
-                </div>
+                <LazyImage
+                  containerClass="dashboard-form__picture"
+                  src={profilePicture || DefaultProfilePic}
+                  alt="Profile"
+                />
                 <div className="dashboard-form__user">
                   <div className="dashboard-form__user--primary">{login}</div>
                   <label

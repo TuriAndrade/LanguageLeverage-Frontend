@@ -1,12 +1,18 @@
 import React, { useRef, useEffect, useState } from "react"
 import { CSSTransition } from "react-transition-group"
 
-export default function LazyImage({ alt, ...rest }) {
+export default function LazyImage({
+  containerClass,
+  withPlaceholder,
+  placeholderClass,
+  alt,
+  ...rest
+}) {
   const [isVisible, setIsVisible] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
 
   const observer = useRef()
-  const lazyImage = useRef()
+  const container = useRef()
 
   useEffect(() => {
     if (observer.current) observer.current.disconnect()
@@ -17,29 +23,24 @@ export default function LazyImage({ alt, ...rest }) {
       }
     })
 
-    if (lazyImage.current) observer.current.observe(lazyImage.current)
-  }, [observer, lazyImage])
+    if (container.current) observer.current.observe(container.current)
+  }, [observer, container])
 
-  return isVisible ? (
-    <CSSTransition in={isLoaded} timeout={600} classNames="lazyImage">
-      <img
-        {...rest}
-        ref={lazyImage}
-        alt={alt}
-        onLoad={() => setIsLoaded(true)}
-        style={!isLoaded ? { display: "none" } : null}
-      ></img>
-    </CSSTransition>
-  ) : (
-    <div
-      ref={lazyImage}
-      style={{
-        visibility: "hidden",
-        pointerEvents: "none",
-        zIndex: "-100",
-        width: "0",
-        height: "0",
-      }}
-    ></div>
+  return (
+    <div ref={container} className={containerClass}>
+      {isVisible ? (
+        <CSSTransition in={isLoaded} timeout={600} classNames="lazyImage">
+          <img
+            {...rest}
+            alt={alt}
+            onLoad={() => setIsLoaded(true)}
+            style={!isLoaded ? { display: "none" } : null}
+          ></img>
+        </CSSTransition>
+      ) : null}
+      {withPlaceholder && !isLoaded ? (
+        <div className={placeholderClass}></div>
+      ) : null}
+    </div>
   )
 }

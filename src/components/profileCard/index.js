@@ -373,6 +373,7 @@ export default function ProfileCard({
               <LazyImage
                 src={user.picture || DefaultProfilePic}
                 alt="Profile"
+                containerClass="profile-card__picture"
               />
               {admin && admin.isYou ? (
                 <div className="profile-card__picture-identifier">

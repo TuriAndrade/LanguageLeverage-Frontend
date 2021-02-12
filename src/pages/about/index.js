@@ -107,9 +107,11 @@ function About() {
         </div>
         <div className="about__members-grid">
           <div className="team-card">
-            <div className="team-card__picture">
-              <LazyImage src={Arthur} alt="Arthur" />
-            </div>
+            <LazyImage
+              containerClass="team-card__picture"
+              src={Arthur}
+              alt="Arthur"
+            />
             <div className="team-card__caption">
               <AiOutlineCopyright className="team-card__caption--icon" />
               <div className="team-card__caption--text">
@@ -121,9 +123,11 @@ function About() {
             </div>
           </div>
           <div className="team-card">
-            <div className="team-card__picture">
-              <LazyImage src={Turi} alt="Turi" />
-            </div>
+            <LazyImage
+              containerClass="team-card__picture"
+              src={Turi}
+              alt="Turi"
+            />
             <div className="team-card__caption">
               <AiOutlineCode className="team-card__caption--icon" />
               <div className="team-card__caption--text">
@@ -133,9 +137,11 @@ function About() {
             </div>
           </div>
           <div className="team-card">
-            <div className="team-card__picture">
-              <LazyImage src={Mafe} alt="Mafê" />
-            </div>
+            <LazyImage
+              containerClass="team-card__picture"
+              src={Mafe}
+              alt="Mafê"
+            />
             <div className="team-card__caption">
               <AiOutlineShareAlt className="team-card__caption--icon" />
               <div className="team-card__caption--text">

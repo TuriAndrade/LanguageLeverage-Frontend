@@ -256,17 +256,16 @@ export default function Post({
       />
       <div className="post-header">
         <div className="post-header__header">
-          <div className="post-header__profile-picture">
-            <LazyImage
-              src={
-                (article.Editor &&
-                  article.Editor.User &&
-                  article.Editor.User.picture) ||
-                DefaultProfilePicture
-              }
-              alt="EditorPic"
-            />
-          </div>
+          <LazyImage
+            src={
+              (article.Editor &&
+                article.Editor.User &&
+                article.Editor.User.picture) ||
+              DefaultProfilePicture
+            }
+            alt="EditorPic"
+            containerClass="post-header__profile-picture"
+          />
           <div className="post-header__login">
             <div className="post-header__login--text">
               {article.Editor.User.login}
@@ -276,9 +275,13 @@ export default function Post({
             {convertTime(new Date(article.createdAt).getTime())}
           </div>
         </div>
-        <div className="post-header__cover">
-          <LazyImage src={article.cover} alt="Capa" />
-        </div>
+        <LazyImage
+          containerClass="post-header__cover"
+          src={article.cover}
+          alt="Capa"
+          withPlaceholder
+          placeholderClass="post-header__cover--placeholder"
+        />
         <div className="post-header__btn-box">
           <div className="post-header__btn">
             <button

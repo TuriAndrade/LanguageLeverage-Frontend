@@ -96,17 +96,16 @@ function PreviewPost(props) {
           <div className="post-box">
             <div className="post-header">
               <div className="post-header__header">
-                <div className="post-header__profile-picture">
-                  <LazyImage
-                    src={
-                      (post.Editor &&
-                        post.Editor.User &&
-                        post.Editor.User.picture) ||
-                      DefaultProfilePic
-                    }
-                    alt="Profile pic"
-                  />
-                </div>
+                <LazyImage
+                  containerClass="post-header__profile-picture"
+                  src={
+                    (post.Editor &&
+                      post.Editor.User &&
+                      post.Editor.User.picture) ||
+                    DefaultProfilePic
+                  }
+                  alt="EditorPic"
+                />
                 <div className="post-header__login">
                   <div className="post-header__login--text">
                     {post.Editor && post.Editor.User && post.Editor.User.login}
@@ -116,9 +115,13 @@ function PreviewPost(props) {
                   {convertTime(new Date(post.createdAt).getTime())}
                 </div>
               </div>
-              <div className="post-header__cover">
-                <LazyImage src={post.cover} alt="Meme" />
-              </div>
+              <LazyImage
+                containerClass="post-header__cover"
+                src={post.cover}
+                alt="Capa"
+                withPlaceholder
+                placeholderClass="post-header__cover--placeholder"
+              />
               <div className="post-header__btn-box">
                 <div className="post-header__btn">
                   <button className="btn-icon btn-icon--orange u-discreet-disabled-btn">
