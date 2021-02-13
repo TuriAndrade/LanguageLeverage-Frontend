@@ -14,8 +14,8 @@ import { CSSTransition } from "react-transition-group"
 import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
 import { GoVerified, FaTimesCircle, FaTimes } from "react-icons/all"
-import { FiltersContext } from "../../components/context"
 import axios from "axios"
+import { FiltersContext } from "../../components/context"
 
 function Main() {
   const [articles, setArticles] = useState([])
