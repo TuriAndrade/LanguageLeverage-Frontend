@@ -55,7 +55,6 @@ function Main() {
             "get/feed",
             {
               offset,
-              limit: 2,
               subjects: filters,
               email: localStorage.getItem("email") || undefined,
             },
@@ -89,7 +88,6 @@ function Main() {
             "get/feed",
             {
               offset,
-              limit: 2,
               subjects: filters,
               email: localStorage.getItem("email") || undefined,
             },
@@ -136,7 +134,6 @@ function Main() {
             "get/feed",
             {
               offset,
-              limit: 2,
               subjects: filters,
               email: localStorage.getItem("email") || undefined,
             },
