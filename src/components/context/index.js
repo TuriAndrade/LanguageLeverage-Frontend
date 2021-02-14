@@ -9,3 +9,5 @@ export const ThemeContext = createContext(null)
 export const LanguageContext = createContext(null)
 
 export const FiltersContext = createContext(null)
+
+export const FeedContext = createContext(null)

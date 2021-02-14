@@ -15,58 +15,167 @@ import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
 import { GoVerified, FaTimesCircle, FaTimes } from "react-icons/all"
 import axios from "axios"
-import { FiltersContext } from "../../components/context"
+import { FiltersContext, FeedContext } from "../../components/context"
+import { isEqual } from "lodash"
 
 function Main() {
-  const [articles, setArticles] = useState([])
   const [loadingContent, setLoadingContent] = useState(true)
   const [error, setError] = useState(null)
   const [popupIn, setPopupIn] = useState(false)
   const [loadingMoreArticles, setLoadingMoreArticles] = useState(false)
   const [hasMoreArticles, setHasMoreArticles] = useState(false)
   const [offset, setOffset] = useState(0)
+  const [isMount, setIsMount] = useState(true)
 
-  const { filters, setFilters } = useContext(FiltersContext)
-
-  useEffect(() => {
-    setArticles([])
-    setOffset(0)
-    setLoadingContent(true)
-  }, [filters])
+  const { filters, setFilters, prevFilters } = useContext(FiltersContext)
+  const { basePosts, setBasePosts, currentPosts, setCurrentPosts } = useContext(
+    FeedContext
+  )
 
   useEffect(() => {
-    let cancel
-    api
-      .post(
-        "get/feed",
-        {
-          offset,
-          subjects: filters,
-          email: localStorage.getItem("email") || undefined,
-        },
-        {
-          withCredentials: true,
-          cancelToken: new axios.CancelToken((c) => (cancel = c)),
-        }
-      )
-      .then((response) => {
-        const articles = response.data.articles
+    if (!isEqual(filters, prevFilters)) {
+      setCurrentPosts([])
+      setOffset(0)
+      setLoadingContent(true)
+    }
+  }, [filters, prevFilters, setCurrentPosts])
 
-        setArticles((prevstate) => [...prevstate, ...articles])
-        setHasMoreArticles(articles.length > 0)
+  useEffect(() => {
+    if (isMount) {
+      setIsMount(false)
+      if (basePosts.length > 0 && filters.length === 0) {
+        setCurrentPosts(basePosts)
         setLoadingContent(false)
         setLoadingMoreArticles(false)
-      })
-      .catch((e) => {
-        if (axios.isCancel(e)) return null
-        setError("Algo de errado aconteceu!")
+        setHasMoreArticles(true)
+      } else if (basePosts.length === 0 && filters.length === 0) {
+        let cancel
+        api
+          .post(
+            "get/feed",
+            {
+              offset,
+              limit: 2,
+              subjects: filters,
+              email: localStorage.getItem("email") || undefined,
+            },
+            {
+              withCredentials: true,
+              cancelToken: new axios.CancelToken((c) => (cancel = c)),
+            }
+          )
+          .then((response) => {
+            const articles = response.data.articles
+
+            setBasePosts(articles)
+            setCurrentPosts(articles)
+            setHasMoreArticles(articles.length > 0)
+            setLoadingContent(false)
+            setLoadingMoreArticles(false)
+          })
+          .catch((e) => {
+            if (axios.isCancel(e)) return null
+            setError("Algo de errado aconteceu!")
+            setLoadingContent(false)
+            setLoadingMoreArticles(false)
+          })
+
+        // I can't use finally here because, in case of a cancel error, I don't wanna set the loadings to false
+        return () => cancel()
+      } else if (filters.length > 0 && currentPosts.length === 0) {
+        let cancel
+        api
+          .post(
+            "get/feed",
+            {
+              offset,
+              limit: 2,
+              subjects: filters,
+              email: localStorage.getItem("email") || undefined,
+            },
+            {
+              withCredentials: true,
+              cancelToken: new axios.CancelToken((c) => (cancel = c)),
+            }
+          )
+          .then((response) => {
+            const articles = response.data.articles
+
+            setCurrentPosts(articles)
+            setHasMoreArticles(articles.length > 0)
+            setLoadingContent(false)
+            setLoadingMoreArticles(false)
+          })
+          .catch((e) => {
+            if (axios.isCancel(e)) return null
+            setError("Algo de errado aconteceu!")
+            setLoadingContent(false)
+            setLoadingMoreArticles(false)
+          })
+
+        return () => cancel()
+      } else {
         setLoadingContent(false)
         setLoadingMoreArticles(false)
-      })
+        setHasMoreArticles(true)
+      }
+    } else {
+      if (
+        currentPosts.length === 0 &&
+        filters.length === 0 &&
+        basePosts.length > 0
+      ) {
+        setCurrentPosts(basePosts)
+        setLoadingContent(false)
+        setLoadingMoreArticles(false)
+        setHasMoreArticles(true)
+      } else if (offset >= currentPosts.length) {
+        let cancel
+        api
+          .post(
+            "get/feed",
+            {
+              offset,
+              limit: 2,
+              subjects: filters,
+              email: localStorage.getItem("email") || undefined,
+            },
+            {
+              withCredentials: true,
+              cancelToken: new axios.CancelToken((c) => (cancel = c)),
+            }
+          )
+          .then((response) => {
+            const articles = response.data.articles
 
-    // I can't use finally here because, in case of a cancel error, I don't wanna set the loadings to false
-    return () => cancel()
-  }, [offset, filters])
+            if (filters.length === 0 && offset >= basePosts.length) {
+              setBasePosts((prevstate) => [...prevstate, ...articles])
+            }
+
+            setCurrentPosts((prevstate) => [...prevstate, ...articles])
+            setHasMoreArticles(articles.length > 0)
+            setLoadingContent(false)
+            setLoadingMoreArticles(false)
+          })
+          .catch((e) => {
+            if (axios.isCancel(e)) return null
+            setError("Algo de errado aconteceu!")
+            setLoadingContent(false)
+            setLoadingMoreArticles(false)
+          })
+
+        return () => cancel()
+      }
+    }
+  }, [
+    offset,
+    filters,
+    basePosts,
+    setBasePosts,
+    currentPosts.length,
+    setCurrentPosts,
+    isMount,
+  ])
 
   const observer = useRef()
 
@@ -78,18 +187,18 @@ function Main() {
 
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMoreArticles) {
-          setOffset(articles.length)
+          setOffset(currentPosts.length)
           setLoadingMoreArticles(true)
         }
       })
 
       if (node) observer.current.observe(node)
     },
-    [loadingMoreArticles, hasMoreArticles, articles]
+    [loadingMoreArticles, hasMoreArticles, currentPosts]
   )
 
   function insertComment({ articleId, comment }) {
-    setArticles((prevstate) => {
+    setCurrentPosts((prevstate) => {
       return prevstate.map((article) => {
         if (articleId === article.id) {
           return {
@@ -113,7 +222,7 @@ function Main() {
   }
 
   function insertLike({ articleId, like }) {
-    setArticles((prevstate) =>
+    setCurrentPosts((prevstate) =>
       prevstate.map((article) => {
         if (articleId === article.id) {
           return {
@@ -127,7 +236,7 @@ function Main() {
   }
 
   function removeLike({ articleId, likeId }) {
-    setArticles((prevstate) =>
+    setCurrentPosts((prevstate) =>
       prevstate.map((article) => {
         if (articleId === article.id) {
           return {
@@ -171,11 +280,11 @@ function Main() {
         ) : null}
         {!loadingContent ? (
           <>
-            {articles.map((article, index) => {
+            {currentPosts.map((article, index) => {
               return (
                 <Post
                   fowardedRef={
-                    index === articles.length - 1 ? lastArticle : undefined
+                    index === currentPosts.length - 1 ? lastArticle : undefined
                   }
                   key={article.id}
                   article={article}
@@ -185,7 +294,7 @@ function Main() {
                 />
               )
             })}
-            {!hasMoreArticles && articles.length > 0 ? (
+            {!hasMoreArticles && currentPosts.length > 0 ? (
               <div className="post-box post-box--thats-it">
                 <div className="post-box__icon post-box__icon--primary">
                   <GoVerified />
@@ -194,7 +303,7 @@ function Main() {
                   Isso é tudo!
                 </div>
               </div>
-            ) : articles.length > 0 ? (
+            ) : currentPosts.length > 0 ? (
               <CSSTransition
                 in={loadingMoreArticles}
                 timeout={300}
@@ -210,7 +319,7 @@ function Main() {
                 </div>
               </CSSTransition>
             ) : null}
-            {articles.length === 0 && (
+            {currentPosts.length === 0 && (
               <div className="no-content">
                 <div className="no-content__icon no-content__icon--red">
                   <FaTimesCircle />

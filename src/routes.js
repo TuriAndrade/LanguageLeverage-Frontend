@@ -10,6 +10,7 @@ import {
   ThemeContext,
   LanguageContext,
   FiltersContext,
+  FeedContext,
 } from "./components/context"
 
 import authenticate from "./utils/authenticate"
@@ -38,6 +39,8 @@ import Post from "./pages/post"
 
 import { ProfileLayout, DefaultLayout } from "./components/layout"
 
+import usePrevious from "./components/usePrevious"
+
 export default function Routes() {
   const [user, setUser] = useState({
     loading: true,
@@ -48,6 +51,10 @@ export default function Routes() {
     localStorage.getItem("language") || "pt"
   )
   const [filters, setFilters] = useState([])
+  const prevFilters = usePrevious(filters)
+
+  const [basePosts, setBasePosts] = useState([])
+  const [currentPosts, setCurrentPosts] = useState([])
 
   useLayoutEffect(() => {
     document.documentElement.className = ""
@@ -82,123 +89,134 @@ export default function Routes() {
         <CsrfContext.Provider value={{ csrfToken, setCsrfToken }}>
           <ThemeContext.Provider value={{ theme, setTheme }}>
             <LanguageContext.Provider value={{ language, setLanguage }}>
-              <FiltersContext.Provider value={{ filters, setFilters }}>
-                <Switch>
-                  <PublicRoute
-                    restricted={false}
-                    path="/preferences"
-                    component={Preferences}
-                  />
-                  <PublicRoute
-                    restricted={false}
-                    path="/categories"
-                    component={Categories}
-                  />
-                  <PublicRoute
-                    restricted={false}
-                    path="/about"
-                    component={About}
-                  />
-                  <PublicRoute
-                    restricted={true}
-                    path="/login"
-                    component={Login}
-                  />
-                  <PublicRoute
-                    restricted={true}
-                    path="/register"
-                    component={Register}
-                  />
-                  <Route
-                    path={[
-                      "/profile",
-                      "/logout",
-                      "/posts",
-                      "/editors",
-                      "/admins",
-                      "/new/post",
-                      "/all/posts",
-                      "/update/post/:id",
-                      "/preview/post/:id",
-                      "/editor/posts/:editorId",
-                    ]}
-                    render={() => (
-                      <ProfileLayout>
-                        <Switch>
-                          <PrivateRoute path="/profile" component={Profile} />
-                          <PrivateRoute path="/logout" component={Logout} />
-                          <PrivateRoute
-                            path="/posts"
-                            editorOnly
-                            component={Posts}
-                          />
-                          <PrivateRoute
-                            path="/editors"
-                            adminOnly
-                            component={Editors}
-                          />
-                          <PrivateRoute
-                            path="/admins"
-                            fullAdminOnly
-                            component={Admins}
-                          />
-                          <PrivateRoute
-                            path="/new/post"
-                            validatedEditorOnly
-                            component={NewPost}
-                          />
-                          <PrivateRoute
-                            path="/update/post/:id"
-                            validatedEditorOnly
-                            component={UpdatePost}
-                          />
-                          <PrivateRoute
-                            path="/preview/post/:id"
-                            component={PreviewPost}
-                          />
-                          <PrivateRoute
-                            path="/all/posts"
-                            adminOnly
-                            component={AllPosts}
-                          />
-                          <PrivateRoute
-                            path="/editor/posts/:editorId"
-                            adminOnly
-                            component={EditorPosts}
-                          />
-                        </Switch>
-                      </ProfileLayout>
-                    )}
-                  />
-                  <Route
-                    render={() => (
-                      <DefaultLayout>
-                        <Switch>
-                          <PublicRoute
-                            restricted={false}
-                            exact
-                            path="/"
-                            component={Main}
-                          />
-                          <PublicRoute
-                            restricted={false}
-                            path="/trending"
-                            component={Trending}
-                          />
-                          <PublicRoute
-                            restricted={false}
-                            path="/post/:id"
-                            component={Post}
-                          />
-                          <PublicRoute
-                            restricted={false}
-                            component={NotFound}
-                          />
-                        </Switch>
-                      </DefaultLayout>
-                    )}
-                  />
-                </Switch>
+              <FiltersContext.Provider
+                value={{ filters, setFilters, prevFilters }}
+              >
+                <FeedContext.Provider
+                  value={{
+                    basePosts,
+                    setBasePosts,
+                    currentPosts,
+                    setCurrentPosts,
+                  }}
+                >
+                  <Switch>
+                    <PublicRoute
+                      restricted={false}
+                      path="/preferences"
+                      component={Preferences}
+                    />
+                    <PublicRoute
+                      restricted={false}
+                      path="/categories"
+                      component={Categories}
+                    />
+                    <PublicRoute
+                      restricted={false}
+                      path="/about"
+                      component={About}
+                    />
+                    <PublicRoute
+                      restricted={true}
+                      path="/login"
+                      component={Login}
+                    />
+                    <PublicRoute
+                      restricted={true}
+                      path="/register"
+                      component={Register}
+                    />
+                    <Route
+                      path={[
+                        "/profile",
+                        "/logout",
+                        "/posts",
+                        "/editors",
+                        "/admins",
+                        "/new/post",
+                        "/all/posts",
+                        "/update/post/:id",
+                        "/preview/post/:id",
+                        "/editor/posts/:editorId",
+                      ]}
+                      render={() => (
+                        <ProfileLayout>
+                          <Switch>
+                            <PrivateRoute path="/profile" component={Profile} />
+                            <PrivateRoute path="/logout" component={Logout} />
+                            <PrivateRoute
+                              path="/posts"
+                              editorOnly
+                              component={Posts}
+                            />
+                            <PrivateRoute
+                              path="/editors"
+                              adminOnly
+                              component={Editors}
+                            />
+                            <PrivateRoute
+                              path="/admins"
+                              fullAdminOnly
+                              component={Admins}
+                            />
+                            <PrivateRoute
+                              path="/new/post"
+                              validatedEditorOnly
+                              component={NewPost}
+                            />
+                            <PrivateRoute
+                              path="/update/post/:id"
+                              validatedEditorOnly
+                              component={UpdatePost}
+                            />
+                            <PrivateRoute
+                              path="/preview/post/:id"
+                              component={PreviewPost}
+                            />
+                            <PrivateRoute
+                              path="/all/posts"
+                              adminOnly
+                              component={AllPosts}
+                            />
+                            <PrivateRoute
+                              path="/editor/posts/:editorId"
+                              adminOnly
+                              component={EditorPosts}
+                            />
+                          </Switch>
+                        </ProfileLayout>
+                      )}
+                    />
+                    <Route
+                      render={() => (
+                        <DefaultLayout>
+                          <Switch>
+                            <PublicRoute
+                              restricted={false}
+                              exact
+                              path="/"
+                              component={Main}
+                            />
+                            <PublicRoute
+                              restricted={false}
+                              path="/trending"
+                              component={Trending}
+                            />
+                            <PublicRoute
+                              restricted={false}
+                              path="/post/:id"
+                              component={Post}
+                            />
+                            <PublicRoute
+                              restricted={false}
+                              component={NotFound}
+                            />
+                          </Switch>
+                        </DefaultLayout>
+                      )}
+                    />
+                  </Switch>
+                </FeedContext.Provider>
               </FiltersContext.Provider>
             </LanguageContext.Provider>
           </ThemeContext.Provider>
