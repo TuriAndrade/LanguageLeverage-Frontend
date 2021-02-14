@@ -112,7 +112,7 @@ function Main() {
           })
 
         return () => cancel()
-      } else {
+      } else if (isEqual(filters, prevFilters)) {
         setLoadingContent(false)
         setLoadingMoreArticles(false)
         setHasMoreArticles(true)
@@ -168,6 +168,7 @@ function Main() {
     offset,
     filters,
     basePosts,
+    prevFilters,
     setBasePosts,
     currentPosts.length,
     setCurrentPosts,
