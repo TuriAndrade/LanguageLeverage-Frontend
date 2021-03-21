@@ -56,10 +56,7 @@ export default function Comment({
           const createdComment = response.data.comment
 
           setReply("")
-          insertComment({
-            articleId: comment.articleId,
-            comment: createdComment,
-          })
+          insertComment(createdComment)
         } catch (e) {
           setError("Algum erro aconteceu!")
           setPopupIn(true)

@@ -1,50 +1,135 @@
-import React, { useEffect, useState, useContext, useRef } from "react"
-import scrollToTop from "../../components/scrollToTop"
-import {
-  AiOutlineHeart,
-  AiOutlineShareAlt,
-  GoComment,
-  AiFillHeart,
-} from "react-icons/all"
-import LoadingContent from "../../components/loadingContent"
-import PopupMessage from "../../components/popupMessage"
-import getTimePassed from "../../utils/getTimePassed"
-import api from "../../services/api"
-import DefaultProfilePic from "../../assets/default-profile-picture.png"
-import { UserContext, CsrfContext } from "../../components/context"
-import { atMost200 } from "../../validators/general"
+import React, {
+  useState,
+  useContext,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+} from "react"
 import Comment from "../../components/comment"
+import { CsrfContext, UserContext } from "../../components/context"
+import { CSSTransition } from "react-transition-group"
 import CommentModal from "../../components/commentModal"
 import LikeModal from "../../components/likeModal"
-import { CSSTransition } from "react-transition-group"
-import LazyImage from "../../components/lazyImage"
-import "dotenv"
+import {
+  AiOutlineHeart,
+  AiFillHeart,
+  AiOutlineShareAlt,
+  GoComment,
+  AiOutlinePlusCircle,
+} from "react-icons/all"
+import getTimePassed from "../../utils/getTimePassed"
+import DefaultProfilePicture from "../../assets/default-profile-picture.png"
+import { atMost200 } from "../../validators/general"
+import api from "../../services/api"
 import axios from "axios"
 import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
+import LazyImage from "../../components/lazyImage"
+import LoadingContent from "../../components/loadingContent"
+import PopupMessage from "../../components/popupMessage"
 
-function Post(props) {
+export default function Post(props) {
+  const [article, setArticle] = useState(null)
   const [loadingContent, setLoadingContent] = useState(true)
-  const [error, setError] = useState(null)
-  const [success, setSuccess] = useState(null)
-  const [post, setPost] = useState(null)
-  const [popupIn, setPopupIn] = useState(false)
+
   const [comment, setComment] = useState("")
+  const [nComments, setNComments] = useState(null)
   const [loadingComment, setLoadingComment] = useState(false)
+
+  const [like, setLike] = useState(null)
+  const [nLikes, setNLikes] = useState(null)
+
   const [commentIn, setCommentIn] = useState(false)
   const [likeIn, setLikeIn] = useState(false)
-  const [scrollToComments, setScrollToComments] = useState(false)
+  const [popupIn, setPopupIn] = useState(false)
+
+  const [commentsArray, setCommentsArray] = useState([])
+  const [commentsOffset, setCommentsOffset] = useState(0)
+  const [fetchingComments, setFetchingComments] = useState(false)
+  const [hasMoreComments, setHasMoreComments] = useState(false)
+
+  const [categories, setCategories] = useState([])
+
   const [message, setMessage] = useState(null)
   const [messageIn, setMessageIn] = useState(false)
-  const [like, setLike] = useState(false)
-  const [nLikes, setNLikes] = useState(0)
 
-  const { user } = useContext(UserContext)
+  const [scrollToComments, setScrollToComments] = useState(false)
+
+  const [error, setError] = useState(null)
+
+  const [success, setSuccess] = useState(null)
+
   const { csrfToken } = useContext(CsrfContext)
+  const { user } = useContext(UserContext)
 
   const commentInput = useRef()
 
   const cancelLike = useRef(null)
+
+  useEffect(() => {
+    if (props.match.params.id) {
+      setFetchingComments(true)
+
+      Promise.all([
+        api
+          .get(`/published/article/${props.match.params.id}`)
+          .then((response) => {
+            setArticle(response.data.article)
+          }),
+
+        api
+          .get(`/comments/number/${props.match.params.id}`)
+          .then((response) => {
+            setNComments(response.data.nComments)
+          }),
+
+        api
+          .get(`/article/subjects/${props.match.params.id}`)
+          .then((response) => {
+            setCategories(response.data.subjects)
+          }),
+
+        api
+          .post(
+            `/get/likes/${props.match.params.id}`,
+            {
+              email: localStorage.getItem("email") || undefined,
+            },
+            { withCredentials: true }
+          )
+          .then((response) => {
+            setNLikes(response.data.nLikes)
+            setLike(response.data.isLiked)
+          }),
+
+        api
+          .post(`/get/comments/${props.match.params.id}`, {
+            offset: 0,
+          })
+          .then((response) => {
+            setCommentsArray(
+              response.data.comments.map((comment) => ({
+                ...comment,
+                fetchingReplies: false,
+                repliesOffset: 0,
+              }))
+            )
+            setFetchingComments(false)
+            setHasMoreComments(response.data.hasMore)
+          }),
+      ])
+        .catch((e) => {
+          if (
+            e.response &&
+            e.response.data.error === "No published article found with this id!"
+          ) {
+            setError("Artigo não encontrado!")
+            setPopupIn(true)
+          }
+        })
+        .finally(() => setLoadingContent(false))
+    }
+  }, [props.match.params.id])
 
   useEffect(() => {
     if (scrollToComments && commentInput && commentInput.current) {
@@ -58,43 +143,55 @@ function Post(props) {
     }
   }, [scrollToComments])
 
-  useEffect(() => {
-    if (props.match.params.id) {
+  useLayoutEffect(() => {
+    //useLayoutEffect to avoid flashing when hasMore btn changes to loading gif
+    if (commentsOffset > 0) {
+      setFetchingComments(true)
       api
-        .post(
-          `get/published/article/${props.match.params.id}`,
-          {
-            email: localStorage.getItem("email") || undefined,
-          },
-          { withCredentials: true }
-        )
+        .post(`/get/comments/${props.match.params.id}`, {
+          offset: commentsOffset,
+        })
         .then((response) => {
-          const article = response.data.article
-
-          setPost(article)
-
-          setNLikes(article.Likes.length)
-
-          if (article.isLiked) {
-            setLike(true)
-          }
+          setCommentsArray((prevstate) => [
+            ...prevstate,
+            ...response.data.comments.map((comment) => ({
+              ...comment,
+              fetchingReplies: false,
+              repliesOffset: 0,
+            })),
+          ])
+          setFetchingComments(false)
+          setHasMoreComments(response.data.hasMore)
         })
-        .catch((e) => {
-          if (
-            e.response &&
-            e.response.data &&
-            e.response.data.error === "No published article found with this id!"
-          ) {
-            setError("Esse post não existe ou não está publicado!")
-          } else {
-            setError("Algum erro aconteceu!")
-          }
-          setPopupIn(true)
-          setPost(null)
-        })
-        .finally(() => setLoadingContent(false))
     }
-  }, [props.match.params.id])
+  }, [props.match.params.id, commentsOffset])
+
+  useEffect(() => {
+    commentsArray.map((comment, index) => {
+      if (comment.fetchingReplies) {
+        api
+          .post(`/get/replies/${comment.id}`, {
+            offset: comment.repliesOffset,
+          })
+          .then((response) => {
+            setCommentsArray((prevstate) =>
+              prevstate.map((entry, i) =>
+                i === index
+                  ? {
+                      ...entry,
+                      replies: [...entry.replies, ...response.data.replies],
+                      fetchingReplies: false,
+                      hasMoreReplies: response.data.hasMore,
+                    }
+                  : entry
+              )
+            )
+          })
+      }
+
+      return null
+    })
+  }, [commentsArray])
 
   function convertTime(timestamp) {
     const time = getTimePassed(timestamp)
@@ -103,6 +200,32 @@ function Post(props) {
       return "Data não encontrada!"
     } else {
       return `${time.n}${time.unit}`
+    }
+  }
+
+  function insertComment(comment) {
+    setCommentsArray((prevstate) => {
+      if (comment.replyTo) {
+        return prevstate.map((entry) => {
+          if (entry.id === comment.replyTo) {
+            return {
+              ...entry,
+              replies: entry.replies ? [comment, ...entry.replies] : [comment],
+            }
+          } else return entry
+        })
+      } else return [comment, ...prevstate]
+    })
+    setNComments((prevstate) => prevstate + 1)
+  }
+
+  function toggleLike() {
+    if (!like) {
+      setLike(true)
+      setNLikes((prevstate) => prevstate + 1)
+    } else {
+      setLike(false)
+      setNLikes((prevstate) => prevstate - 1)
     }
   }
 
@@ -115,13 +238,12 @@ function Post(props) {
         (user && !user.loading)
       ) {
         try {
-          setLike(true)
-          setNLikes((prevstate) => prevstate + 1)
-          const response = await api.post(
+          toggleLike()
+          await api.post(
             "/like",
             {
               email: localStorage.getItem("email") || undefined,
-              articleId: post.id,
+              articleId: article.id,
             },
             {
               withCredentials: true,
@@ -133,10 +255,6 @@ function Post(props) {
               },
             }
           )
-
-          const createdLike = response.data.like
-
-          insertLike({ like: createdLike })
         } catch (e) {
           return
         }
@@ -145,13 +263,12 @@ function Post(props) {
       }
     } else {
       try {
-        setLike(false)
-        setNLikes((prevstate) => prevstate - 1)
-        const response = await api.post(
+        toggleLike()
+        await api.post(
           "/dislike",
           {
             email: localStorage.getItem("email") || undefined,
-            articleId: post.id,
+            articleId: article.id,
           },
           {
             withCredentials: true,
@@ -161,10 +278,6 @@ function Post(props) {
             },
           }
         )
-
-        const likeId = response.data.likeId
-
-        removeLike({ likeId })
       } catch (e) {
         return
       }
@@ -187,7 +300,7 @@ function Post(props) {
               name: localStorage.getItem("name") || undefined,
               email: localStorage.getItem("email") || undefined,
               text: comment,
-              articleId: post.id,
+              articleId: article.id,
             },
             {
               withCredentials: true,
@@ -198,8 +311,9 @@ function Post(props) {
           )
 
           const createdComment = response.data.comment
+
+          insertComment(createdComment)
           setComment("")
-          insertComment({ comment: createdComment })
         } catch (e) {
           setError("Algum erro aconteceu!")
           setPopupIn(true)
@@ -214,7 +328,7 @@ function Post(props) {
 
   function copyToClipboard() {
     navigator.clipboard
-      .writeText(`${process.env.REACT_APP_URL}/post/${post.id}`)
+      .writeText(`${process.env.REACT_APP_URL}/post/${article.id}`)
       .then(
         function () {
           setMessage("Link copiado!")
@@ -228,50 +342,8 @@ function Post(props) {
       })
   }
 
-  function insertComment({ comment }) {
-    setPost((prevstate) => ({
-      ...prevstate,
-      Comments: !comment.replyTo
-        ? [...prevstate.Comments, comment]
-        : prevstate.Comments.map((entry) => {
-            if (entry.id === comment.replyTo) {
-              return {
-                ...entry,
-                replies: entry.replies
-                  ? [...entry.replies, comment]
-                  : [comment],
-              }
-            } else return entry
-          }),
-    }))
-  }
-
-  function insertLike({ like }) {
-    setPost((prevstate) => ({
-      ...prevstate,
-      Likes: [...prevstate.Likes, like],
-      isLiked: true,
-    }))
-  }
-
-  function removeLike({ likeId }) {
-    setPost((prevstate) => ({
-      ...prevstate,
-      Likes: prevstate.Likes.filter((like) => like.id !== likeId),
-      isLiked: false,
-    }))
-  }
-
   return (
     <>
-      <PopupMessage
-        error={error}
-        setError={setError}
-        success={success}
-        setSuccess={setSuccess}
-        modalIn={popupIn}
-        setModalIn={setPopupIn}
-      />
       <CSSTransition
         in={messageIn}
         classNames="bottom-message"
@@ -282,14 +354,23 @@ function Post(props) {
       >
         <div className="bottom-message">{message}</div>
       </CSSTransition>
+      <PopupMessage
+        modalIn={popupIn}
+        setModalIn={setPopupIn}
+        error={error}
+        setError={setError}
+        sucess={success}
+        setSuccess={setSuccess}
+        disappear={!!article}
+      />
       <LoadingContent loadingIn={loadingContent} />
-      {!loadingContent && post ? (
+      {!loadingContent && article && (
         <div className="post-preview">
           <CommentModal
             modalIn={commentIn}
             setModalIn={setCommentIn}
             comment={comment}
-            articleId={post.id}
+            articleId={article.id}
             setError={setError}
             setSuccess={setSuccess}
             setPopupIn={setPopupIn}
@@ -299,38 +380,33 @@ function Post(props) {
           <LikeModal
             modalIn={likeIn}
             setModalIn={setLikeIn}
-            articleId={post.id}
+            articleId={article.id}
             setError={setError}
             setSuccess={setSuccess}
             setPopupIn={setPopupIn}
             setComment={setComment}
-            insertLike={insertLike}
+            insertLike={toggleLike}
           />
           <div className="post-box">
             <div className="post-header">
               <div className="post-header__header">
                 <LazyImage
-                  containerClass="post-header__profile-picture"
-                  src={
-                    (post.Editor &&
-                      post.Editor.User &&
-                      post.Editor.User.picture) ||
-                    DefaultProfilePic
-                  }
+                  src={article.Editor.User.picture || DefaultProfilePicture}
                   alt="EditorPic"
+                  containerClass="post-header__profile-picture"
                 />
                 <div className="post-header__login">
                   <div className="post-header__login--text">
-                    {post.Editor && post.Editor.User && post.Editor.User.login}
+                    {article.Editor.User.login}
                   </div>
                 </div>
                 <div className="post-header__publish-time">
-                  {convertTime(new Date(post.createdAt).getTime())}
+                  {convertTime(new Date(article.createdAt).getTime())}
                 </div>
               </div>
               <LazyImage
                 containerClass="post-header__cover"
-                src={post.cover}
+                src={article.cover}
                 alt="Capa"
                 withPlaceholder
                 placeholderClass="post-header__cover--placeholder"
@@ -338,27 +414,34 @@ function Post(props) {
               <div className="post-header__btn-box">
                 <div className="post-header__btn">
                   <button
-                    onClick={() => setScrollToComments(true)}
-                    className="btn-icon btn-icon--orange"
+                    onClick={() => {
+                      setScrollToComments(true)
+                    }}
+                    className={
+                      nComments !== null
+                        ? "btn-icon btn-icon--orange"
+                        : "btn-icon btn-icon--orange u-disabled-btn"
+                    }
                   >
                     <div className="btn-icon--icon">
                       <GoComment />
                     </div>
                     <div className="btn-icon--number post-header__btn-number">
-                      {post.Comments ? post.Comments.length : 0}
+                      {nComments}
                     </div>
                   </button>
                 </div>
                 <div className="post-header__btn">
                   <button
-                    onClick={handleLike}
                     className={
-                      like
+                      like === true
                         ? "btn-icon btn-icon--active btn-icon--red"
-                        : "btn-icon btn-icon--red"
+                        : like === false
+                        ? "btn-icon btn-icon--red"
+                        : "btn-icon btn-icon--red u-disabled-btn"
                     }
                   >
-                    <div className="btn-icon--icon">
+                    <div onClick={handleLike} className="btn-icon--icon">
                       {like ? <AiFillHeart /> : <AiOutlineHeart />}
                     </div>
                     <div className="btn-icon--number post-header__btn-number">
@@ -380,27 +463,31 @@ function Post(props) {
             </div>
             <div className="post-content post-content--opened">
               <div
-                dangerouslySetInnerHTML={{ __html: post.html }}
+                dangerouslySetInnerHTML={{ __html: article.html }}
                 className="post-content__content-box"
               ></div>
-              {post.Subjects && post.Subjects.length > 0 ? (
+              {categories.length > 0 && (
                 <div className="post-content__categories-box">
-                  {post.Subjects.map((subject, index) => (
-                    <div key={index} className="post-content__category">
-                      {subject.subject}
-                    </div>
-                  ))}
+                  {categories.map((category, index) => {
+                    if (category.subject) {
+                      return (
+                        <div key={index} className="post-content__category">
+                          {category.subject}
+                        </div>
+                      )
+                    } else return null
+                  })}
                 </div>
-              ) : null}
+              )}
               <div className="post-content__comments-box">
                 <div className="post-content__comments-header">
-                  {post.Comments && post.Comments.length === 1
+                  {nComments === 1
                     ? "1 Comentário"
-                    : `${post.Comments.length} Comentários`}
+                    : `${nComments} Comentários`}
                 </div>
                 <form
                   onSubmit={handleComment}
-                  className="post-content__comments-input-box"
+                  className="post-comment__input-box"
                 >
                   <input
                     ref={commentInput}
@@ -424,37 +511,82 @@ function Post(props) {
                   ) : null}
                 </form>
                 <div className="post-content__comments">
-                  {post.Comments &&
-                    post.Comments.map((comment) => (
-                      <React.Fragment key={comment.id}>
-                        <Comment
-                          insertComment={insertComment}
-                          comment={comment}
-                          setError={setError}
-                          setSuccess={setSuccess}
-                          setPopupIn={setPopupIn}
-                        />
-                        {comment.replies &&
-                          comment.replies.map((reply) => (
-                            <Comment
-                              key={reply.id}
-                              insertComment={insertComment}
-                              comment={reply}
-                              setError={setError}
-                              setSuccess={setSuccess}
-                              setPopupIn={setPopupIn}
+                  {commentsArray.map((comment, index) => (
+                    <React.Fragment key={comment.id}>
+                      <Comment
+                        insertComment={insertComment}
+                        comment={comment}
+                        setError={setError}
+                        setSuccess={setSuccess}
+                        setPopupIn={setPopupIn}
+                      />
+                      {comment.replies &&
+                        comment.replies.map((reply) => (
+                          <Comment
+                            key={reply.id}
+                            insertComment={insertComment}
+                            comment={reply}
+                            setError={setError}
+                            setSuccess={setSuccess}
+                            setPopupIn={setPopupIn}
+                          />
+                        ))}
+                      {comment.hasMoreReplies ? (
+                        <button
+                          onClick={() => {
+                            setCommentsArray((prevstate) =>
+                              prevstate.map((entry, i) =>
+                                i === index
+                                  ? {
+                                      ...entry,
+                                      repliesOffset: comment.replies.length,
+                                      fetchingReplies: true,
+                                    }
+                                  : entry
+                              )
+                            )
+                          }}
+                          className="post-content__has-more-replies"
+                        >
+                          {comment.fetchingReplies ? (
+                            <UseAnimation
+                              wrapperStyle={{ width: "3rem", height: "3rem" }}
+                              animation={loading}
+                              strokeColor="#0092db"
                             />
-                          ))}
-                      </React.Fragment>
-                    ))}
+                          ) : (
+                            "Mais"
+                          )}
+                        </button>
+                      ) : null}
+                    </React.Fragment>
+                  ))}
+                  {fetchingComments ? (
+                    <div className="post-content__fetching-comments">
+                      <UseAnimation
+                        wrapperStyle={{ width: "4rem", height: "4rem" }}
+                        animation={loading}
+                        strokeColor="#0092db"
+                      />
+                    </div>
+                  ) : null}
+                  {hasMoreComments ? (
+                    <button
+                      onClick={() => {
+                        setCommentsOffset(commentsArray.length)
+                        setHasMoreComments(false)
+                      }}
+                      className="post-content__has-more-comments"
+                    >
+                      <AiOutlinePlusCircle />
+                    </button>
+                  ) : null}
                 </div>
               </div>
             </div>
           </div>
         </div>
-      ) : null}
+      )}
     </>
   )
 }
-
-export default scrollToTop({ component: Post })

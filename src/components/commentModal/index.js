@@ -20,8 +20,8 @@ export default function CommentModal({
   setError,
   setSuccess,
   setPopupIn,
-  setComment,
   insertComment,
+  setComment,
 }) {
   const [name, setName] = useState("")
   const [errorName, setErrorName] = useState(null)
@@ -78,7 +78,7 @@ export default function CommentModal({
         setName("")
         setEmail("")
         setComment("")
-        insertComment({ articleId, comment: createdComment })
+        insertComment(createdComment)
       } catch (e) {
         if (
           e.response &&

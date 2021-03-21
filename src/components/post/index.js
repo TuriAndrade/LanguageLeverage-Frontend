@@ -17,6 +17,7 @@ import {
   GoComment,
   AiOutlineEyeInvisible,
   AiOutlineEye,
+  AiOutlinePlusCircle,
 } from "react-icons/all"
 import getTimePassed from "../../utils/getTimePassed"
 import DefaultProfilePicture from "../../assets/default-profile-picture.png"
@@ -28,21 +29,27 @@ import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
 import LazyImage from "../lazyImage"
 
-export default function Post({
-  article,
-  fowardedRef,
-  insertComment,
-  insertLike,
-  removeLike,
-}) {
+export default function Post({ article, fowardedRef }) {
   const [isOpened, setIsOpened] = useState(false)
+  const [firstOpen, setFirstOpen] = useState(true)
+
   const [comment, setComment] = useState("")
+  const [nComments, setNComments] = useState(null)
   const [loadingComment, setLoadingComment] = useState(false)
-  const [like, setLike] = useState(false)
-  const [nLikes, setNLikes] = useState(0)
+
+  const [like, setLike] = useState(null)
+  const [nLikes, setNLikes] = useState(null)
+
   const [commentIn, setCommentIn] = useState(false)
   const [likeIn, setLikeIn] = useState(false)
   const [popupIn, setPopupIn] = useState(false)
+
+  const [commentsArray, setCommentsArray] = useState([])
+  const [commentsOffset, setCommentsOffset] = useState(0)
+  const [fetchingComments, setFetchingComments] = useState(false)
+  const [hasMoreComments, setHasMoreComments] = useState(false)
+
+  const [categories, setCategories] = useState([])
 
   const [message, setMessage] = useState(null)
   const [messageIn, setMessageIn] = useState(false)
@@ -60,13 +67,30 @@ export default function Post({
 
   const cancelLike = useRef(null)
 
-  useLayoutEffect(() => {
-    if (article.isLiked) {
-      setLike(true)
-    }
+  useEffect(() => {
+    api.get(`/comments/number/${article.id}`).then((response) => {
+      setNComments(response.data.nComments)
+    })
 
-    setNLikes(article.Likes.length)
-  }, [article])
+    api
+      .post(
+        `/get/likes/${article.id}`,
+        {
+          email: localStorage.getItem("email") || undefined,
+        },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        setNLikes(response.data.nLikes)
+        setLike(response.data.isLiked)
+      })
+  }, [article.id])
+
+  useEffect(() => {
+    api.get(`/article/subjects/${article.id}`).then((response) => {
+      setCategories(response.data.subjects)
+    })
+  }, [article.id])
 
   useEffect(() => {
     if (isOpened && scrollToComments && commentInput && commentInput.current) {
@@ -80,6 +104,79 @@ export default function Post({
     }
   }, [isOpened, scrollToComments])
 
+  useLayoutEffect(() => {
+    //useLayoutEffect to avoid flashing when hasMore btn changes to loading gif
+    if (firstOpen && isOpened) {
+      setFetchingComments(true)
+      setFirstOpen(false)
+      api
+        .post(`/get/comments/${article.id}`, {
+          offset: 0,
+        })
+        .then((response) => {
+          setCommentsArray(
+            response.data.comments.map((comment) => ({
+              ...comment,
+              fetchingReplies: false,
+              repliesOffset: 0,
+            }))
+          )
+          setFetchingComments(false)
+          setHasMoreComments(response.data.hasMore)
+        })
+    }
+  }, [article.id, firstOpen, isOpened])
+
+  useLayoutEffect(() => {
+    //useLayoutEffect to avoid flashing when hasMore btn changes to loading gif
+    if (commentsOffset > 0) {
+      setFetchingComments(true)
+      api
+        .post(`/get/comments/${article.id}`, {
+          offset: commentsOffset,
+        })
+        .then((response) => {
+          setCommentsArray((prevstate) => [
+            ...prevstate,
+            ...response.data.comments.map((comment) => ({
+              ...comment,
+              fetchingReplies: false,
+              repliesOffset: 0,
+            })),
+          ])
+          setFetchingComments(false)
+          setHasMoreComments(response.data.hasMore)
+        })
+    }
+  }, [article.id, commentsOffset])
+
+  useEffect(() => {
+    commentsArray.map((comment, index) => {
+      if (comment.fetchingReplies) {
+        api
+          .post(`/get/replies/${comment.id}`, {
+            offset: comment.repliesOffset,
+          })
+          .then((response) => {
+            setCommentsArray((prevstate) =>
+              prevstate.map((entry, i) =>
+                i === index
+                  ? {
+                      ...entry,
+                      replies: [...entry.replies, ...response.data.replies],
+                      fetchingReplies: false,
+                      hasMoreReplies: response.data.hasMore,
+                    }
+                  : entry
+              )
+            )
+          })
+      }
+
+      return null
+    })
+  }, [commentsArray])
+
   function convertTime(timestamp) {
     const time = getTimePassed(timestamp)
 
@@ -87,6 +184,32 @@ export default function Post({
       return "Data não encontrada!"
     } else {
       return `${time.n}${time.unit}`
+    }
+  }
+
+  function insertComment(comment) {
+    setCommentsArray((prevstate) => {
+      if (comment.replyTo) {
+        return prevstate.map((entry) => {
+          if (entry.id === comment.replyTo) {
+            return {
+              ...entry,
+              replies: entry.replies ? [comment, ...entry.replies] : [comment],
+            }
+          } else return entry
+        })
+      } else return [comment, ...prevstate]
+    })
+    setNComments((prevstate) => prevstate + 1)
+  }
+
+  function toggleLike() {
+    if (!like) {
+      setLike(true)
+      setNLikes((prevstate) => prevstate + 1)
+    } else {
+      setLike(false)
+      setNLikes((prevstate) => prevstate - 1)
     }
   }
 
@@ -99,9 +222,8 @@ export default function Post({
         (user && !user.loading)
       ) {
         try {
-          setLike(true)
-          setNLikes((prevstate) => prevstate + 1)
-          const response = await api.post(
+          toggleLike()
+          await api.post(
             "/like",
             {
               email: localStorage.getItem("email") || undefined,
@@ -117,10 +239,6 @@ export default function Post({
               },
             }
           )
-
-          const createdLike = response.data.like
-
-          insertLike({ articleId: article.id, like: createdLike })
         } catch (e) {
           return
         }
@@ -129,9 +247,8 @@ export default function Post({
       }
     } else {
       try {
-        setLike(false)
-        setNLikes((prevstate) => prevstate - 1)
-        const response = await api.post(
+        toggleLike()
+        await api.post(
           "/dislike",
           {
             email: localStorage.getItem("email") || undefined,
@@ -145,10 +262,6 @@ export default function Post({
             },
           }
         )
-
-        const likeId = response.data.likeId
-
-        removeLike({ articleId: article.id, likeId })
       } catch (e) {
         return
       }
@@ -183,8 +296,8 @@ export default function Post({
 
           const createdComment = response.data.comment
 
+          insertComment(createdComment)
           setComment("")
-          insertComment({ articleId: article.id, comment: createdComment })
         } catch (e) {
           setError("Algum erro aconteceu!")
           setPopupIn(true)
@@ -252,27 +365,22 @@ export default function Post({
         setSuccess={setSuccess}
         setPopupIn={setPopupIn}
         setComment={setComment}
-        insertLike={insertLike}
+        insertLike={toggleLike}
       />
       <div className="post-header">
         <div className="post-header__header">
           <LazyImage
-            src={
-              (article.Editor &&
-                article.Editor.User &&
-                article.Editor.User.picture) ||
-              DefaultProfilePicture
-            }
+            src={article.editor_picture || DefaultProfilePicture}
             alt="EditorPic"
             containerClass="post-header__profile-picture"
           />
           <div className="post-header__login">
             <div className="post-header__login--text">
-              {article.Editor.User.login}
+              {article.editor_login}
             </div>
           </div>
           <div className="post-header__publish-time">
-            {convertTime(new Date(article.createdAt).getTime())}
+            {convertTime(new Date(article.created_at).getTime())}
           </div>
         </div>
         <LazyImage
@@ -289,22 +397,28 @@ export default function Post({
                 setIsOpened(true)
                 setScrollToComments(true)
               }}
-              className="btn-icon btn-icon--orange"
+              className={
+                nComments !== null
+                  ? "btn-icon btn-icon--orange"
+                  : "btn-icon btn-icon--orange u-disabled-btn"
+              }
             >
               <div className="btn-icon--icon">
                 <GoComment />
               </div>
               <div className="btn-icon--number post-header__btn-number">
-                {article.Comments ? article.Comments.length : 0}
+                {nComments}
               </div>
             </button>
           </div>
           <div className="post-header__btn">
             <button
               className={
-                like
+                like === true
                   ? "btn-icon btn-icon--active btn-icon--red"
-                  : "btn-icon btn-icon--red"
+                  : like === false
+                  ? "btn-icon btn-icon--red"
+                  : "btn-icon btn-icon--red u-disabled-btn"
               }
             >
               <div onClick={handleLike} className="btn-icon--icon">
@@ -348,9 +462,9 @@ export default function Post({
           dangerouslySetInnerHTML={{ __html: article.html }}
           className="post-content__content-box"
         ></div>
-        {article.Subjects && article.Subjects.length > 0 && (
+        {categories.length > 0 && (
           <div className="post-content__categories-box">
-            {article.Subjects.map((category, index) => {
+            {categories.map((category, index) => {
               if (category.subject) {
                 return (
                   <div key={index} className="post-content__category">
@@ -363,9 +477,7 @@ export default function Post({
         )}
         <div className="post-content__comments-box">
           <div className="post-content__comments-header">
-            {article.Comments && article.Comments.length === 1
-              ? "1 Comentário"
-              : `${article.Comments.length} Comentários`}
+            {nComments === 1 ? "1 Comentário" : `${nComments} Comentários`}
           </div>
           <form onSubmit={handleComment} className="post-comment__input-box">
             <input
@@ -390,29 +502,76 @@ export default function Post({
             ) : null}
           </form>
           <div className="post-content__comments">
-            {article.Comments &&
-              article.Comments.map((comment) => (
-                <React.Fragment key={comment.id}>
-                  <Comment
-                    insertComment={insertComment}
-                    comment={comment}
-                    setError={setError}
-                    setSuccess={setSuccess}
-                    setPopupIn={setPopupIn}
-                  />
-                  {comment.replies &&
-                    comment.replies.map((reply) => (
-                      <Comment
-                        key={reply.id}
-                        insertComment={insertComment}
-                        comment={reply}
-                        setError={setError}
-                        setSuccess={setSuccess}
-                        setPopupIn={setPopupIn}
+            {commentsArray.map((comment, index) => (
+              <React.Fragment key={comment.id}>
+                <Comment
+                  insertComment={insertComment}
+                  comment={comment}
+                  setError={setError}
+                  setSuccess={setSuccess}
+                  setPopupIn={setPopupIn}
+                />
+                {comment.replies &&
+                  comment.replies.map((reply) => (
+                    <Comment
+                      key={reply.id}
+                      insertComment={insertComment}
+                      comment={reply}
+                      setError={setError}
+                      setSuccess={setSuccess}
+                      setPopupIn={setPopupIn}
+                    />
+                  ))}
+                {comment.hasMoreReplies ? (
+                  <button
+                    onClick={() => {
+                      setCommentsArray((prevstate) =>
+                        prevstate.map((entry, i) =>
+                          i === index
+                            ? {
+                                ...entry,
+                                repliesOffset: comment.replies.length,
+                                fetchingReplies: true,
+                              }
+                            : entry
+                        )
+                      )
+                    }}
+                    className="post-content__has-more-replies"
+                  >
+                    {comment.fetchingReplies ? (
+                      <UseAnimation
+                        wrapperStyle={{ width: "3rem", height: "3rem" }}
+                        animation={loading}
+                        strokeColor="#0092db"
                       />
-                    ))}
-                </React.Fragment>
-              ))}
+                    ) : (
+                      "Mais"
+                    )}
+                  </button>
+                ) : null}
+              </React.Fragment>
+            ))}
+            {fetchingComments ? (
+              <div className="post-content__fetching-comments">
+                <UseAnimation
+                  wrapperStyle={{ width: "4rem", height: "4rem" }}
+                  animation={loading}
+                  strokeColor="#0092db"
+                />
+              </div>
+            ) : null}
+            {hasMoreComments ? (
+              <button
+                onClick={() => {
+                  setCommentsOffset(commentsArray.length)
+                  setHasMoreComments(false)
+                }}
+                className="post-content__has-more-comments"
+              >
+                <AiOutlinePlusCircle />
+              </button>
+            ) : null}
           </div>
         </div>
       </div>

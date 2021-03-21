@@ -8,6 +8,8 @@ import { verifyIfBlank } from "../../validators/general"
 import { validateEmail } from "../../validators/email"
 import ControlledInput from "../controlledInput"
 import { CsrfContext } from "../context"
+import UseAnimation from "react-useanimations"
+import loading from "react-useanimations/lib/loading"
 
 export default function LikeModal({
   modalIn,
@@ -24,6 +26,8 @@ export default function LikeModal({
   const [email, setEmail] = useState("")
   const [errorEmail, setErrorEmail] = useState(null)
 
+  const [loadingLike, setLoadingLike] = useState(false)
+
   const [isSubscriber, setIsSubscriber] = useState(false)
 
   const { csrfToken } = useContext(CsrfContext)
@@ -39,6 +43,7 @@ export default function LikeModal({
 
     if (data.name && data.email && data.articleId) {
       try {
+        setLoadingLike(true)
         localStorage.setItem("name", data.name)
         localStorage.setItem("email", data.email)
 
@@ -66,7 +71,7 @@ export default function LikeModal({
         setError(false)
         setName("")
         setEmail("")
-        insertLike({ articleId, like: createdLike })
+        insertLike(createdLike)
       } catch (e) {
         if (
           e.response &&
@@ -81,6 +86,7 @@ export default function LikeModal({
       } finally {
         setModalIn(false)
         setPopupIn(true)
+        setLoadingLike(false)
       }
     }
   }
@@ -171,9 +177,20 @@ export default function LikeModal({
                   <div className="post-comment-modal__submit-btn">
                     <button
                       type="submit"
-                      className="post-comment-modal__submit-btn btn-primary--thin btn-primary btn-primary--color-primary"
+                      className={
+                        !loadingLike
+                          ? "post-comment-modal__submit-btn btn-primary--thin btn-primary btn-primary--color-primary"
+                          : "post-comment-modal__submit-btn btn-primary--thin btn-primary btn-primary--color-primary u-disabled-btn"
+                      }
                     >
-                      <p className="btn-primary--text">Ok</p>
+                      <div className="btn-primary--text">Ok</div>
+                      {loadingLike ? (
+                        <UseAnimation
+                          wrapperStyle={{ width: "2rem", height: "2rem" }}
+                          animation={loading}
+                          strokeColor="#ffffff"
+                        />
+                      ) : null}
                     </button>
                   </div>
                 </form>

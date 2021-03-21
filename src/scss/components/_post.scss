@@ -270,6 +270,49 @@
     }
   }
 
+  &__fetching-comments {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+
+  &__has-more-comments {
+    align-self: center;
+    display: flex;
+    font-size: 2.2rem;
+    background: transparent;
+
+    @include theme-aware("color", "color-text");
+
+    @include not-touch-device() {
+      &:hover {
+        @include theme-aware("color", "color-primary");
+      }
+    }
+  }
+
+  &__has-more-replies {
+    position: relative;
+    align-self: start;
+    display: flex;
+    font-size: $default-font-size;
+    margin-left: 4rem;
+    background: transparent;
+
+    @include theme-aware("color", "color-primary");
+
+    &::before {
+      content: "";
+      height: 2px;
+      width: 1.5rem;
+      position: absolute;
+      top: 50%;
+      left: -2.75rem;
+      transform: translateY(-50%);
+      @include theme-aware("background-color", "color-primary");
+    }
+  }
+
   &__comments-loading {
     position: absolute;
     top: 50%;

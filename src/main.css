@@ -1318,6 +1318,52 @@ textarea {
     flex-direction: column; }
     .post-content__comments > *:not(:last-child) {
       margin-bottom: 1rem; }
+  .post-content__fetching-comments {
+    display: flex;
+    width: 100%;
+    justify-content: center; }
+  .post-content__has-more-comments {
+    align-self: center;
+    display: flex;
+    font-size: 2.2rem;
+    background: transparent;
+    /*
+    This disables hover on firefox,
+    but it fixes hover related problems in
+    mobile devices, so it's worth it
+  */ }
+    .theme-light .post-content__has-more-comments {
+      color: #141716; }
+    .theme-dark .post-content__has-more-comments {
+      color: #fff; }
+    @media not all and (pointer: coarse) {
+      .theme-light .post-content__has-more-comments:hover {
+        color: #0092db; }
+      .theme-dark .post-content__has-more-comments:hover {
+        color: #0092db; } }
+  .post-content__has-more-replies {
+    position: relative;
+    align-self: start;
+    display: flex;
+    font-size: 1.6rem;
+    margin-left: 4rem;
+    background: transparent; }
+    .theme-light .post-content__has-more-replies {
+      color: #0092db; }
+    .theme-dark .post-content__has-more-replies {
+      color: #0092db; }
+    .post-content__has-more-replies::before {
+      content: "";
+      height: 2px;
+      width: 1.5rem;
+      position: absolute;
+      top: 50%;
+      left: -2.75rem;
+      transform: translateY(-50%); }
+      .theme-light .post-content__has-more-replies::before {
+        background-color: #0092db; }
+      .theme-dark .post-content__has-more-replies::before {
+        background-color: #0092db; }
   .post-content__comments-loading {
     position: absolute;
     top: 50%;
