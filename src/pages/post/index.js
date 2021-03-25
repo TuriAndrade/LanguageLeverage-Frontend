@@ -24,7 +24,7 @@ import api from "../../services/api"
 import axios from "axios"
 import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
-import LazyImage from "../../components/lazyImage"
+import Image from "../../components/image"
 import LoadingContent from "../../components/loadingContent"
 import PopupMessage from "../../components/popupMessage"
 
@@ -390,7 +390,7 @@ export default function Post(props) {
           <div className="post-box">
             <div className="post-header">
               <div className="post-header__header">
-                <LazyImage
+                <Image
                   src={article.Editor.User.picture || DefaultProfilePicture}
                   alt="EditorPic"
                   containerClass="post-header__profile-picture"
@@ -404,7 +404,7 @@ export default function Post(props) {
                   {convertTime(new Date(article.createdAt).getTime())}
                 </div>
               </div>
-              <LazyImage
+              <Image
                 containerClass="post-header__cover"
                 src={article.cover}
                 alt="Capa"

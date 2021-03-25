@@ -27,7 +27,7 @@ import PopupMessage from "../popupMessage"
 import axios from "axios"
 import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
-import LazyImage from "../lazyImage"
+import Image from "../image"
 
 export default function Post({ article, fowardedRef }) {
   const [isOpened, setIsOpened] = useState(false)
@@ -369,7 +369,7 @@ export default function Post({ article, fowardedRef }) {
       />
       <div className="post-header">
         <div className="post-header__header">
-          <LazyImage
+          <Image
             src={article.editor_picture || DefaultProfilePicture}
             alt="EditorPic"
             containerClass="post-header__profile-picture"
@@ -383,7 +383,7 @@ export default function Post({ article, fowardedRef }) {
             {convertTime(new Date(article.created_at).getTime())}
           </div>
         </div>
-        <LazyImage
+        <Image
           containerClass="post-header__cover"
           src={article.cover}
           alt="Capa"

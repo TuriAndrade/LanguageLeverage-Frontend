@@ -25,7 +25,7 @@ import UseAnimation from "react-useanimations"
 import loading from "react-useanimations/lib/loading"
 
 import { FaArrowLeft } from "react-icons/all"
-import LazyImage from "../../components/lazyImage"
+import Image from "../../components/image"
 
 function Profile() {
   const [name, setName] = useState("")
@@ -294,7 +294,7 @@ function Profile() {
           {changePassword ? (
             <form onSubmit={handleChangePassword} className="dashboard-form">
               <div className="dashboard-form__header">
-                <LazyImage
+                <Image
                   containerClass="dashboard-form__picture"
                   src={profilePicture || DefaultProfilePic}
                   alt="Profile"
@@ -395,7 +395,7 @@ function Profile() {
           ) : (
             <form onSubmit={handleSubmit} className="dashboard-form">
               <div className="dashboard-form__header">
-                <LazyImage
+                <Image
                   containerClass="dashboard-form__picture"
                   src={profilePicture || DefaultProfilePic}
                   alt="Profile"
