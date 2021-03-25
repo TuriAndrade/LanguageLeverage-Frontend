@@ -63,9 +63,29 @@ function Main() {
               cancelToken: new axios.CancelToken((c) => (cancel = c)),
             }
           )
-          .then((response) => {
+          .then(async (response) => {
             const articles = response.data.articles
 
+            await Promise.all(
+              articles.map((article) => {
+                const cover = new Image()
+                const profilePicture = new Image()
+
+                cover.src = article.cover
+                profilePicture.src = article.editor_picture
+
+                return Promise.all([
+                  new Promise((resolve, reject) => {
+                    cover.onload = resolve()
+                    cover.onerror = reject()
+                  }),
+                  new Promise((resolve, reject) => {
+                    profilePicture.onload = resolve()
+                    profilePicture.onerror = reject()
+                  }),
+                ])
+              })
+            )
             setBasePosts(articles)
             setCurrentPosts(articles)
             setHasMoreArticles(articles.length > 0)
@@ -96,9 +116,29 @@ function Main() {
               cancelToken: new axios.CancelToken((c) => (cancel = c)),
             }
           )
-          .then((response) => {
+          .then(async (response) => {
             const articles = response.data.articles
 
+            await Promise.all(
+              articles.map((article) => {
+                const cover = new Image()
+                const profilePicture = new Image()
+
+                cover.src = article.cover
+                profilePicture.src = article.editor_picture
+
+                return Promise.all([
+                  new Promise((resolve, reject) => {
+                    cover.onload = resolve()
+                    cover.onerror = reject()
+                  }),
+                  new Promise((resolve, reject) => {
+                    profilePicture.onload = resolve()
+                    profilePicture.onerror = reject()
+                  }),
+                ])
+              })
+            )
             setCurrentPosts(articles)
             setHasMoreArticles(articles.length > 0)
             setLoadingContent(false)
@@ -142,8 +182,29 @@ function Main() {
               cancelToken: new axios.CancelToken((c) => (cancel = c)),
             }
           )
-          .then((response) => {
+          .then(async (response) => {
             const articles = response.data.articles
+
+            await Promise.all(
+              articles.map((article) => {
+                const cover = new Image()
+                const profilePicture = new Image()
+
+                cover.src = article.cover
+                profilePicture.src = article.editor_picture
+
+                return Promise.all([
+                  new Promise((resolve, reject) => {
+                    cover.onload = resolve()
+                    cover.onerror = reject()
+                  }),
+                  new Promise((resolve, reject) => {
+                    profilePicture.onload = resolve()
+                    profilePicture.onerror = reject()
+                  }),
+                ])
+              })
+            )
 
             if (filters.length === 0 && offset >= basePosts.length) {
               setBasePosts((prevstate) => [...prevstate, ...articles])
