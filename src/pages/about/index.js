@@ -231,7 +231,7 @@ function About() {
           </div>
           <div className="about__members-grid">
             <TeamCard
-              name="Athur Melo"
+              name="Arthur Melo"
               caption="fundador e diretor geral."
               picture={Arthur}
               alt="Arthur"
