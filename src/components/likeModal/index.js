@@ -135,8 +135,6 @@ export default function LikeModal({
                       state={name}
                       setState={setName}
                       error={errorName}
-                      inputClass="post-comment-modal__input"
-                      errorClass="post-comment-modal--error"
                     />
                   </div>
                   <div className="post-comment-modal__input-box">
@@ -146,8 +144,6 @@ export default function LikeModal({
                       state={email}
                       setState={setEmail}
                       error={errorEmail}
-                      inputClass="post-comment-modal__input"
-                      errorClass="post-comment-modal--error"
                     />
                   </div>
                   <div className="post-comment-modal__checkbox-group">

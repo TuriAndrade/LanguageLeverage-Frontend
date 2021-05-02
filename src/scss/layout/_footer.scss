@@ -65,21 +65,25 @@
   }
 
   &__bottom {
-    width: 50%;
     border-top: 2px solid $color-white;
     position: absolute;
     bottom: 0;
-    left: 50%;
-    height: 8rem;
+    right: 0;
+    padding: 3rem 4rem;
+    display: grid;
+    justify-content: end;
+    grid-template-columns: repeat(auto-fit, minmax(2.7rem, min-content));
     align-items: center;
-    padding: 0 4rem;
-    display: flex;
-    justify-content: flex-end;
-    gap: 4rem;
+    gap: 3rem;
+    min-width: 50%;
+    max-width: 100%;
 
     @include respond(tab-port) {
-      width: 65%;
-      left: 35%;
+      min-width: 65%;
+    }
+
+    @include respond(small-phone) {
+      justify-content: center;
     }
   }
 
@@ -114,39 +118,45 @@
       font-size: $default-font-size;
       background: transparent;
     }
+  }
 
-    input {
-      font-size: $default-font-size;
-      font-weight: 500;
-      position: relative;
-      border: 2px solid $color-white;
-      width: 100%;
-      padding: 1rem;
-      color: $color-white;
-      background: transparent;
+  &__form-input {
+    font-size: $default-font-size;
+    font-weight: 500;
+    position: relative;
+    border: 2px solid $color-white;
+    width: 100%;
+    padding: 1rem;
+    color: $color-white;
+    background: transparent;
 
-      &::placeholder {
-        /* Chrome, Firefox, Opera, Safari 10.1+ */
-        color: $color-white;
-        font-weight: 500;
-        opacity: 1; /* Firefox */
-      }
-
-      &:-ms-input-placeholder {
-        /* Internet Explorer 10-11 */
-        color: $color-white;
-        font-weight: 500;
-      }
-
-      &::-ms-input-placeholder {
-        /* Microsoft Edge */
-        color: $color-white;
-        font-weight: 500;
-      }
-
-      &--error {
-        border: 2px solid $color-red;
-      }
+    &--error {
+      border: 2px solid $color-red !important;
     }
+
+    &::placeholder {
+      /* Chrome, Firefox, Opera, Safari 10.1+ */
+      color: $color-white;
+      font-weight: 500;
+      opacity: 1; /* Firefox */
+    }
+
+    &:-ms-input-placeholder {
+      /* Internet Explorer 10-11 */
+      color: $color-white;
+      font-weight: 500;
+    }
+
+    &::-ms-input-placeholder {
+      /* Microsoft Edge */
+      color: $color-white;
+      font-weight: 500;
+    }
+  }
+
+  &__form-error {
+    @include theme-aware("color", "color-red");
+    font-size: 1.4rem;
+    font-weight: 600;
   }
 }

@@ -1,5 +1,5 @@
 import React from "react"
-import { FiTwitter, FiInstagram } from "react-icons/all"
+import { FiTwitter, FiInstagram, FiFacebook, FaWhatsapp } from "react-icons/all"
 
 export default function DefaultSidebarRight() {
   return (
@@ -21,10 +21,12 @@ export default function DefaultSidebarRight() {
           </span>
           <span className="sidebar__social-media-header--primary">LangLev</span>
         </div>
-        <div className="sidebar__social-media-icon-box u-disabled-btn">
-          <a href="https://twitter.com" className="sidebar__social-media-icon">
+        <div className="sidebar__social-media-icon-box">
+          <a
+            href="https://twitter.com/langlevbrasil/"
+            className="sidebar__social-media-icon"
+          >
             <FiTwitter />
-            {/*<span className="sidebar__social-media-icon--number">456</span>*/}
           </a>
         </div>
         <div className="sidebar__social-media-icon-box">
@@ -33,7 +35,22 @@ export default function DefaultSidebarRight() {
             className="sidebar__social-media-icon"
           >
             <FiInstagram />
-            {/*<span className="sidebar__social-media-icon--number">855</span>*/}
+          </a>
+        </div>
+        <div className="sidebar__social-media-icon-box">
+          <a
+            href="https://www.facebook.com/LangLev-Language-Leverage-106112188113886/"
+            className="sidebar__social-media-icon"
+          >
+            <FiFacebook />
+          </a>
+        </div>
+        <div className="sidebar__social-media-icon-box">
+          <a
+            href="https://chat.whatsapp.com/IQKtksqGJOBIpOpIsQ7gvL/"
+            className="sidebar__social-media-icon"
+          >
+            <FaWhatsapp />
           </a>
         </div>
       </div>

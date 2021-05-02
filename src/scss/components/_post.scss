@@ -184,12 +184,31 @@
   border-bottom-right-radius: 2rem;
   border-bottom-left-radius: 2rem;
   padding: 1.5rem 1rem;
+  display: grid;
   grid-auto-rows: min-content;
   grid-template-columns: 1fr;
   row-gap: 3rem;
 
   @include respond(small-phone) {
     padding: 1.5rem 2rem;
+  }
+
+  &__icons-box {
+    display: grid;
+    justify-content: end;
+    grid-template-columns: repeat(auto-fit, minmax(2rem, min-content));
+    gap: 4rem;
+
+    @include respond(small-phone) {
+      justify-content: center;
+      gap: 3rem;
+    }
+  }
+
+  &__icon {
+    @include theme-aware("color", "color-primary");
+    font-size: 2rem;
+    display: flex;
   }
 
   &__categories-box {

@@ -1,24 +1,48 @@
 .team-card {
   display: grid;
+  position: relative;
   grid-template-rows: [row-picture-start] min-content [row-picture-end row-caption-start] min-content [row-caption-end];
   grid-template-columns: minmax(min-content, 35rem);
   row-gap: 1rem;
+  perspective: 100rem;
+  cursor: pointer;
+
+  @include not-touch-device() {
+    &:hover &__picture {
+      transform: rotateY(-180deg);
+    }
+
+    &:hover &__text {
+      transform: rotateY(0);
+    }
+  }
 
   &__picture {
+    position: relative;
     grid-row: row-picture-start / row-picture-end;
     width: 100%;
     height: 48rem;
     @include theme-aware("box-shadow", "default-box-shadow");
     border-radius: 1rem;
     overflow: hidden;
-    transition: all 0.5s;
+    backface-visibility: hidden;
+    transition: transform 0.4s ease-out;
 
-    @include not-touch-device() {
-      &:hover {
-        transform: translateY(-1rem) rotateZ(3deg);
-        transform-origin: center;
-        @include theme-aware("box-shadow", "big-box-shadow");
-      }
+    &-enter {
+      transform: rotateY(0);
+    }
+
+    &-enter-active {
+      transform: rotateY(-180deg);
+    }
+
+    &-exit,
+    &-enter-done {
+      transform: rotateY(-180deg);
+    }
+
+    &-exit-active {
+      transform: rotateY(0);
     }
 
     img {
@@ -51,6 +75,45 @@
       @include theme-aware("color", "color-text");
       font-size: $default-font-size;
       font-weight: 600;
+    }
+  }
+
+  &__text {
+    position: absolute;
+    backface-visibility: hidden;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 48rem;
+    border-radius: 1rem;
+    transform: rotateY(180deg);
+    @include theme-aware("background-color", "color-post");
+    @include theme-aware("box-shadow", "default-box-shadow");
+    @include theme-aware("color", "color-text");
+    transition: transform 0.4s ease-out;
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 130%;
+    overflow: hidden;
+
+    &-enter {
+      transform: rotateY(180deg);
+    }
+
+    &-enter-active {
+      transform: rotateY(0);
+    }
+
+    &-exit,
+    &-enter-done {
+      transform: rotateY(0);
+    }
+
+    &-exit-active {
+      transform: rotateY(180deg);
     }
   }
 }

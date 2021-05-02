@@ -18,6 +18,10 @@ import {
   AiOutlineEyeInvisible,
   AiOutlineEye,
   AiOutlinePlusCircle,
+  FiTwitter,
+  FiInstagram,
+  FiFacebook,
+  FaWhatsapp,
 } from "react-icons/all"
 import getTimePassed from "../../utils/getTimePassed"
 import DefaultProfilePicture from "../../assets/default-profile-picture.png"
@@ -442,11 +446,9 @@ export default function Post({ article, fowardedRef }) {
           <div className="post-header__btn">
             <button
               onClick={() => setIsOpened((prevState) => !prevState)}
-              className="btn-icon btn-icon--green"
+              className="btn-bg-icon btn-bg-icon--primary"
             >
-              <div className="btn-icon--icon">
-                {isOpened ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
-              </div>
+              {isOpened ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
             </button>
           </div>
         </div>
@@ -573,6 +575,32 @@ export default function Post({ article, fowardedRef }) {
               </button>
             ) : null}
           </div>
+        </div>
+        <div className="post-content__icons-box">
+          <a
+            href="https://twitter.com/langlevbrasil/"
+            className="post-content__icon"
+          >
+            <FiTwitter />
+          </a>
+          <a
+            href="https://www.instagram.com/langlevbrasil/"
+            className="post-content__icon"
+          >
+            <FiInstagram />
+          </a>
+          <a
+            href="https://chat.whatsapp.com/IQKtksqGJOBIpOpIsQ7gvL/"
+            className="post-content__icon"
+          >
+            <FaWhatsapp />
+          </a>
+          <a
+            href="https://www.facebook.com/LangLev-Language-Leverage-106112188113886/"
+            className="post-content__icon"
+          >
+            <FiFacebook />
+          </a>
         </div>
       </div>
     </div>
