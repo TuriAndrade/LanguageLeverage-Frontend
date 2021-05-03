@@ -227,7 +227,7 @@ function About() {
         </div>
         <div className="about__members">
           <div className="cool-heading about__members--heading u-margin-bottom-big">
-            Conheça os linguarudos
+            Conheça os langlevers
           </div>
           <div className="about__members-grid">
             <TeamCard
@@ -313,7 +313,7 @@ function About() {
             />
             <TeamCard
               name="Zach Byerly"
-              caption="consultor de TI e narrador de áudios."
+              caption="consultora de TI e narrador de áudios."
               picture={Zach}
               alt="Zach"
               Icon={AiOutlineCode}

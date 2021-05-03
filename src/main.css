@@ -4263,10 +4263,10 @@ textarea {
     .sidebar__social-media-icon > *:not(:last-child) {
       margin-right: 1.3rem; }
     @media not all and (pointer: coarse) {
-      .theme-light .sidebar__social-media-icon:hover svg {
-        stroke: #0092db; }
-      .theme-dark .sidebar__social-media-icon:hover svg {
-        stroke: #0092db; }
+      .theme-light .sidebar__social-media-icon:hover {
+        color: #0092db; }
+      .theme-dark .sidebar__social-media-icon:hover {
+        color: #0092db; }
       .theme-light .sidebar__social-media-icon:hover .sidebar__social-media-icon--number {
         color: #0092db; }
       .theme-dark .sidebar__social-media-icon:hover .sidebar__social-media-icon--number {

@@ -430,9 +430,7 @@
 
     @include not-touch-device() {
       &:hover {
-        svg {
-          @include theme-aware("stroke", "color-primary");
-        }
+        @include theme-aware("color", "color-primary");
       }
 
       &:hover &--number {
